@@ -25,3 +25,5 @@ yarn-error.log*
 /venv
 .env
 db.sqlite3
+__pycache__
+*.py[cod]
