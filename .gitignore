@@ -1,0 +1,10 @@
+# Python
+venv/
+__pycache__/
+
+# Django
+db.sqlite3
+.env
+
+# Logs & Cache
+staticfiles/
