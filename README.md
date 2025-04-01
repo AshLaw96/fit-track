@@ -4,17 +4,13 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/commits/main)
 [![GitHub repo size](https://img.shields.io/github/repo-size/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track)
 
-⚠️ INSTRUCTIONS ⚠️
+This Fitness Tracker App is designed to help users take control of their health and wellness by providing an all-in-one platform for tracking exercise, meals, and sleep habits. Whether they're looking to improve fitness, maintain a healthy lifestyle, or simply enjoy working out, this app offers the tools and insights needed to stay on top of their health journey.
 
-In this section, include a few paragraphs providing an overview of your project. Essentially, this part is your "sales pitch". Describe what the project hopes to accomplish, who it is intended to target, and how it will be useful to the target audience.
+The app allows users to log workouts, track their nutrition, and monitor sleep patterns to gain a comprehensive understanding of their daily habits. By integrating these three key aspects of health, users can identify trends, set goals, and make informed decisions to optimise their well-being. The goal is to provide a seamless and intuitive experience that encourages consistency and helps users stay accountable.
 
-⚠️ --- END --- ⚠️
+This app is ideal for anyone looking to improve or maintain their health and fitness, from beginners taking their first steps toward a healthier lifestyle to experienced fitness enthusiasts wanting to fine-tune their routines. It is also valuable for individuals who enjoy exercising and want to keep track of their progress over time.
 
-🛑 NOTES 🛑
-
-Do not add a **Table of Contents** to your Markdown files. GitHub has these built-in automatically using the headers/hashtags.
-
-Don't add screenshots for the README/TESTING into your `assets` or `static` folders. Create a new folder at the root-level called `documentation`. Consider creating sub-directories within `documentation` to handle things like `wireframes`, `features`, `validation`, `responsiveness`, etc.
+By addressing the need for a holistic approach to health tracking, this app serves as a practical and motivational tool that empowers users to build better habits, stay consistent, and achieve their fitness goals. With an easy-to-use interface and personalized tracking features, it makes health management more accessible, engaging, and effective.
 
 **Site Mockups**
 _([amiresponsive](https://ui.dev/amiresponsive?url=https://fit-track-project-8ab24fa880fe.herokuapp.com), [techsini](https://techsini.com/multi-mockup), etc.)_
@@ -45,20 +41,53 @@ source: [fit-track amiresponsive](https://ui.dev/amiresponsive?url=https://fit-t
 
 ##### Purpose
 
-- Provide a seamless and intuitive e-commerce experience for customers to browse, filter, and purchase products.
-- Empower site owners to manage the store's inventory and customer orders efficiently.
+- Track Fitness Progress - Log workouts, monitor performance, and stay motivated to reach fitness goals.
+
+- Monitor Nutrition - Keep track of meals and dietary habits to ensure a balanced and healthy diet.
+
+- Analyse Sleep Patterns - Record sleep duration and quality to promote better rest and recovery.
+
+- Encourage Healthy Habits - Provide users with insights into their daily routines to build and maintain a healthier lifestyle.
+
+- Set & Achieve Goals - Allow users to set personalised fitness, nutrition, and sleep goals to stay on track.
+
+- Increase Accountability - Help users stay consistent by tracking progress and offering data-driven feedback.
+
+- Simplify Health Tracking - Offer an easy-to-use interface for managing all aspects of health in one place.
+
+- Target All Fitness Levels - Designed for beginners, fitness enthusiasts, and anyone looking to maintain or improve their well-being.
 
 ##### Primary User Needs
 
-- Guest users need to browse products and checkout with ease.
-- Registered customers need a streamlined shopping experience with account and order history features.
-- Site owners need robust tools for inventory and order management.
+- Easy Workout Logging - Users need a simple way to track workouts, exercises, and progress over time.
+
+- Meal Tracking & Nutritional Insights - Users want to log meals and get insights into their diet to maintain a healthy balance.
+
+- Sleep Monitoring - Users need to track sleep patterns to improve rest and overall well-being.
+
+- Goal Setting & Progress Tracking - Users want to set fitness, nutrition, and sleep goals and track their progress.
+
+- User-Friendly Interface - Users need an intuitive and easy-to-navigate platform to input and review their data quickly.
+
+- Reminders & Notifications - Users may need reminders to log workouts, meals, or sleep data to stay consistent.
+
+- Data Insights & Reports - Users want visual progress reports and analytics to stay motivated and make informed decisions.
+
+- Community & Motivation - Users may benefit from social features or challenges to stay engaged and motivated.
 
 ##### Business Goals
 
-- Drive sales by providing a user-friendly shopping experience.
-- Build customer loyalty through personalized and efficient account features.
-- Maintain an organized and up-to-date store inventory.
+- Increase User Base - Grow the number of active users by targeting fitness enthusiasts, beginners, and health-conscious individuals.
+
+- Improve User Retention - Encourage long-term app usage through personalized recommendations and progress tracking.
+
+- Enhance User Experience - Continuously improve UI/UX to make the app intuitive and enjoyable to use.
+
+- Introduce Community Features - Build a supportive community through forums, challenges, or social sharing to increase engagement.
+
+- Strong Customer Support - Provide excellent customer support to maintain a positive reputation and high user satisfaction.
+
+- User Privacy & Data Security - Ensure strong data protection policies to build user trust and comply with regulations.
 
 #### 2. Scope Plane
 
@@ -68,31 +97,149 @@ source: [fit-track amiresponsive](https://ui.dev/amiresponsive?url=https://fit-t
 
 ##### Content Requirements
 
-- Product details, including name, price, description, category, and images.
-- Clear prompts and instructions for browsing, filtering, and purchasing.
-- Order details, confirmation pages, and email notifications.
-- Secure payment processing using Stripe.
-- Payment success emails sent to users.
-- 404 page for lost users.
+- User Profile Information - Name, age, weight, height, fitness goals, and preferences.
+
+- Exercise & Activity Tracking - Logs for workouts, calories burned, steps taken, and progress over time.
+
+- Meal & Nutrition Tracking - Food logging, meal plans, calorie intake tracking, and recipe suggestions.
+
+- Sleep Tracking - Sleep duration, quality analysis, and improvement recommendations.
+
+- Goal Setting & Progress Updates - Users can set and track fitness, nutrition, and sleep goals.
+
+- Motivational Content - Daily tips, workout challenges, and reminders.
+
+- Push Notifications & Reminders - Alerts for workouts, meals, hydration, and sleep.
+
+- User Dashboard - A summary of daily and weekly progress.
+
+- Community & Social Features - Group challenges, leaderboards, or friend activity tracking.
+
+- Help & Support - FAQs, troubleshooting guides, and customer support contact.
+
+- 400 Error Page (Bad Request/Not Found) - A user-friendly page for incorrect or broken links with navigation back to key sections.
+
+- 500 Error Page (Server Issues) - A helpful page for internal errors, reassuring users and providing troubleshooting steps.
 
 #### 3. Structure Plane
 
 ##### Information Architecture
 
 - **Navigation Menu**:
-  - Links to Home, Products, Cart, Newsletter, and Account sections.
+
+  - Links to Dashboard, Log-in/Sign-up, Exercise log, Meal log, Sleep tracking, Profile, Settings, and Help.
+
 - **Hierarchy**:
-  - Prominent product categories and filters for easy navigation.
-  - Cart and checkout options displayed prominently for convenience.
+
+  - Dashboard - When a user first arrives on the website, they will see a simple navigation bar with links to Log In / Sign Up, the Help Page, and the Dashboard. The landing page will provide a brief overview of the app's features and a link to log in or sign up. If the user is logged in, the main section will display their dashboard content, including:
+
+    - A summary of the current day’s activities
+
+    - Workout and nutrition overview
+
+    - Daily goal progress
+
+    - Progress analytics
+
+    - Challenge and motivation section
+
+    The navigation bar will also update to include links to additional pages and a Sign Out option. A notification icon will alert users to any new updates.
+
+  - Log In / Sign Up Page - Allows users to log in to their account, redirecting them to their dashboard upon success. If they do not have an account, they can create one and then proceed to log in.
+
+  - Exercise Log Page - Displays a weekly overview of the user's exercises. Users can add, edit, or delete workout entries through an interactive table, which includes:
+
+    - Exercise type
+
+    - Name of the workout
+
+    - Time, amount, or duration
+
+    - Notes section for additional details
+
+  - Meal Log Page - Functions similarly to the Exercise Log Page, but for daily meal tracking. It includes:
+
+    - Meal type (e.g., breakfast, lunch, dinner, snack)
+
+    - Meal name
+
+    - Calorie/nutritional intake
+
+    - Notes section for additional details
+
+  - Sleep Tracking Page - Allows users to track their sleep habits with multiple sections:
+
+    - Sleep log entries with progress bars for each night
+
+    - Sleep disruption analysis, including factors affecting sleep quality
+
+    - Sleep quality rating graph and notes section
+
+    - Weekly/monthly comparison graph, highlighting trends and averages
+
+    - A sleep alert icon if the user’s average sleep quality is poor
+
+    - Alarm section where users can set sleep and wake-up alarms
+
+    - Feedback & encouragement section, displaying motivational messages
+
+    - Edit button for modifying all data on the page, with an option to save changes
+
+  - Profile Page - Users can edit personal details, such as height, weight, and username. This page also includes:
+
+    - An activity counter to track user engagement
+
+    - A quick summary graph of progress
+
+    - An achievement section for goal milestones
+
+    - A delete account button for users who wish to remove their profile
+
+  - Settings Page - Allows users to adjust app preferences, including:
+
+    - Notification settings (on/off toggle)
+
+    - Data sharing preferences (on/off toggle)
+
+    - Measurement system selection (metric or imperial)
+
+    - Profile visibility settings
+
+  - Help Page - Accessible to both guest users and logged-in users, this page includes:
+
+    - Frequently Asked Questions (FAQ)
+
+    - Troubleshooting & technical support
+
+    - Contact support options
+
+    - Tutorials and guides for using the app
 
 ##### User Flow
 
-1. Guest user browses the store → filters and sorts products by category, price, or name.
-2. Guest user adds items to the cart → proceeds to checkout.
-3. Guest user creates an account or logs in during checkout → completes purchase.
-4. Returning customers log in → view past orders and track purchase history.
-5. Site owners manage inventory → add, update, or delete products and categories.
-6. Users signup to the newsletter → potentially receive advanced notice of upcoming sales.
+1. Guest user lands on the standard dashboard → Sees an overview of the app’s features and a call to action to sign up or log in.
+
+2. Guest user explores the help page → Reads FAQs, troubleshooting tips, or app guides.
+
+3. Guest user signs up for an account → Enters details (name, email, password) → Redirected to log in.
+
+4. Returning user logs in → Redirected to the dashboard.
+
+5. User lands on their dashboard → Sees an overview of the day's progress, recent activities, and notifications.
+
+6. User logs a workout → Navigates to the exercise log page → Adds, edits, or deletes an exercise entry.
+
+7. User logs a meal → Navigates to the meal log page → Adds meal details, tracks calories/nutrition.
+
+8. User tracks sleep → Enters sleep data, reviews sleep history, and sets sleep goals/alarms.
+
+9. User checks analytics → Reviews progress charts and trends for fitness, nutrition, and sleep.
+
+10. User adjusts settings → Updates profile details, notification preferences, or measurement units.
+
+11. User views achievements & challenges → Engages with motivational challenges or unlocks achievements.
+
+12. User signs out → Logs out and returns to standard dashboard.
 
 #### 4. Skeleton Plane
 
@@ -109,33 +256,41 @@ source: [fit-track amiresponsive](https://ui.dev/amiresponsive?url=https://fit-t
 
 ### Colour Scheme
 
-⚠️INSTRUCTIONS ⚠️
+I used [coolors.co](https://coolors.co/1e3a8a-2dd4bf-facc15-fafafa-2e2e2e) to generate my color palette.
 
-Explain your colors and color scheme. Consider adding a link and screenshot for your color scheme using [coolors](https://coolors.co/generate).
+- Primary Color: Navy Blue `#1E3A8A`
 
-When you add a color to the palette, the URL is dynamically updated, making it easier for you to return back to your color palette later if needed. See example below:
+- Secondary Color: Teal `#2DD4BF`
 
-⚠️ --- END --- ⚠️
+- Accent Color: Muted Yellow `#FACC15`
 
-I used [coolors.co](https://coolors.co/080708-3772ff-df2935-fdca40-e6e8e6) to generate my color palette.
+- Background: Off-White `#FAFAFA`
 
-- `#000000` primary text.
-- `#3772FF` primary highlights.
-- `#DF2935` secondary text.
-- `#FDCA40` secondary highlights.
+- Text Color: Charcoal Gray `#2E2E2E`
 
-![screenshot](documentation/coolors.png)
+![screenshot](documentation/light-colours.png)
+
+##### DARK MODE
+
+- Primary Color: Deep Navy `#0F172A`
+
+- Secondary Color: Teal `#14B8A6`
+
+- Accent Color: Muted Yellow `#EAB308`
+
+- Background: Charcoal Black `#1E293B`
+
+- Text Color: Light Gray `#E5E7EB`
+
+- Card/Section Background: Dark Gray `#334155`
+
+![screenshot](documentation/dark-colours.png)
 
 ### Typography
 
-⚠️ INSTRUCTIONS ⚠️
-
-Explain any fonts and icon libraries used, like **Google Fonts**, **Font Awesome**, etc. Consider adding a link to each font used, the Font Awesome site (if used), or similar icon library.
-
-⚠️ --- END --- ⚠️
-
-- [Montserrat](https://fonts.google.com/specimen/Montserrat) was used for the primary headers and titles.
-- [Lato](https://fonts.google.com/specimen/Lato) was used for all other secondary text.
+- [Inter](https://fonts.google.com/specimen/Inter) was used for the primary headers and titles.
+- [Roboto](https://fonts.google.com/specimen/Roboto) was used for all other secondary text.
+- [DM Sans](https://fonts.google.com/specimen/DM+Sans) was used for numbers and data displays.
 - [Font Awesome](https://fontawesome.com) icons were used throughout the site, such as the social media icons in the footer.
 
 ## User Stories
