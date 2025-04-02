@@ -381,26 +381,19 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 | [![badge](https://img.shields.io/badge/Python-grey?logo=python&logoColor=3776AB)](https://www.python.org)                | Back-end programming language.                                              |
 | [![badge](https://img.shields.io/badge/Heroku-grey?logo=heroku&logoColor=430098)](https://www.heroku.com)                | Hosting the deployed back-end site.                                         |
 | [![badge](https://img.shields.io/badge/Bootstrap-grey?logo=bootstrap&logoColor=7952B3)](https://getbootstrap.com)        | Front-end CSS framework for modern responsiveness and pre-built components. |
-| [![badge](https://img.shields.io/badge/Jest-grey?logo=jest&logoColor=c21325)](https://jestjs.io)                         | Automated JavaScript testing.                                               |
 | [![badge](https://img.shields.io/badge/Django-grey?logo=django&logoColor=092E20)](https://www.djangoproject.com)         | Python framework for the site.                                              |
 | [![badge](https://img.shields.io/badge/PostgreSQL-grey?logo=postgresql&logoColor=4169E1)](https://www.postgresql.org)    | Relational database management.                                             |
 | [![badge](https://img.shields.io/badge/Cloudinary-grey?logo=cloudinary&logoColor=3448C5)](https://cloudinary.com)        | Online static file storage.                                                 |
 | [![badge](https://img.shields.io/badge/WhiteNoise-grey?logo=python&logoColor=FFFFFF)](https://whitenoise.readthedocs.io) | Serving static files with Heroku.                                           |
-| [![badge](https://img.shields.io/badge/Stripe-grey?logo=stripe&logoColor=008CDD)](https://stripe.com)                    | Online secure payments of e-commerce products/services.                     |
 | [![badge](https://img.shields.io/badge/Gmail_API-grey?logo=gmail&logoColor=EA4335)](https://mail.google.com)             | Sending emails in my application.                                           |
 | [![badge](https://img.shields.io/badge/Font_Awesome-grey?logo=fontawesome&logoColor=528DD7)](https://fontawesome.com)    | Icons.                                                                      |
 | [![badge](https://img.shields.io/badge/ChatGPT-grey?logo=openai&logoColor=75A99C)](https://chat.openai.com)              | Help debug, troubleshoot, and explain things.                               |
 | [![badge](https://img.shields.io/badge/Mermaid-grey?logo=mermaid&logoColor=FF3670)](https://mermaid.live)                | Generate an interactive diagram for the data/schema.                        |
-
-⚠️ NOTE ⚠️
-
-Want to add more?
-
-- Tutorial: https://shields.io/badges/static-badge
-- Icons/Logos: https://simpleicons.org
-  - FYI: not all logos are available to use
-
-🛑 --- END --- 🛑
+| [![badge](https://img.shields.io/badge/React-grey?logo=react&logoColor=black)](https://reactjs.org/)                     | JavaScript library for building dynamic and responsive user interface       |
+| [![badge](https://img.shields.io/badge/DRF-grey?logo=django&logoColor=white)](https://www.django-rest-framework.org/)    | Allowing frontend-backend communication                                     |
+| [![badge](https://img.shields.io/badge/JWT-grey?logo=jsonwebtokens)](https://jwt.io/)                                    | Used for authentication and session management                              |
+| [![badge](https://img.shields.io/badge/SendGrid-grey?logo=sendgrid&logoColor=white)](https://sendgrid.com/)              | Sending notifications, password resets and confirmations                    |
+| [![badge](https://img.shields.io/badge/Pytest-grey?logo=pytest)](https://docs.pytest.org/)                               | Used to run unit and integration tests.                                     |
 
 ## Database Design
 
