@@ -399,125 +399,90 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 
 ### Data Model
 
-Entity Relationship Diagrams (ERD) help to visualize database architecture before creating models. Understanding the relationships between different tables can save time later in the project.
-
 ![screenshot](documentation/erd.png)
-
-⚠️ INSTRUCTIONS ⚠️
-
-Using your defined models, create an ERD with the relationships identified. A couple of recommendations for building your own free ERDs:
-
-- [Lucidchart](https://www.lucidchart.com/pages/ER-diagram-symbols-and-meaning)
-- [Draw.io](https://draw.io)
-
-Looking for an interactive version of your ERD? Consider using a [`Mermaid flowchart`](https://mermaid.live). To simplify the process, you can ask ChatGPT (or similar) the following prompt:
-
-> ChatGPT Prompt:
-> "Generate a Markdown syntax Mermaid ERD using my Django models"
-> [paste-your-django-models-into-ChatGPT]
-
-The "Boutique Ado" sample ERD in Markdown syntax using Mermaid can be seen below as an example.
-
-**NOTE**: A Markdown Preview tool doesn't show the interactive ERD; you must first commit/push the code to your GitHub repository in order to see it live in action.
-
-⚠️ --- END --- ⚠️
 
 I have used `Mermaid` to generate an interactive ERD of my project.
 
 ```mermaid
 erDiagram
-    User {
+    USER ||--|| PROFILE : has
+    USER ||--|{ ACHIEVEMENTS : earns
+    USER ||--|{ EXERCISE_LOG : tracks
+    USER ||--|{ MEAL_LOG : records
+    USER ||--|{ SLEEP_LOG : monitors
+    USER ||--|| GOAL_SUMMARY : tracks
+    USER ||--|| ACTIVE_COUNTER : logs
+
+    PROFILE {
         int id PK
-        varchar username
-        varchar email
-        varchar password
+        int user_id FK
+        string username
+        string email
+        string profile_image
+        date dob
+        float height
+        float weight
+        datetime created_at
     }
 
-    UserProfile {
+    ACHIEVEMENTS {
         int id PK
-        varchar default_phone_number
-        varchar default_street_address1
-        varchar default_street_address2
-        varchar default_town_or_city
-        varchar default_county
-        varchar default_postcode
-        varchar default_country
+        int user_id FK
+        string category
+        int stars
+        boolean completed
+        datetime achieved_at
     }
 
-    User ||--|| UserProfile : has_one
-
-    Category {
+    EXERCISE_LOG {
         int id PK
-        varchar name
-        varchar friendly_name
+        int user_id FK
+        string type
+        string name
+        float duration
+        string notes
+        datetime logged_at
     }
 
-    Product {
+    MEAL_LOG {
         int id PK
-        varchar sku
-        varchar name
-        text description
-        bool has_sizes
-        decimal price
-        decimal rating
-        varchar image_url
-        image image
+        int user_id FK
+        string meal_type
+        string name
+        float calories
+        string nutrition_details
+        string notes
+        datetime logged_at
     }
 
-    Product ||--o| Category : belongs_to
-
-    Order {
+    SLEEP_LOG {
         int id PK
-        varchar order_number
-        varchar full_name
-        varchar email
-        varchar phone_number
-        varchar country
-        varchar postcode
-        varchar town_or_city
-        varchar street_address1
-        varchar street_address2
-        varchar county
-        datetime date
-        decimal delivery_cost
-        decimal order_total
-        decimal grand_total
-        text original_bag
-        varchar stripe_pid
+        int user_id FK
+        float hours_slept
+        int sleep_quality_rating
+        int sleep_disruptions
+        string notes
+        datetime logged_at
     }
 
-    OrderLineItem {
+    GOAL_SUMMARY {
         int id PK
-        int quantity
-        decimal lineitem_total
-        varchar product_size
+        int user_id FK
+        int progress_percentage
+        string category
+        datetime updated_at
     }
 
-    Order ||--o| OrderLineItem : has_many
-    OrderLineItem ||--o| Product : belongs_to
-
-    Order ||--o| UserProfile : belongs_to
-
-    Newsletter {
+    ACTIVE_COUNTER {
         int id PK
-        varchar email
-    }
-
-    Contact {
-        int id PK
-        varchar name
-        varchar email
-        text message
-    }
-
-    FAQ {
-        int id PK
-        varchar question
-        text answer
+        int user_id FK
+        int streak_days
+        datetime last_active_date
+        datetime last_reset_date
     }
 ```
 
-source: [Mermaid](https://mermaid.live/edit#pako:eNqVVcFu2zAM_RVD57RIHLdpfRs6DBg2bB2GXYYAhmIxjlBZcimqqdvk3yfbSVPHceP5kBh8TyRFPtKvLDUCWMwAP0ueIc_nOvDPHwsYvDbv1SM1BVIE998OpieO6Ypj4DxV8xy6CORcqq654NauDYoG2c71IeQ9mqVUMDCygCV3ipJiZTQk2uULwH6WJQSghAuBYO1kKDHsJ5JZ68Rgkkoq-1mpcfojvDCWqiac8YDliXoFm83FxWbTql0crLhNfEX2xDtOkBksB1b1dC-XKEELVSYH-C0TH1m4lAb6tw_uXFCCZ_K3tynKgqTRB2RhjKrvZ-UL2INdQCpzroICZQpdM3KSOuuG9WAGicN3Kq1NzW_PNauam82hrHGwAGV0Zr0g9tyfKAYPkKm4vfJdOqWS_5uvD8ehJabWsV4dfqzzs3N1dp6OJ0T4ypLMoX7pNlOAkk-ApZ8LS124KScZ4qoL-g2nxTFYy82gzKTmKlnw7OQdZAFJIY-3Vt3o71LDV4L8TMMr06Pjmlp13KemvBPpnRxn99afRn618k8lsddlO6NmG-Rcl6fy3R3ZK7tfyTtie890yT9gbRUQDdb-Owm_3ebOaOKD18mg0ag7nHv1daf6y6dfAyM9OrDtbVS75dqu94O2ZSOWA_rgwn9Ta7dzRivwKbLYvwqOD3M21xWPOzK_S52ymNDBiLmikvvuK8ziJVfWWwuuWfzKnlk8jSaXN9ez8HoyHc_C8TiajVjJ4ovp5XUUTqMovLqdXd2Et-FsO2Ivxngfk8vxZBpGkT_m_zxW-_tbY01QNC5b7YJt_wE0ZoQj)
+source: [Mermaid](https://mermaid.live/edit#pako:eNqlVV1v2jAU_SuWnykK7fho3hBLOzQoFbTVNiFZt_ElWCR2ZjvdKPDf5_BVAkGail8SH58bn-N7r7OgoeJIfYr6q4BIQzKWxI3nUTAky-XV1XJJHoeDu24vID6ZgjleXpB251s3eAn6wcPTyHEQtCxhBT-CYac7ClhvcO9YVkM4K6H1g3ZvS9EYKs1LOKNeEDxuSYmSwiptTlXfD9yXRs_9fnv48-yGS6f-qfsSsM7g-eHJoT6JVeRoG-LO-WIzzYeQlghOHr8XocygZg6_O8CN1UJG6yUJCZ4sYAIiPkFTrSYiRiYSiA5iOFgkXL1-IJNYgSVTFNHUHqN_jtA82ooESajRvXIG28XVzmohixf5Dd0GkdLzYoCxsMtSPl6VihEkCVWSxugUlWiFcCrwrUxsoZguEmvn6WliitnanCjPNFih5ClZWTQl6l0dRWXa9xV-ke4EIWb_LT6EWGlxKHNHztwzt8U4WleN5mJ7H835OX_bqlaZNszEmNqjMooRU_Y7g1jYOctTIqMyBhdGZ2nu7HJLhZvkc65y3DV2pNEYlqIOUdpCe5_tnb26LOXnOrdwg31eoNOAMGMc5qWnA8YyCK14Q5aD5yjOItoDhtNJKzTSglPf6gwrNEHtbj43pWutY2qn6GqW-u6Vg56N6ViuXEwK8pdSyS5MqyyaUn8CsXGzzXFs_1l7VKPkqDsqk5b69fUnqL-gf6nfbFXrjeu6V6t98W5q9UazQufUrzVvqjXvtnXttbz67W3Da64q9H29qVdtNevewait_gFmgCZA)
 
 ⚠️ RECOMMENDED ⚠️
 
