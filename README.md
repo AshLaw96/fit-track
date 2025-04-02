@@ -323,65 +323,49 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 
 ## Features
 
-⚠️ INSTRUCTIONS ⚠️
-
-In this section, you should go over the different parts of your project, and describe each feature. You should explain what value each of the features provides for the user, focusing on your target audience, what they want to achieve, and how your project can help them achieve these things.
-
-**IMPORTANT**: Remember to always include a screenshot of each individual feature!
-
-⚠️ --- END --- ⚠️
-
 ### Existing Features
 
-| Feature            | Notes                                                                                                                                                                            | Screenshot                                                   |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Register           | Authentication is handled by allauth, allowing users to register accounts.                                                                                                       | ![screenshot](documentation/features/register.png)           |
-| Login              | Authentication is handled by allauth, allowing users to log in to their existing accounts.                                                                                       | ![screenshot](documentation/features/login.png)              |
-| Logout             | Authentication is handled by allauth, allowing users to log out of their accounts.                                                                                               | ![screenshot](documentation/features/logout.png)             |
-| Product List       | Users can browse all available products with sorting, filtering by categories, and search functionality.                                                                         | ![screenshot](documentation/features/product-list.png)       |
-| Product Details    | Displays detailed information about a selected product, including its name, description, price, an image, and available sizes.                                                   | ![screenshot](documentation/features/product-details.png)    |
-| Add to Bag         | Users can add items to their shopping bag, with support for selecting different sizes if applicable.                                                                             | ![screenshot](documentation/features/add-to-bag.png)         |
-| View Bag           | Users can view the contents of their shopping bag, adjust quantities, or remove items.                                                                                           | ![screenshot](documentation/features/view-bag.png)           |
-| Checkout           | Users can proceed to checkout, where they provide their delivery details and payment information using Stripe integration.                                                       | ![screenshot](documentation/features/checkout.png)           |
-| Order Confirmation | Users receive an on-screen and email confirmation with details of their purchase.                                                                                                | ![screenshot](documentation/features/order-confirmation.png) |
-| Profile Management | Users can manage their profile information, including their default delivery address and order history.                                                                          | ![screenshot](documentation/features/profile-management.png) |
-| Order History      | Users can view their past orders and access details of each order, including products purchased and the delivery status.                                                         | ![screenshot](documentation/features/order-history.png)      |
-| Product Management | Superusers can add, edit, and delete products from the site via a CRUD interface.                                                                                                | ![screenshot](documentation/features/product-management.png) |
-| Newsletter         | Users can register their email address to receive newsletters from the site. Currently, this only stores the email in the database.                                              | ![screenshot](documentation/features/newsletter.png)         |
-| Contact            | Users can submit a message via the contact form, which stores their name, email, and message in the database.                                                                    | ![screenshot](documentation/features/contact.png)            |
-| FAQs               | Admins can manage frequently asked questions, which are displayed on the site for users.                                                                                         | ![screenshot](documentation/features/faqs.png)               |
-| User Feedback      | Clear and concise Django messages are used to provide feedback to users when interacting with various features (e.g., adding products to the bag, checking out, etc.).           | ![screenshot](documentation/features/user-feedback.png)      |
-| Heroku Deployment  | The site is deployed to Heroku, making it accessible online for users.                                                                                                           | ![screenshot](documentation/features/heroku.png)             |
-| SEO                | SEO optimization with a sitemap.xml, robots.txt, and appropriate meta tags to improve search engine visibility.                                                                  | ![screenshot](documentation/features/seo.png)                |
-| Marketing          | Social media presence is available in the footer using external links, as well as a Facebook Marketplace wireframe in the README for future integrations.                        | ![screenshot](documentation/features/marketing.png)          |
-| 404                | The 404 error page will indicate when a user has navigated to a page that doesn't exist, replacing the default Heroku 404 page with one that ties into the site's look and feel. | ![screenshot](documentation/features/404.png)                |
+| Feature                 | Notes                                                                                                                                                                            | Screenshot                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Register                | Authentication is handled by JWT, allowing users to register accounts.                                                                                                           | ![screenshot](documentation/features)            |
+| Login                   | Authentication is handled by JWT, allowing users to log in to their existing accounts.                                                                                           | ![screenshot](documentation/features)            |
+| Logout                  | Authentication is handled by JWT, allowing users to log out of their accounts.                                                                                                   | ![screenshot](documentation/features)            |
+| Dashboard overview      | Displays a summary of the user's daily activities, including workouts, meals, sleep tracking and goal progress.                                                                  | ![screenshot](documentation/features)            |
+| Exercise logging        | Allows users to log, edit and delete exercises, tracking details such as type, duration and intensity.                                                                           | ![screenshot](documentation/features)            |
+| Meal tracking           | Enables users to log meals, track calorie and nutrient intake and make adjustments as needed.                                                                                    | ![screenshot](documentation/features)            |
+| Sleep tracking          | Users can record sleep duration and quality, view progress graphs, and receive alerts if sleep trends indicate poor rest.                                                        | ![screenshot](documentation/features)            |
+| Profile management      | Users can update personal details such as weight, height, and fitness goals, as well as view achievements.                                                                       | ![screenshot](documentation/features)            |
+| Settings & preferences  | Provides customisation options like toggling notifications, changing measurement units, and adjusting profile visibility.                                                        | ![screenshot](documentation/features)            |
+| Motivational challenges | Offers fitness challenges and goals to keep users engaged and motivated.                                                                                                         | ![screenshot](documentation/features)            |
+| Progress analytics      | Displays detailed charts and graphs showing trends in exercise, diet, and sleep patterns over time.                                                                              | ![screenshot](documentation/features)            |
+| Help & support          | Contains FAQs, troubleshooting guides, and contact support options for users needing assistance.                                                                                 | ![screenshot](documentation/features)            |
+| Heroku Deployment       | The site is deployed to Heroku, making it accessible online for users.                                                                                                           | ![screenshot](documentation/features/heroku.png) |
+| 404                     | The 404 error page will indicate when a user has navigated to a page that doesn't exist, replacing the default Heroku 404 page with one that ties into the site's look and feel. | ![screenshot](documentation/features/404.png)    |
+| 500                     | The 500 error page will indicate when a server error has occurred, replacing the default Heroku 500 page with one that ties into the site's look and feel.                       | ![screenshot](documentation/features)            |
 
 ### Future Features
 
-⚠️ INSTRUCTIONS ⚠️
-
-Do you have additional ideas that you'd like to include on your project in the future? Fantastic, list them here! It's always great to have plans for future improvements. Consider adding any helpful links or notes to help remind you in the future, if you revisit the project in a couple years.
-
-A few examples are listed below to align with possible ways to improve on the sample walkthrough project, to give you some inspiration.
-
-⚠️ --- END ---⚠️
-
-- **Product Reviews & Ratings**: Allow customers to leave reviews and rate products, with admin moderation. Display average ratings and review counts on product pages.
-- **Wishlist Functionality**: Enable users to save products to a personal wishlist for future purchases. Notify users if wishlist items go on sale or are back in stock.
+- **Wishlist Functionality**: Enable users to save routines to a personal wishlist for future. Notify users if wishlist routine is trending.
 - **Product Recommendations**: Implement a "Customers who bought this also bought" or "You might also like" feature to suggest related products.
 - **Live Chat Support**: Provide real-time customer support through an integrated live chat or chatbot.
-- **Abandoned Cart Recovery**: Automatically send emails to users who add items to their cart but don't complete the purchase, offering discounts or reminders.
-- **Discount Codes and Vouchers**: Allow the admin to create discount codes or vouchers for promotions and marketing campaigns.
-- **Loyalty Program**: Introduce a points-based loyalty system where customers earn points for purchases, which can be redeemed for discounts.
-- **Product Inventory Alerts**: Notify customers when out-of-stock items are back in stock, or when low inventory is approaching.
+- **Loyalty Program**: Introduce a points-based loyalty system where customers earn points for app usage, which can be redeemed for discounts on the subscriptions.
+
+  ⚠️ POTENTIAL REMOVE IF ADD ⚠️
+
 - **Multi-Currency and Multi-Language Support**: Expand the application to support multiple currencies and languages to reach a global audience.
-- **Product Bundles**: Offer discounted product bundles (e.g., buy 3 for the price of 2) or custom product kits.
-- **Social Media Integration**: Enable users to share products directly to social media platforms or implement a social login for quick account creation.
-- **Shipping Tracking Integration**: Provide real-time shipping updates and tracking information directly within the user’s order history.
-- **Advanced Analytics Dashboard for Admin**: Offer an in-depth dashboard that displays sales trends, popular products, customer behavior, and more.
-- **Subscription-Based Products**: Allow users to subscribe to certain products (e.g., monthly deliveries of consumables like coffee or skincare products).
-- **Product Video Demos**: Support product videos to better showcase features, especially for high-tech or complex items.
-- **Mobile App**: Develop a mobile app for iOS and Android, providing users with a more optimized shopping experience on mobile devices.
+  🛑 --- END --- 🛑
+
+- **Personalized AI Coach**: Implement AI-driven suggestions for workouts, meal plans, and sleep improvements based on user data.
+- **Voice Command Integration**: Allow users to log workouts, meals, or sleep data using voice commands.
+- **Wearable Device Sync**: Enable integration with fitness trackers and smartwatches (e.g., Fitbit, Apple Watch, Garmin) to automatically track exercise and sleep.
+- **Social Media Integration**: Enable users to share routines to social media platforms or implement a social login for quick account creation.
+- **Advanced Analytics Dashboard for Admin**: Offer an in-depth dashboard that displays exercise trends, popular meals, customer behaviour, and more.
+- **Subscription-Based Advanced Features**: Allow users to subscribe to certain advanced features (e.g., more in-depth meal plans or exercise routines).
+- **Tutorial Video Demos**: video guides to better showcase how to use features, especially for more complex features.
+- **Mobile App**: Develop a mobile app for iOS and Android, providing users with a more optimised experience on mobile devices.
+- **Stress & Mindfulness Tracking**: Add guided breathing exercises, meditation, or stress level tracking features.
+- **Offline Mode**: Let users log activities even when offline, syncing data when reconnected.
+- **Integration with Meal Delivery Services**: Provide users with the option to order healthy meals directly through partnered meal services.
 
 ## Tools & Technologies
 
