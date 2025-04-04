@@ -56,3 +56,19 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.goal_type} goal"
+
+
+class Exercise(models.Model):
+    """
+    Model representing an exercise entry.
+    """
+    name = models.CharField(max_length=100)
+    duration = models.PositiveIntegerField()
+    calories_burned = models.PositiveIntegerField()
+    date = models.DateField()
+
+    def __str__(self):
+        return (
+            f"{self.name} - {self.duration} min - "
+            f"{self.calories_burned} cal"
+        )

@@ -1,3 +1,6 @@
+from rest_framework import generics, permissions, viewsets
+from .models import CustomUser, Goal, Exercise
+from .serializers import UserSerializer, GoalSerializer, ExerciseSerializer
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
@@ -35,3 +38,11 @@ class GoalDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Goal.objects.filter(user=self.request.user)
+
+
+class ExerciseViewSet(viewsets.ModelViewSet):
+    """
+    API view to list, create, update, and delete exercises.
+    """
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
