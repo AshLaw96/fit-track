@@ -1,6 +1,7 @@
 # Python
 /venv/
-/backend/__pycache__/
+*.py[cod]
+*__pycache__/
 
 # Django
 db.sqlite3
