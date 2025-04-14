@@ -289,3 +289,34 @@ class UserReport(models.Model):
         return f"Report for {self.user.username} - {self.report_date}"
 
 
+# Workout Plan model
+class WorkoutPlan(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    exercises = models.ManyToManyField(Exercise)
+    description = models.TextField(blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.user.username}"
+
+
+# Friendship model
+class Friend(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        related_name='friends',
+        on_delete=models.CASCADE
+    )
+    friend_user = models.ForeignKey(
+        CustomUser,
+        related_name='friend_of',
+        on_delete=models.CASCADE
+    )
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'friend_user')
+
+    def __str__(self):
+        return f"{self.user.username} & {self.friend_user.username} Friends"
