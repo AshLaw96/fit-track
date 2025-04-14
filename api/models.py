@@ -250,3 +250,42 @@ class NutritionLog(models.Model):
     fats_g = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
 
+
+class Challenge(models.Model):
+    """
+    Model representing a fitness challenge.
+    """
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    # e.g. 'steps', 'distance_km'
+    metric = models.CharField(max_length=50)
+    target_value = models.FloatField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.title}"
+
+
+class UserChallenge(models.Model):
+    """
+    Model representing a user's participation in a challenge.
+    """
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    progress = models.FloatField(default=0.0)
+    completed = models.BooleanField(default=False)
+
+
+class UserReport(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    report_date = models.DateField(auto_now_add=True)
+    total_steps = models.PositiveIntegerField()
+    avg_calories = models.PositiveIntegerField()
+    total_sleep_hours = models.FloatField()
+    avg_water_intake_l = models.DecimalField(max_digits=4, decimal_places=2)
+
+    def __str__(self):
+        return f"Report for {self.user.username} - {self.report_date}"
+
+
