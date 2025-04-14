@@ -182,3 +182,71 @@ class Achievement(models.Model):
         return f"{self.user.username} - {self.category} - {self.title}"
 
 
+# User Activity model
+class UserActivity(models.Model):
+    """
+    Model representing a user's activity.
+    """
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="activity"
+    )
+    last_active = models.DateField(auto_now=True)
+    streak_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.streak_count} day streak"
+
+
+# User Streak model
+class UserStreak(models.Model):
+    """
+    Model representing a user's streak.
+    """
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='streak'
+    )
+    current_streak = models.PositiveIntegerField(default=0)
+    last_logged_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.current_streak} days"
+
+
+# Dashboard models
+class DailyLog(models.Model):
+    """
+    Model representing a daily log for user activities.
+    """
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    steps = models.PositiveIntegerField(default=0)
+    sleep_hours = models.DecimalField(
+        max_digits=4, decimal_places=2, null=True, blank=True
+    )
+    water_intake_l = models.DecimalField(
+        max_digits=4, decimal_places=2, null=True, blank=True
+    )
+    weight_kg = models.DecimalField(
+        max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    notes = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'date')
+
+
+class NutritionLog(models.Model):
+    """
+    Model representing a nutrition log for user activities.
+    """
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    date = models.DateField(default=date.today)
+    carbs_g = models.PositiveIntegerField(default=0)
+    protein_g = models.PositiveIntegerField(default=0)
+    fats_g = models.PositiveIntegerField(default=0)
+    calories = models.PositiveIntegerField(default=0)
+
