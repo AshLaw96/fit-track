@@ -17,6 +17,7 @@ from api.models import (
     UserReport,
     Friend,
     WorkoutPlan,
+    Exercise
 )
 
 User = get_user_model()
@@ -370,8 +371,6 @@ class GoalProgressViewTests(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
-# -------------------- test check from here --------------------
-
 
 class ChallengeViewTests(APITestCase):
     """
@@ -400,7 +399,15 @@ class ChallengeViewTests(APITestCase):
         self.assertGreaterEqual(len(response.data), 1)
 
     def test_create_challenge(self):
-        response = self.client.post(self.url, {"title": "New Challenge"})
+        data = {
+            "title": "New Challenge",
+            "description": "A new fitness challenge",
+            "metric": "steps",
+            "target_value": 10000,
+            "start_date": date.today(),
+            "end_date": date.today() + timedelta(days=10),
+        }
+        response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, 201)
 
     def test_retrieve_challenge(self):
@@ -410,7 +417,15 @@ class ChallengeViewTests(APITestCase):
 
     def test_update_challenge(self):
         url = reverse("challenge_detail", args=[self.challenge.id])
-        response = self.client.put(url, {"title": "Updated Challenge"})
+        data = {
+            "title": "Updated Challenge",
+            "metric": self.challenge.metric,
+            "target_value": self.challenge.target_value,
+            "start_date": self.challenge.start_date,
+            "end_date": self.challenge.end_date,
+            "description": "Updated challenge description"
+        }
+        response = self.client.put(url, data, format="json")
         self.assertEqual(response.status_code, 200)
 
     def test_delete_challenge(self):
@@ -426,6 +441,11 @@ class UserChallengeViewTests(APITestCase):
     retrieving, updating, and deleting user challenges.
     """
     def setUp(self):
+        # Clear out any existing data to avoid conflicts with the test data
+        UserChallenge.objects.all().delete()
+        Challenge.objects.all().delete()
+        User.objects.all().delete()
+
         self.user = User.objects.create_user(
             username="participant", password="challengepass"
         )
@@ -447,11 +467,15 @@ class UserChallengeViewTests(APITestCase):
     def test_list_user_challenges(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_create_user_challenge(self):
         new_challenge = Challenge.objects.create(
-            title="Water Drinking Challenge"
+            title="Water Drinking Challenge",
+            metric="liters",
+            target_value=2.0,
+            start_date=date.today(),
+            end_date=date.today() + timedelta(days=7)
         )
         response = self.client.post(self.url, {"challenge": new_challenge.id})
         self.assertEqual(response.status_code, 201)
@@ -479,6 +503,8 @@ class FriendViewTests(APITestCase):
     retrieving, updating, and deleting friends.
     """
     def setUp(self):
+        Friend.objects.all().delete()
+
         self.user = User.objects.create_user(
             username="mainuser", password="friends123"
         )
@@ -496,13 +522,13 @@ class FriendViewTests(APITestCase):
     def test_list_friends(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_create_friend(self):
         new_friend = User.objects.create_user(
             username="another_friend", password="secret"
         )
-        response = self.client.post(self.url, {"friend": new_friend.id})
+        response = self.client.post(self.url, {"friend_user": new_friend.id})
         self.assertEqual(response.status_code, 201)
 
     def test_retrieve_friend(self):
