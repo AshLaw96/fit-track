@@ -88,7 +88,7 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100)
     duration = models.PositiveIntegerField()
     calories_burned = models.PositiveIntegerField()
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return (

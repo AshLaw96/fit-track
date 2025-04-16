@@ -206,7 +206,9 @@ class UserStreakView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return UserStreak.objects.get_or_create(user=self.request.user)[0]
+        # Ensure that the 'user' field is set correctly during creation
+        obj, created = UserStreak.objects.get_or_create(user=self.request.user)
+        return obj
 
 
 # --- Daily Log Views ---
@@ -357,6 +359,10 @@ class FriendListView(generics.ListCreateAPIView):
     def get_queryset(self):
         # Filter friends for the requesting user
         return Friend.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Set the user to the currently authenticated user
+        serializer.save(user=self.request.user)
 
 
 class FriendDetailView(generics.RetrieveDestroyAPIView):
