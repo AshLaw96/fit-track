@@ -54,6 +54,21 @@ class ExerciseSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'duration', 'calories_burned',
         ]
+        read_only_fields = ['id']
+
+    def validate_duration(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Duration must be greater than 0."
+            )
+        return value
+
+    def validate_calories_burned(self, value):
+        if value < 0:
+            raise serializers.ValidationError(
+                "Calories burned must be a non-negative number."
+            )
+        return value
 
 
 class MealSerializer(serializers.ModelSerializer):
@@ -151,6 +166,16 @@ class UserStreakSerializer(serializers.ModelSerializer):
             'current_streak',
             'last_logged_date'
         ]
+
+    def create(self, validated_data):
+        # Automatically assign the authenticated user
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Make sure the user field is set during updates
+        validated_data['user'] = self.context['request'].user
+        return super().update(instance, validated_data)
 
 
 class DailyLogSerializer(serializers.ModelSerializer):
@@ -277,10 +302,14 @@ class FriendSerializer(serializers.ModelSerializer):
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
     """
-    Serializer for the WorkoutPlan model.
+    Serializer for the WorkoutPlan model without nesting `Exercise` serializer.
+    Instead of nested exercise data, we handle the relationship via
+    `exercise_ids`.
     """
-    # Ṇested serialisation
-    exercises = ExerciseSerializer(many=True)
+    exercises = serializers.PrimaryKeyRelatedField(
+        queryset=Exercise.objects.all(),
+        many=True
+    )
 
     class Meta:
         model = WorkoutPlan
@@ -288,15 +317,26 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'date_created']
 
     def create(self, validated_data):
-        # Automatically associate the workout plan with the currently
-        # authenticated user
-        exercises_data = validated_data.pop('exercises')
+        # Get the list of exercise IDs
+        exercises = validated_data.pop('exercises')
         user = self.context['request'].user
         workout_plan = WorkoutPlan.objects.create(user=user, **validated_data)
-        # Create exercise entries
-        for exercise_data in exercises_data:
-            Exercise.objects.create(
-                workout_plan=workout_plan,
-                **exercise_data
-            )
+
+        # Add the exercises to the workout plan
+        workout_plan.exercises.set(exercises)
         return workout_plan
+
+    def update(self, instance, validated_data):
+        # Get the list of exercise IDs
+        exercises = validated_data.pop('exercises', None)
+
+        # Update other fields on instance
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if exercises is not None:
+            # Update the exercises for the workout plan
+            instance.exercises.set(exercises)
+
+        return instance
