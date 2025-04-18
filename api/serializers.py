@@ -90,6 +90,10 @@ class SleepLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'date']
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
 
 class AchievementSerializer(serializers.ModelSerializer):
     """
@@ -141,17 +145,25 @@ class GoalProgressSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'goal', 'date']
 
-    def create(self, validated_data):
-        goal_id = validated_data.pop('goal_id')
+    def validate(self, attrs):
+        goal_id = attrs.get('goal_id')
         request = self.context.get('request')
         user = request.user if request else None
 
         try:
             goal = Goal.objects.get(id=goal_id, user=user)
         except Goal.DoesNotExist:
-            raise serializers.ValidationError("Invalid goal ID for this user.")
+            raise serializers.ValidationError({
+                'goal_id': 'Invalid goal ID for this user.'
+            })
 
-        validated_data['goal'] = goal
+        # inject the validated goal instance
+        attrs['goal'] = goal
+        return attrs
+
+    def create(self, validated_data):
+        # Remove goal_id from validated_data
+        validated_data.pop('goal_id', None)
         return super().create(validated_data)
 
 
@@ -283,6 +295,10 @@ class UserReportSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'report_date']
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
 
 class FriendSerializer(serializers.ModelSerializer):
     """
@@ -293,11 +309,13 @@ class FriendSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'date_added']
 
-    def create(self, validated_data):
+    def validate(self, data):
+        request = self.context.get('request')
+        user = request.user if request else None
         # Prevent adding a friend to oneself
-        if validated_data['friend_user'] == validated_data['user']:
+        if data['friend_user'] == user:
             raise serializers.ValidationError("You cannot befriend yourself.")
-        return super().create(validated_data)
+        return data
 
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
