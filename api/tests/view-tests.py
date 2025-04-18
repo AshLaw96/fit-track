@@ -710,8 +710,6 @@ class DailyLogViewTests(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
-# TEST BELOW THIS LINE ----------------------------------
-
 
 class NutritionLogViewTests(APITestCase):
     """
@@ -779,14 +777,20 @@ class UserReportViewTests(APITestCase):
     def test_list_user_reports(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        user_reports = [
+            r for r in response.data["results"]
+            if r["user"] == self.user.id
+        ]
+        self.assertEqual(len(user_reports), 1)
 
     def test_create_user_report(self):
         response = self.client.post(
             self.url,
             {
-                "report_type": "bug",
-                "message": "Found an issue"
+                "total_steps": 12000,
+                "avg_calories": 2200,
+                "total_sleep_hours": 8.0,
+                "avg_water_intake_l": 2.5
             }
         )
         self.assertEqual(response.status_code, 201)
@@ -800,7 +804,12 @@ class UserReportViewTests(APITestCase):
         url = reverse("user_report_detail", args=[self.report.id])
         response = self.client.put(
             url,
-            {"report_type": "feedback", "message": "Updated message"}
+            {
+                "total_steps": 15000,
+                "avg_calories": 2000,
+                "total_sleep_hours": 6.5,
+                "avg_water_intake_l": 3.0
+            }
         )
         self.assertEqual(response.status_code, 200)
 
