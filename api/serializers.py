@@ -319,7 +319,10 @@ class ChallengeSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Challenge
-        fields = '__all__'
+        fields = [
+            'owner', 'title', 'description', 'metric', 'target_value',
+            'start_date', 'end_date'
+        ]
 
 
 class UserChallengeSerializer(serializers.ModelSerializer):

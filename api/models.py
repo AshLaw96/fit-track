@@ -280,6 +280,12 @@ class Challenge(models.Model):
     """
     Model representing a fitness challenge.
     """
+    owner = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='challenges',
+        null=True,
+    )
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     # e.g. 'steps', 'distance_km'
@@ -287,6 +293,10 @@ class Challenge(models.Model):
     target_value = models.FloatField()
     start_date = models.DateField()
     end_date = models.DateField()
+
+    def clean(self):
+        if self.start_date > self.end_date:
+            raise ValidationError("Start date must be before end date.")
 
     def __str__(self):
         return f"{self.title}"

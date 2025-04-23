@@ -289,7 +289,12 @@ class ChallengeListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Challenge.objects.all()
+        # Only show challenges owned by the current user
+        return Challenge.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        # Set the owner to the currently authenticated user
+        serializer.save(owner=self.request.user)
 
 
 class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -300,7 +305,8 @@ class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Challenge.objects.all()
+        # Limit access to challenges the user owns
+        return Challenge.objects.filter(owner=self.request.user)
 
 
 # --- User Challenge Views ---
