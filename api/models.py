@@ -348,6 +348,14 @@ class WorkoutPlan(models.Model):
     description = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'title'],
+                name='unique_user_workout_plan'
+            )
+        ]
+
     def __str__(self):
         return f"{self.title} - {self.user.username}"
 

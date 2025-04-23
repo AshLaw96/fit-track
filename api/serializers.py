@@ -403,7 +403,9 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkoutPlan
-        fields = '__all__'
+        fields = [
+            'user', 'title', 'description', 'exercises', 'date_created'
+        ]
         read_only_fields = ['user', 'date_created']
 
     def create(self, validated_data):
