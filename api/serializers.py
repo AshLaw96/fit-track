@@ -350,8 +350,22 @@ class UserReportSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = UserReport
-        fields = '__all__'
+        fields = [
+             'user', 'report_date', 'total_steps', 'avg_calories',
+             'total_sleep_hours', 'avg_water_intake_l'
+        ]
         read_only_fields = ['user', 'report_date']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        report_date = data.get('report_date', timezone.now().date())
+        if UserReport.objects.filter(
+            user=user, report_date=report_date
+        ).exists():
+            raise serializers.ValidationError(
+                "Report for this date already exists."
+            )
+        return data
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

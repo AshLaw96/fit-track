@@ -322,11 +322,19 @@ class UserChallenge(models.Model):
 
 class UserReport(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    report_date = models.DateField(auto_now_add=True)
+    report_date = models.DateField(default=timezone.now)
     total_steps = models.PositiveIntegerField()
     avg_calories = models.PositiveIntegerField()
     total_sleep_hours = models.FloatField()
     avg_water_intake_l = models.DecimalField(max_digits=4, decimal_places=2)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'report_date'],
+                name='unique_user_report_date'
+            )
+        ]
 
     def __str__(self):
         return f"Report for {self.user.username} - {self.report_date}"
