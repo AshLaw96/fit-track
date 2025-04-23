@@ -267,6 +267,14 @@ class NutritionLog(models.Model):
     fats_g = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'date'],
+                name='unique_nutrition_log_per_day'
+            )
+        ]
+
 
 class Challenge(models.Model):
     """

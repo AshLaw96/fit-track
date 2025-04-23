@@ -267,8 +267,22 @@ class NutritionLogSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = NutritionLog
-        fields = '__all__'
+        fields = [
+            'user', 'date', 'carbs_g', 'protein_g', 'fats_g', 'calories'
+        ]
         read_only_fields = ['user']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        date_val = data.get('date')
+        if (
+            self.instance is None and
+            NutritionLog.objects.filter(user=user, date=date_val).exists()
+        ):
+            raise serializers.ValidationError(
+                "A nutrition log already exists for this date."
+            )
+        return data
 
     def validate_carbs_g(self, value):
         if value < 0:
