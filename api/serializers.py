@@ -331,8 +331,17 @@ class UserChallengeSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = UserChallenge
-        fields = '__all__'
+        fields = [
+            'user', 'challenge', 'progress', 'completed'
+        ]
         read_only_fields = ['user']
+
+    def validate_progress(self, value):
+        if value < 0:
+            raise serializers.ValidationError(
+                "Progress must be a non-negative number."
+            )
+        return value
 
 
 class UserReportSerializer(serializers.ModelSerializer):

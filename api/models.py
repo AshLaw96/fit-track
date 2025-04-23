@@ -311,6 +311,14 @@ class UserChallenge(models.Model):
     progress = models.FloatField(default=0.0)
     completed = models.BooleanField(default=False)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'challenge'],
+                name='unique_user_challenge'
+            )
+        ]
+
 
 class UserReport(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
