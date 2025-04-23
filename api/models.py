@@ -248,7 +248,12 @@ class DailyLog(models.Model):
     notes = models.TextField(null=True, blank=True)
 
     class Meta:
-        unique_together = ('user', 'date')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'date'],
+                name='unique_user_date_log'
+            )
+        ]
 
 
 class NutritionLog(models.Model):

@@ -213,9 +213,24 @@ class DailyLogSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = DailyLog
-        fields = '__all__'
+        fields = [
+            'user', 'date', 'steps', 'sleep_hours', 'water_intake_l',
+            'weight_kg', 'notes'
+        ]
         # Ensure user field is read-only
         read_only_fields = ['user']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        date = data.get('date', None)
+        if (
+            self.instance is None and
+            DailyLog.objects.filter(user=user, date=date).exists()
+        ):
+            raise serializers.ValidationError(
+                "A log already exists for this date."
+            )
+        return data
 
     def validate_steps(self, value):
         if value < 0:

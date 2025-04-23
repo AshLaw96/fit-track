@@ -221,8 +221,16 @@ class DailyLogListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Filter daily logs for the requesting user
-        return DailyLog.objects.filter(user=self.request.user)
+        user = self.request.user
+        queryset = DailyLog.objects.filter(user=user)
+
+        start_date = self.request.query_params.get('start')
+        end_date = self.request.query_params.get('end')
+
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+
+        return queryset
 
     def perform_create(self, serializer):
         # Set the user to the currently authenticated user
