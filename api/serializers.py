@@ -1,4 +1,6 @@
+from django.utils import timezone
 from rest_framework import serializers
+from datetime import date
 from .models import (
     CustomUser, Goal, Exercise, Meal,
     SleepLog, Achievement, UserActivity,
@@ -12,7 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the CustomUser model.
     """
-    profile_image = serializers.ImageField(use_url=True)
+    profile_image = serializers.ImageField(
+        use_url=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = CustomUser
@@ -25,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             'weight_kg',
             'profile_image'
         ]
+        read_only_fields = ['id']
 
 
 class GoalSerializer(serializers.ModelSerializer):
@@ -44,6 +49,11 @@ class GoalSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def validate_deadline(self, value):
+        if value and value < date.today():
+            raise serializers.ValidationError("Deadline can't be in the past.")
+        return value
+
 
 class ExerciseSerializer(serializers.ModelSerializer):
     """
@@ -52,9 +62,9 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = [
-            'id', 'name', 'duration', 'calories_burned',
+            'id', 'name', 'duration', 'calories_burned', 'date', 'user'
         ]
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'user', 'date']
 
     def validate_duration(self, value):
         if value <= 0:
@@ -80,6 +90,26 @@ class MealSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'timestamp']
 
+    def validate_calories(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Calories must be non-negative.")
+        return value
+
+    def validate_protein(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Protein must be non-negative.")
+        return value
+
+    def validate_carbs(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Carbs must be non-negative.")
+        return value
+
+    def validate_fats(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Fats must be non-negative.")
+        return value
+
 
 class SleepLogSerializer(serializers.ModelSerializer):
     """
@@ -90,9 +120,21 @@ class SleepLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user', 'date']
 
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
+    def validate_duration_hours(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Duration must be greater than 0."
+            )
+        if value > 24:
+            raise serializers.ValidationError(
+                "Sleep duration cannot exceed 24 hours."
+            )
+        return value
+
+    def validate_quality_rating(self, value):
+        if value not in [1, 2, 3, 4]:
+            raise serializers.ValidationError("Invalid quality rating.")
+        return value
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -111,10 +153,6 @@ class AchievementSerializer(serializers.ModelSerializer):
             'date_earned'
         ]
         read_only_fields = ['user', 'date_earned']
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
 
 
 class UserActivitySerializer(serializers.ModelSerializer):
