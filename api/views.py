@@ -203,10 +203,13 @@ class UserStreakView(generics.ListCreateAPIView):
     serializer_class = UserStreakSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        # Ensure that the 'user' field is set correctly during creation
-        obj, created = UserStreak.objects.get_or_create(user=self.request.user)
-        return obj
+    def get_queryset(self):
+        # Return the streak for the authenticated user
+        return UserStreak.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Automatically assign the authenticated user during creation
+        serializer.save(user=self.request.user)
 
 
 # --- Daily Log Views ---

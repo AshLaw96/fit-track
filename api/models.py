@@ -222,7 +222,10 @@ class UserStreak(models.Model):
     last_logged_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.current_streak} days"
+        return (
+            f"{self.user.username} - Streak: {self.current_streak} days "
+            f"(Last logged: {self.last_logged_date})"
+        )
 
 
 # Dashboard models

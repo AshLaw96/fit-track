@@ -192,9 +192,19 @@ class UserStreakSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        # Make sure the user field is set during updates
+        # Ensure the streak is only updated by the user it belongs to
         validated_data['user'] = self.context['request'].user
         return super().update(instance, validated_data)
+
+    def validate(self, data):
+        if (
+            'last_logged_date' in data and
+            data['last_logged_date'] > timezone.now().date()
+        ):
+            raise serializers.ValidationError(
+                "The last_logged_date cannot be in the future."
+            )
+        return data
 
 
 class DailyLogSerializer(serializers.ModelSerializer):
