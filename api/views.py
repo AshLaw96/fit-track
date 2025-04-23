@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, viewsets
-from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
@@ -372,8 +372,11 @@ class FriendListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Filter friends for the requesting user
-        return Friend.objects.filter(user=self.request.user)
+        # Only allow users to access their own friendships
+        return (
+            Friend.objects.filter(user=self.request.user) |
+            Friend.objects.filter(friend_user=self.request.user)
+        )
 
     def perform_create(self, serializer):
         # Set the user to the currently authenticated user
@@ -388,8 +391,14 @@ class FriendDetailView(generics.RetrieveDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Return friends for the requesting user
+        # Ensure the user can only delete friendships they created
         return Friend.objects.filter(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        # Ensure the user is the owner of the friendship
+        if instance.user != self.request.user:
+            raise PermissionDenied("You can only delete your own friendships.")
+        instance.delete()
 
 
 # --- Workout Plan Views ---

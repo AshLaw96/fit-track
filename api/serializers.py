@@ -378,7 +378,9 @@ class FriendSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Friend
-        fields = '__all__'
+        fields = [
+            'user', 'friend_user', 'date_added'
+        ]
         read_only_fields = ['user', 'date_added']
 
     def validate(self, data):
@@ -387,6 +389,15 @@ class FriendSerializer(serializers.ModelSerializer):
         # Prevent adding a friend to oneself
         if data['friend_user'] == user:
             raise serializers.ValidationError("You cannot befriend yourself.")
+
+        # Check for duplicate friendship
+        if Friend.objects.filter(
+            user=user, friend_user=data['friend_user']
+        ).exists():
+            raise serializers.ValidationError(
+                "You are already friends with this user."
+            )
+
         return data
 
 

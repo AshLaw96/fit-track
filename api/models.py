@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from datetime import date
 
 
@@ -376,6 +377,14 @@ class Friend(models.Model):
 
     class Meta:
         unique_together = ('user', 'friend_user')
+
+    def clean(self):
+        if self.user == self.friend_user:
+            raise ValidationError("You cannot be friends with yourself.")
+        if Friend.objects.filter(
+            user=self.friend_user, friend_user=self.user
+        ).exists():
+            raise ValidationError("Friendship already exists.")
 
     def __str__(self):
         return f"{self.user.username} & {self.friend_user.username} Friends"
