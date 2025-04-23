@@ -56,10 +56,18 @@ class GoalDetailView(generics.RetrieveUpdateDestroyAPIView):
 # --- Exercise Views ---
 class ExerciseViewSet(viewsets.ModelViewSet):
     """
-    API view to list, create, update, and delete exercises.
+    API view to list, create, update, and delete user-specific exercises.
     """
-    queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Exercise.objects.all()
+
+    def get_queryset(self):
+        return Exercise.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 # --- Meal Views ---
@@ -69,6 +77,9 @@ class MealListCreateView(generics.ListCreateAPIView):
     """
     serializer_class = MealSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # Dummy queryset for DRF compatibility
+    queryset = Meal.objects.none()
 
     def get_queryset(self):
         return Meal.objects.filter(user=self.request.user)
@@ -84,6 +95,8 @@ class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = MealSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    queryset = Meal.objects.none()
+
     def get_queryset(self):
         return Meal.objects.filter(user=self.request.user)
 
@@ -95,6 +108,9 @@ class SleepLogListCreateView(generics.ListCreateAPIView):
     """
     serializer_class = SleepLogSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # Prevent DRF errors
+    queryset = SleepLog.objects.none()
 
     def get_queryset(self):
         return SleepLog.objects.filter(
@@ -112,6 +128,8 @@ class SleepLogDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SleepLogSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    queryset = SleepLog.objects.none()
+
     def get_queryset(self):
         return SleepLog.objects.filter(user=self.request.user)
 
@@ -123,6 +141,8 @@ class AchievementListCreateView(generics.ListCreateAPIView):
     """
     serializer_class = AchievementSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Achievement.objects.none()
 
     def get_queryset(self):
         return Achievement.objects.filter(user=self.request.user)
@@ -138,6 +158,8 @@ class AchievementDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AchievementSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    queryset = Achievement.objects.none()
+
     def get_queryset(self):
         return Achievement.objects.filter(user=self.request.user)
 
@@ -149,6 +171,8 @@ class UserActivityListCreateView(generics.ListCreateAPIView):
     """
     serializer_class = UserActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    queryset = UserActivity.objects.none()
 
     def get_queryset(self):
         return UserActivity.objects.filter(user=self.request.user)
@@ -163,6 +187,8 @@ class UserActivityDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     serializer_class = UserActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    queryset = UserActivity.objects.none()
 
     def get_queryset(self):
         return UserActivity.objects.filter(user=self.request.user)
