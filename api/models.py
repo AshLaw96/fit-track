@@ -76,6 +76,9 @@ class GoalProgress(models.Model):
     progress_value = models.FloatField()
     completed = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return f"{self.goal} on {self.date}"
 
@@ -85,6 +88,12 @@ class Exercise(models.Model):
     """
     Model representing an exercise entry.
     """
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='exercises',
+        null=True,
+    )
     name = models.CharField(max_length=100)
     duration = models.PositiveIntegerField()
     calories_burned = models.PositiveIntegerField()

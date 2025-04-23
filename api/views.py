@@ -180,9 +180,7 @@ class GoalProgressListCreateView(generics.ListCreateAPIView):
         return GoalProgress.objects.filter(goal__user=self.request.user)
 
     def perform_create(self, serializer):
-        goal_id = self.request.data.get('goal_id')
-        goal = get_object_or_404(Goal, id=goal_id, user=self.request.user)
-        serializer.save(goal=goal)
+        serializer.save()
 
 
 # Retrieve, update or delete a specific progress entry

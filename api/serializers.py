@@ -145,6 +145,13 @@ class GoalProgressSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'goal', 'date']
 
+    def validate_progress_value(self, value):
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Progress must be greater than 0."
+            )
+        return value
+
     def validate(self, attrs):
         goal_id = attrs.get('goal_id')
         request = self.context.get('request')
