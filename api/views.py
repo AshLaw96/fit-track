@@ -10,8 +10,18 @@ from .serializers import (
     SleepLogSerializer, AchievementSerializer, UserActivitySerializer,
     GoalProgressSerializer, UserStreakSerializer, DailyLogSerializer,
     NutritionLogSerializer, ChallengeSerializer, UserChallengeSerializer,
-    UserReportSerializer, FriendSerializer, WorkoutPlanSerializer
+    UserReportSerializer, FriendSerializer, WorkoutPlanSerializer,
+    RegisterSerializer
 )
+
+
+# --- Authentication Views ---
+class RegisterView(generics.CreateAPIView):
+    """
+    API view to register a new user.
+    """
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterSerializer
 
 
 # --- User Profile Views ---
