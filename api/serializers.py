@@ -1,5 +1,6 @@
 from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from datetime import date
 from .models import (
     CustomUser, Goal, Exercise, Meal,
@@ -419,23 +420,22 @@ class UserReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserReport
         fields = [
-             'user', 'report_date', 'total_steps', 'avg_calories',
-             'total_sleep_hours', 'avg_water_intake_l'
+            'user', 'report_date', 'total_steps', 'avg_calories',
+            'total_sleep_hours', 'avg_water_intake_l'
         ]
-        read_only_fields = ['user', 'report_date']
+        read_only_fields = ['user']
 
-    def validate(self, data):
-        user = self.context['request'].user
-        report_date = data.get('report_date', timezone.now().date())
-        if UserReport.objects.filter(
-            user=user, report_date=report_date
-        ).exists():
-            raise serializers.ValidationError(
-                "Report for this date already exists."
+        validators = [
+            UniqueTogetherValidator(
+                queryset=UserReport.objects.all(),
+                fields=['user', 'report_date'],
+                message="Report for this date already exists."
             )
-        return data
+        ]
 
     def create(self, validated_data):
+        # Automatically set the 'user' from the request context
+        print("Creating User Report for:", self.context['request'].user)
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 

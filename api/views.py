@@ -386,6 +386,10 @@ class UserReportListView(generics.ListCreateAPIView):
         # Filter reports for the requesting user
         return UserReport.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        print("Authenticated User:", self.request.user)
+        serializer.save(user=self.request.user)
+
 
 class UserReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
