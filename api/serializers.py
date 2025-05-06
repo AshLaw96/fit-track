@@ -283,7 +283,7 @@ class DailyLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = DailyLog
         fields = [
-            'user', 'date', 'steps', 'sleep_hours', 'water_intake_l',
+            'id', 'user', 'date', 'steps', 'sleep_hours', 'water_intake_l',
             'weight_kg', 'notes'
         ]
         # Ensure user field is read-only
@@ -337,7 +337,7 @@ class NutritionLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = NutritionLog
         fields = [
-            'user', 'date', 'carbs_g', 'protein_g', 'fats_g', 'calories'
+            'id', 'user', 'date', 'carbs_g', 'protein_g', 'fats_g', 'calories'
         ]
         read_only_fields = ['user']
 
@@ -389,7 +389,7 @@ class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = [
-            'owner', 'title', 'description', 'metric', 'target_value',
+            'id', 'owner', 'title', 'description', 'metric', 'target_value',
             'start_date', 'end_date'
         ]
 
@@ -420,11 +420,9 @@ class UserReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserReport
         fields = [
-            'user', 'report_date', 'total_steps', 'avg_calories',
+            'id', 'user', 'report_date', 'total_steps', 'avg_calories',
             'total_sleep_hours', 'avg_water_intake_l'
         ]
-        read_only_fields = ['user']
-
         validators = [
             UniqueTogetherValidator(
                 queryset=UserReport.objects.all(),
@@ -433,11 +431,13 @@ class UserReportSerializer(serializers.ModelSerializer):
             )
         ]
 
-    def create(self, validated_data):
-        # Automatically set the 'user' from the request context
-        print("Creating User Report for:", self.context['request'].user)
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
+    def validate(self, data):
+        request_user = self.context['request'].user
+        if data.get('user') != request_user:
+            raise serializers.ValidationError(
+                "You can only create reports for yourself."
+            )
+        return data
 
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -447,7 +447,7 @@ class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friend
         fields = [
-            'user', 'friend_user', 'date_added'
+            'id', 'user', 'friend_user', 'date_added'
         ]
         read_only_fields = ['user', 'date_added']
 
@@ -483,7 +483,7 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkoutPlan
         fields = [
-            'user', 'title', 'description', 'exercises', 'date_created'
+            'id', 'user', 'title', 'description', 'exercises', 'date_created'
         ]
         read_only_fields = ['user', 'date_created']
 
