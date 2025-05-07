@@ -1,10 +1,41 @@
+/* --- Global Imports --- */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans&family=Inter:wght@500;700&family=Roboto:wght@400;500&display=swap');
+@import "~@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Global Variables */
+:root {
+  /* Light Mode */
+  --primary-color: #1E3A8A;
+  --secondary-color: #2DD4BF;
+  --accent-color: #FACC15;
+  --bg-color: #FAFAFA;
+  --text-color: #2E2E2E;
+
+  /* Dark Mode */
+  --dark-primary: #0F172A;
+  --dark-secondary: #14B8A6;
+  --dark-accent: #EAB308;
+  --dark-bg: #1E293B;
+  --dark-text: #E5E7EB;
+  --dark-card: #334155;
+}
+
+/* Global Base Styles */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Inter', sans-serif;
+}
+
+.data-text {
+  font-family: 'DM Sans', sans-serif;
 }
 
 code {
