@@ -29,8 +29,9 @@ const RegisterForm = ({ onSwitchToLogin }) => {
   };
 
   return (
-    <form className="auth-form" onSubmit={handleRegister}>
-      <h3 className="mb-4 text-primary">Sign Up</h3>
+    <form className="auth-form auth-card p-4 mx-auto" onSubmit={handleRegister}>
+      <h3 className="auth-title mb-3 text-center">Sign Up</h3>
+
       <div className="form-group mb-3">
         <input
           className="form-control"
@@ -40,15 +41,18 @@ const RegisterForm = ({ onSwitchToLogin }) => {
           required
         />
       </div>
+
       <div className="form-group mb-3">
         <input
           className="form-control"
           placeholder="Email"
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
+
       <div className="form-group mb-3">
         <input
           type="password"
@@ -59,6 +63,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
           required
         />
       </div>
+
       <div className="form-group mb-4">
         <input
           type="password"
@@ -69,6 +74,7 @@ const RegisterForm = ({ onSwitchToLogin }) => {
           required
         />
       </div>
+
       <button className="btn btn-primary w-100">Sign Up</button>
     </form>
   );

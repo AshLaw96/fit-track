@@ -9,15 +9,10 @@ const LoginForm = ({ onSuccess }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/token/", {
-        username,
-        password,
-      });
+      const res = await api.post("/token/", { username, password });
       localStorage.setItem("access_token", res.data.access);
       localStorage.setItem("refresh_token", res.data.refresh);
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${res.data.access}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
       alert("Login successful!");
       if (onSuccess) onSuccess();
     } catch (err) {
@@ -27,8 +22,8 @@ const LoginForm = ({ onSuccess }) => {
   };
 
   return (
-    <form className="auth-form" onSubmit={handleLogin}>
-      <h3 className="mb-4 text-primary">Log In</h3>
+    <form className="auth-form auth-card p-4 mx-auto" onSubmit={handleLogin}>
+      <h3 className="auth-title mb-3 text-center">Log In</h3>
       <div className="form-group mb-3">
         <input
           className="form-control"
