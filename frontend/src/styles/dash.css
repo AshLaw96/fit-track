@@ -1,0 +1,9 @@
+/* GuestDash styling */
+.hero-img {
+    border-radius: 15rem;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    /* Maybe add shadow */
+}
+  
