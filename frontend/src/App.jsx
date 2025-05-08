@@ -2,7 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Dashboard from "./components/Dashboard";
 import AuthPage from "./components/AuthPage";
+import AutoScrollUp from "./components/AutoScrollUp";
 
 const App = () => {
   return (
@@ -11,11 +13,12 @@ const App = () => {
         <Header />
         <main className="flex-grow-1">
           <Routes>
-            <Route path="/" element={<AuthPage />} />
-            {/* Add more routes as needed */}
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/auth" element={<AuthPage />} />
           </Routes>
         </main>
         <Footer />
+        <AutoScrollUp />
       </div>
     </Router>
   );
