@@ -1,8 +1,5 @@
 from django.urls import path, include
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from .views import (
     UserProfileView, GoalListView, GoalDetailView, ExerciseViewSet,
@@ -15,6 +12,7 @@ from .views import (
     UserChallengeListView, UserChallengeDetailView, UserReportListView,
     UserReportDetailView, FriendListView, FriendDetailView,
     WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
+    PasswordResetView, PasswordResetConfirmView, CustomTokenObtainPairView
 )
 
 #  Create a router and register viewset with it
@@ -30,6 +28,17 @@ urlpatterns = [
         name='token_obtain_pair',
     ),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path(
+        'password-reset/',
+        PasswordResetView.as_view(),
+        name='password_reset',
+    ),
+    path(
+        'password-reset-confirm/',
+        PasswordResetConfirmView.as_view(),
+        name='password_reset_confirm',
+    ),
+    # User Profile
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     # Goals
     path('goals/', GoalListView.as_view(), name='goal_list'),

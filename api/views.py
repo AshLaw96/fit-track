@@ -1,6 +1,15 @@
-from rest_framework import generics, permissions, viewsets
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from rest_framework import generics, permissions, viewsets, status
+from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.views import APIView
+import os
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
@@ -12,8 +21,81 @@ from .serializers import (
     GoalProgressSerializer, UserStreakSerializer, DailyLogSerializer,
     NutritionLogSerializer, ChallengeSerializer, UserChallengeSerializer,
     UserReportSerializer, FriendSerializer, WorkoutPlanSerializer,
-    RegisterSerializer
+    RegisterSerializer, CustomTokenObtainPairSerializer
 )
+
+User = get_user_model()
+
+
+# --- Password Reset Views ---
+class PasswordResetView(PasswordResetView):
+    """
+    Custom password reset view to send email with password reset link.
+    """
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response(
+                {'error': 'Email is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = User.objects.get(email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            reset_link = (
+                f"{os.getenv('FRONTEND_URL')}/reset-password/{uid}/{token}/"
+            )
+
+            send_mail(
+                subject='Reset Your FitTrack Password',
+                message=(
+                    f"Click the link below to reset your password:\n"
+                    f"{reset_link}"
+                ),
+                from_email=os.getenv('EMAIL_HOST_USER'),
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return Response(
+                {'message': 'Password reset link sent!'},
+                status=status.HTTP_200_OK
+            )
+
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'User with that email not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+class PasswordResetConfirmView(APIView):
+    def post(self, request):
+        uidb64 = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+
+            if not default_token_generator.check_token(user, token):
+                return Response(
+                    {'error': 'Invalid or expired token'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password has been reset.'})
+        except Exception:
+            return Response(
+                {'error': 'Invalid request'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 # --- Authentication Views ---
