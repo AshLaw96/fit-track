@@ -5,6 +5,8 @@ import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
 import AuthPage from "./components/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
+import PasswordResetForm from "./components/PasswordResetForm";
+import PasswordResetConfirmForm from "./components/PasswordResetConfirmForm";
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/reset-password" element={<PasswordResetForm />} />
+            <Route path="/reset-password-confirm/:uid/:token" element={<PasswordResetConfirmForm />} />
           </Routes>
         </main>
         <Footer />

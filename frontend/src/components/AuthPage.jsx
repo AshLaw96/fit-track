@@ -13,7 +13,7 @@ const AuthPage = () => {
           <>
             <LoginForm onSuccess={() => console.log("Logged in")} />
             <p className="mt-3 text-center">
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <button className="btn btn-link p-0" onClick={() => setIsLogin(false)}>
                 Sign up
               </button>

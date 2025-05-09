@@ -14,6 +14,8 @@ const LoginForm = ({ onSuccess }) => {
       localStorage.setItem("refresh_token", res.data.refresh);
       api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
       alert("Login successful!");
+      // Redirect to dashboard
+      window.location.href = '/';
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error(err);
@@ -42,6 +44,15 @@ const LoginForm = ({ onSuccess }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+      </div>
+      <div className="text-end mb-3">
+      <button
+        type="button"
+        className="btn btn-link p-0"
+        onClick={() => window.location.href = "/reset-password"}
+      >
+        Forgot password?
+      </button>
       </div>
       <button className="btn btn-primary w-100">Log In</button>
     </form>
