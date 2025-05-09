@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions, viewsets
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
@@ -22,6 +23,14 @@ class RegisterView(generics.CreateAPIView):
     """
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
+
+
+# --- Token Authentication Views ---
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """
+    Custom token obtain pair view to include user information in the token.
+    """
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 # --- User Profile Views ---

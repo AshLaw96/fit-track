@@ -1,5 +1,6 @@
 from django.utils import timezone
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
 from datetime import date
 from .models import (
@@ -61,6 +62,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['user'] = UserSerializer(self.user).data
+        return data
 
 
 class GoalSerializer(serializers.ModelSerializer):
