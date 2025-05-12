@@ -10,6 +10,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 import os
+import logging
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
@@ -24,6 +25,7 @@ from .serializers import (
     RegisterSerializer, CustomTokenObtainPairSerializer
 )
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -105,6 +107,20 @@ class RegisterView(generics.CreateAPIView):
     """
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        logger.debug(f"RegisterView incoming data: {request.data}")
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            logger.error(
+                f"RegisterView validation errors: {serializer.errors}"
+            )
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # --- Token Authentication Views ---
