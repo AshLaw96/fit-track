@@ -1,28 +1,25 @@
-import React, { useNavigate, useState } from "react";
+import React, { useState } from "react";
 import { startTokenRefreshTimer } from "../utils/api";
 import api from "../utils/api";
 import "../styles/auth.css";
-import { useAuth } from "../contexts/AuthContext";
 
 const LoginForm = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("/token/", { username, password });
-      const { access, refresh } = res.data;
-      login(access, refresh);
+      localStorage.setItem("access_token", res.data.access);
+      localStorage.setItem("refresh_token", res.data.refresh);
       api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
 
       startTokenRefreshTimer();
 
       // Redirect to dashboard
-      navigate('/', { replace: true });
+      window.location.href = '/';
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error(err);
@@ -59,7 +56,7 @@ const LoginForm = ({ onSuccess }) => {
       <button
         type="button"
         className="btn btn-link p-0"
-        onClick={() =>  navigate("/reset-password", { replace: true })}
+        onClick={() => window.location.href = "/reset-password"}
       >
         Forgot password?
       </button>
