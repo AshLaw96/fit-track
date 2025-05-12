@@ -1,11 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/dash.css";
 import heroImage from "../assets/hero.jpeg";
 
 const GuestDash = () => {
+  const location = useLocation();
+  const message = location.state?.message;
+
   return (
     <div className="container py-4 custom-wrap">
+      {message && (
+        <div className="alert alert-info text-center" role="alert">
+          {message}
+        </div>
+      )}
+
       <h2 className="text-center mb-3 custom-heading">Welcome to FitTrack</h2>
       <p className="text-center mb-2">
         FitTrack helps you take charge of your health — log workouts, track meals, and keep an eye on your sleep. Whether you're just getting started or fine-tuning your routine, it's your go-to app for staying consistent, building better habits, and feeling your best.

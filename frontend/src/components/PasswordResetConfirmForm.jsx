@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../api";
+import api from "../utils/api";
 
 const PasswordResetConfirmForm = () => {
   const { uid, token } = useParams();
   const [newPassword, setNewPassword] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleConfirm = async (e) => {
     e.preventDefault();
@@ -18,7 +19,7 @@ const PasswordResetConfirmForm = () => {
       setConfirmed(true);
     } catch (err) {
       console.error("Reset failed:", err);
-      alert("Error resetting password.");
+      setError("Error resetting password. Please try again.");
     }
   };
 
@@ -28,11 +29,14 @@ const PasswordResetConfirmForm = () => {
         {confirmed ? (
           <div className="text-center">
             <h4>Password Reset!</h4>
-            <p>You may now log in with your new password.</p>
+            <p>You may now <a href="/auth">log in</a> with your new password.</p>
           </div>
         ) : (
           <form onSubmit={handleConfirm}>
             <h3 className="auth-title mb-3 text-center">Set New Password</h3>
+
+            {error && <div className="alert alert-danger text-center" role="alert">{error}</div>}
+
             <div className="form-group mb-4">
               <input
                 type="password"
