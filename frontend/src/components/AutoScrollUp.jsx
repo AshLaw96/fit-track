@@ -27,7 +27,7 @@ const AutoScrollUp = () => {
 
   return (
     visible && (
-      <button className="auto-up" onClick={autoUp} aria-label="Automatically scroll to top">
+      <button className="auto-up" onClick={autoUp} aria-label="Scroll to top" title="Back to top">
         <i className="fas fa-chevron-up"></i>
       </button>
     )
