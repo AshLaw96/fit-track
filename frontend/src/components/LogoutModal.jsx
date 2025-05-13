@@ -10,15 +10,16 @@ const LogoutModal = ({ show, onClose }) => {
   const { logout } = useAuth();
 
   const handleLogout = useCallback(() => {
+  setTimeout(() => {
+    // this triggers context change
     logout();
-
     toast.success("You have been logged out successfully.");
-
-    // Close modal
+    // closes modal
     onClose();
-    // Redirect to guest dashboard
     navigate("/", { state: { message: "You have been logged out." } });
-  }, [onClose, navigate, logout]);
+    // defer to next tick
+  }, 0);
+}, [onClose, navigate, logout]);
 
   useEffect(() => {
     if (!show) return;

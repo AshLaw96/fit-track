@@ -1,8 +1,10 @@
-import React, { useNavigate, useState } from "react";
+import React, {  useState } from "react";
 import { startTokenRefreshTimer } from "../utils/api";
 import api from "../utils/api";
 import "../styles/auth.css";
 import { useAuth } from "../contexts/AuthContext";
+import {  useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginForm = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
@@ -20,6 +22,8 @@ const LoginForm = ({ onSuccess }) => {
       api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
 
       startTokenRefreshTimer();
+
+      toast.success("Login successful!");
 
       // Redirect to dashboard
       navigate('/', { replace: true });

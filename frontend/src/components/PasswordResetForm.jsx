@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import "../styles/auth.css";
 
@@ -6,15 +7,27 @@ const PasswordResetForm = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleReset = async (e) => {
     e.preventDefault();
     try {
       await api.post("/password-reset/", { email });
       setSubmitted(true);
+
+      setTimeout(() => {
+        navigate("/auth");
+      }
+      // Redirect after 10 seconds
+      , 10000);
+
     } catch (err) {
       console.error("Password reset request failed:", err);
-      setError("There was an error. Please try again.");
+      if (err.response?.status === 404) {
+        setError("No account found with that email.");
+      } else {
+        setError("There was an error. Please try again.");
+      }
     }
   };
 

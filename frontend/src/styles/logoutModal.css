@@ -1,14 +1,27 @@
-/* styles/logoutModal.css */
 .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal-content {
-    border-radius: 10px;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(30, 58, 138);
+}
+
+/* Clean up modal container */
+.modal.d-block {
+  pointer-events: none;
+}
+
+.modal-dialog {
+  pointer-events: all;
+}
+
+.modal-content {
+  border-radius: 12px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  border: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
