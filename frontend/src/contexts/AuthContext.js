@@ -21,8 +21,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     setIsAuthenticated(false);
-    navigate("/auth");
-  }, [navigate]);
+  }, []);
 
   const refreshToken = useCallback(async () => {
     try {
