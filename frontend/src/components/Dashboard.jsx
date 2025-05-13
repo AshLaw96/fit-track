@@ -1,10 +1,12 @@
 import React from "react";
-import { isLoggedIn } from "../utils/authHelper";
+import { useAuth } from "../contexts/AuthContext";
 import GuestDash from "./GuestDash";
 import UserDash from "./UserDash";
 
 const Dashboard = () => {
-  return isLoggedIn() ? <UserDash /> : <GuestDash />;
+  const { isAuthenticated } = useAuth();
+
+  return isAuthenticated ? <UserDash /> : <GuestDash />;
 };
 
 export default Dashboard;
