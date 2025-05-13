@@ -1,9 +1,10 @@
-from django.contrib.auth.views import PasswordResetView
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
-from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
@@ -30,7 +31,8 @@ User = get_user_model()
 
 
 # --- Password Reset Views ---
-class PasswordResetView(PasswordResetView):
+@method_decorator(csrf_exempt, name='dispatch')
+class CustomPasswordResetView(APIView):
     """
     Custom password reset view to send email with password reset link.
     """
@@ -48,7 +50,10 @@ class PasswordResetView(PasswordResetView):
             token = default_token_generator.make_token(user)
 
             reset_link = (
-                f"{os.getenv('FRONTEND_URL')}/reset-password/{uid}/{token}/"
+                (
+                    f"{os.getenv('FRONTEND_URL')}/reset-password-confirm/"
+                    f"{uid}/{token}/"
+                )
             )
 
             send_mail(
@@ -74,12 +79,15 @@ class PasswordResetView(PasswordResetView):
             )
 
 
-class PasswordResetConfirmView(APIView):
+@method_decorator(csrf_exempt, name='dispatch')
+class CustomPasswordResetConfirmView(APIView):
+    """
+    Custom password reset confirm view to reset the user's password.
+    """
     def post(self, request):
         uidb64 = request.data.get('uid')
         token = request.data.get('token')
         new_password = request.data.get('new_password')
-
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)

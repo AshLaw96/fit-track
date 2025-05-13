@@ -12,7 +12,9 @@ from .views import (
     UserChallengeListView, UserChallengeDetailView, UserReportListView,
     UserReportDetailView, FriendListView, FriendDetailView,
     WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
-    PasswordResetView, PasswordResetConfirmView, CustomTokenObtainPairView
+    CustomPasswordResetView,
+    CustomPasswordResetConfirmView,
+    CustomTokenObtainPairView
 )
 
 #  Create a router and register viewset with it
@@ -30,12 +32,12 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path(
         'password-reset/',
-        PasswordResetView.as_view(),
+        CustomPasswordResetView.as_view(),
         name='password_reset',
     ),
     path(
         'password-reset-confirm/',
-        PasswordResetConfirmView.as_view(),
+        CustomPasswordResetConfirmView.as_view(),
         name='password_reset_confirm',
     ),
     # User Profile
