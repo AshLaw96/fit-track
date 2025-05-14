@@ -2,10 +2,10 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
+import ExerciseLogPage from "./components/ExerciseLogPage";
 import AuthPage from "./components/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
 import PasswordResetForm from "./components/PasswordResetForm";
@@ -18,6 +18,7 @@ const App = () => {
       <main className="flex-grow-1">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/exercises" element={<ExerciseLogPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
           <Route
