@@ -520,3 +520,26 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
             instance.exercises.set(exercises)
 
         return instance
+
+
+class GoalWithProgressSerializer(serializers.ModelSerializer):
+    completion_percent = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Goal
+        fields = [
+            'id',
+            'user',
+            'goal_type',
+            'target_value',
+            'current_value',
+            'status',
+            'created_at',
+            'deadline',
+            'completion_percent'
+        ]
+
+    def get_completion_percent(self, obj):
+        if obj.target_value > 0:
+            return round((obj.current_value / obj.target_value) * 100, 2)
+        return 0.0
