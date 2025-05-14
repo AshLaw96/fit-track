@@ -14,7 +14,7 @@ from .views import (
     WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
     CustomPasswordResetView,
     CustomPasswordResetConfirmView,
-    CustomTokenObtainPairView
+    CustomTokenObtainPairView, DashboardView
 )
 
 #  Create a router and register viewset with it
@@ -164,5 +164,11 @@ urlpatterns = [
         'workout_plans/<int:pk>/',
         WorkoutPlanDetailView.as_view(),
         name='workout_plan_detail',
+    ),
+    # Dashboard
+    path(
+        'dashboard/',
+        DashboardView.as_view(),
+        name='dashboard',
     ),
 ]

@@ -5,9 +5,13 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.utils.timezone import now
+from datetime import timedelta
+from collections import defaultdict
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 import os
@@ -23,7 +27,9 @@ from .serializers import (
     GoalProgressSerializer, UserStreakSerializer, DailyLogSerializer,
     NutritionLogSerializer, ChallengeSerializer, UserChallengeSerializer,
     UserReportSerializer, FriendSerializer, WorkoutPlanSerializer,
-    RegisterSerializer, CustomTokenObtainPairSerializer
+    RegisterSerializer,
+    CustomTokenObtainPairSerializer,
+    GoalWithProgressSerializer
 )
 
 logger = logging.getLogger(__name__)
@@ -582,3 +588,139 @@ class WorkoutPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         # Filter workout plans for the requesting user
         return WorkoutPlan.objects.filter(user=self.request.user)
+
+
+# --- Custom dashboard view ---
+class DashboardView(APIView):
+    """
+    Custom dashboard view to provide a summary of user activity.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        today = now().date()
+        week_ago = today - timedelta(days=6)
+        dates = [today - timedelta(days=i) for i in range(6, -1, -1)]
+
+        # Logs
+        daily_logs = DailyLog.objects.filter(
+            user=user,
+            date__range=[week_ago, today]
+        )
+        nutrition_logs = NutritionLog.objects.filter(
+            user=user,
+            date__range=[week_ago, today]
+        )
+
+        # Challenges
+        active_challenges = Challenge.objects.filter(
+            owner=user, end_date__gte=today
+        )
+        user_challenges = UserChallenge.objects.select_related("challenge") \
+            .filter(user=user)
+
+        # Goals
+        goals = Goal.objects.filter(user=user).order_by("-created_at")
+
+        # Stats
+        total_steps = sum(log.steps for log in daily_logs)
+        avg_sleep = sum(
+            log.sleep_hours or 0 for log in daily_logs
+        ) / max(len(daily_logs), 1)
+        avg_water = sum(
+            log.water_intake_l or 0 for log in daily_logs
+        ) / max(len(daily_logs), 1)
+        avg_calories = sum(
+            log.calories for log in nutrition_logs
+        ) / max(len(nutrition_logs), 1)
+
+        # Weekly Trends
+        steps_by_day = defaultdict(int)
+        sleep_by_day = defaultdict(float)
+        calories_by_day = defaultdict(int)
+
+        for log in daily_logs:
+            steps_by_day[log.date] = log.steps
+            sleep_by_day[log.date] = log.sleep_hours or 0
+        for log in nutrition_logs:
+            calories_by_day[log.date] = log.calories
+
+        weekly_trends = {
+            "dates": [d.strftime("%Y-%m-%d") for d in dates],
+            "steps": [steps_by_day[d] for d in dates],
+            "sleep_hours": [sleep_by_day[d] for d in dates],
+            "calories": [calories_by_day[d] for d in dates],
+        }
+
+        # Challenges with completion %
+        challenges_joined = [
+            {
+                "id": uc.id,
+                "title": uc.challenge.title,
+                "progress": uc.progress,
+                "target_value": uc.challenge.target_value,
+                "completion_percent": round(
+                    (uc.progress / uc.challenge.target_value) * 100, 2
+                )
+                if uc.challenge.target_value else 0.0
+            }
+            for uc in user_challenges
+        ]
+
+        return Response({
+            "user": {
+                "first_name": user.first_name,
+            },
+            "activity_summary": {
+                "logs": DailyLogSerializer(
+                    daily_logs.order_by("-date")[:5], many=True
+                ).data,
+                "total_steps": total_steps,
+                "avg_sleep_hours": round(avg_sleep, 2),
+                "avg_water_l": round(avg_water, 2),
+                "weight": (
+                    daily_logs.latest("date").weight
+                    if daily_logs.exists()
+                    else None
+                ),
+            },
+            "workout_nutrition": {
+                "logs": NutritionLogSerializer(
+                    nutrition_logs.order_by("-date")[:5], many=True
+                ).data,
+                "avg_calories": round(avg_calories, 2),
+            },
+            "daily_goals": {
+                "daily": {
+                    "steps": {
+                        "goal": 10000,
+                        "current": (
+                            daily_logs.latest("date").steps
+                            if daily_logs.exists()
+                            else 0
+                        )
+                    },
+                    "water": {
+                        "goal": 2.5,
+                        "current": (
+                            daily_logs.latest("date").water_intake_l
+                            if daily_logs.exists()
+                            else 0
+                        )
+                    }
+                },
+                "goals": GoalWithProgressSerializer(goals, many=True).data
+            },
+            "analytics": {
+                "total_daily_logs": daily_logs.count(),
+                "total_nutrition_logs": nutrition_logs.count(),
+                "weekly_trends": weekly_trends,
+            },
+            "challenges": {
+                "created": ChallengeSerializer(
+                    active_challenges, many=True
+                ).data,
+                "joined": challenges_joined,
+            }
+        })
