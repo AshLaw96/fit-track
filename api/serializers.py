@@ -101,7 +101,8 @@ class ExerciseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exercise
         fields = [
-            'id', 'name', 'duration', 'calories_burned', 'date', 'user'
+            'id', 'type', 'category', 'name', 'duration',
+            'calories_burned', 'notes', 'date', 'user'
         ]
         read_only_fields = ['id', 'user', 'date']
 
@@ -115,7 +116,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     def validate_calories_burned(self, value):
         if value < 0:
             raise serializers.ValidationError(
-                "Calories burned must be a non-negative number."
+                "Calories burned must be non-negative."
             )
         return value
 

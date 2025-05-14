@@ -89,16 +89,33 @@ class Exercise(models.Model):
     """
     Model representing an exercise entry.
     """
+    EXERCISE_CATEGORIES = [
+        ('cardio', 'Cardio'),
+        ('strength', 'Strength'),
+        ('flexibility', 'Flexibility'),
+        ('sports', 'Sports'),
+        ('other', 'Other'),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='exercises',
         null=True,
     )
-    name = models.CharField(max_length=100)
+    type = models.CharField(
+        max_length=50,
+    )
+    name = models.CharField(max_length=50)
     duration = models.PositiveIntegerField()
     calories_burned = models.PositiveIntegerField()
+    notes = models.TextField(blank=True, null=True)
     date = models.DateField(auto_now_add=True)
+    category = models.CharField(
+        max_length=50,
+        choices=EXERCISE_CATEGORIES,
+        default='other'
+    )
 
     def __str__(self):
         return (

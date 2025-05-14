@@ -188,6 +188,11 @@ class ExerciseViewSet(viewsets.ModelViewSet):
 
     queryset = Exercise.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        logger.info("Exercise POST data: %s", request.data)
+        logger.info("User on request: %s", request.user)
+        return super().create(request, *args, **kwargs)
+
     def get_queryset(self):
         return Exercise.objects.filter(user=self.request.user)
 
