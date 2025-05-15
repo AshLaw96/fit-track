@@ -123,12 +123,8 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def create(self, request, *args, **kwargs):
-        logger.debug(f"RegisterView incoming data: {request.data}")
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
-            logger.error(
-                f"RegisterView validation errors: {serializer.errors}"
-            )
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
@@ -191,13 +187,7 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
-
     queryset = Exercise.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        logger.info("Exercise POST data: %s", request.data)
-        logger.info("User on request: %s", request.user)
-        return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
         return Exercise.objects.filter(user=self.request.user)
@@ -603,6 +593,23 @@ class DashboardView(APIView):
         week_ago = today - timedelta(days=6)
         dates = [today - timedelta(days=i) for i in range(6, -1, -1)]
 
+        def estimate_steps_from_exercise(ex):
+            if ex.type == "cardio":
+                # More intense
+                return (ex.duration or 0) * 120
+            elif ex.type == "strength":
+                # Less movement
+                return (ex.duration or 0) * 60
+            elif ex.type == "flexibility":
+                # E.g. stretching
+                return (ex.duration or 0) * 30
+            elif ex.type == "sports":
+                # General sports average
+                return (ex.duration or 0) * 100
+            else:
+                # 'other' or unknown
+                return (ex.duration or 0) * 80
+
         # Logs
         daily_logs = DailyLog.objects.filter(
             user=user,
@@ -611,6 +618,30 @@ class DashboardView(APIView):
         nutrition_logs = NutritionLog.objects.filter(
             user=user,
             date__range=[week_ago, today]
+        )
+
+        # Get today's meals
+        todays_meals = Meal.objects.filter(user=user, date=today)
+
+        # Calculate macros
+        todays_macros = {
+            "protein": sum(m.protein or 0 for m in todays_meals),
+            "carbs": sum(m.carbs or 0 for m in todays_meals),
+            "fats": sum(m.fats or 0 for m in todays_meals),
+        }
+
+        exercise_logs = Exercise.objects.filter(
+            user=user,
+            date__range=[week_ago, today]
+        )
+
+        # Sum calories and estimate steps from exercises
+        total_exercise_calories = sum(
+            ex.calories_burned or 0 for ex in exercise_logs
+        )
+        # ~100 steps/min
+        estimated_steps = sum(
+            (estimate_steps_from_exercise(ex) for ex in exercise_logs)
         )
 
         # Challenges
@@ -676,7 +707,6 @@ class DashboardView(APIView):
                 "logs": DailyLogSerializer(
                     daily_logs.order_by("-date")[:5], many=True
                 ).data,
-                "total_steps": total_steps,
                 "avg_sleep_hours": round(avg_sleep, 2),
                 "avg_water_l": round(avg_water, 2),
                 "weight": (
@@ -684,12 +714,15 @@ class DashboardView(APIView):
                     if daily_logs.exists()
                     else None
                 ),
+                "steps": total_steps + estimated_steps,
+                "calories_burned": total_exercise_calories
             },
             "workout_nutrition": {
                 "logs": NutritionLogSerializer(
                     nutrition_logs.order_by("-date")[:5], many=True
                 ).data,
                 "avg_calories": round(avg_calories, 2),
+                "todays_macros": todays_macros,
             },
             "daily_goals": {
                 "daily": {
