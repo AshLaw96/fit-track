@@ -3,9 +3,9 @@ import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
 
 const WorkoutNutrition = ({ data }) => {
-  const { workouts = [], nutrition = {} } = data || {};
+  const { workouts = [], todays_macros = {} } = data || {};
   const hasWorkouts = workouts.length > 0;
-  const hasMacros = nutrition?.protein || nutrition?.carbs || nutrition?.fats;
+  const hasMacros = todays_macros?.protein || todays_macros?.carbs || todays_macros?.fats;
 
   return (
     <div className="card p-3 shadow-sm">
@@ -31,9 +31,26 @@ const WorkoutNutrition = ({ data }) => {
             data={{
               labels: ["Protein", "Carbs", "Fats"],
               datasets: [{
-                data: [nutrition.protein, nutrition.carbs, nutrition.fats],
+                data: [todays_macros.protein, todays_macros.carbs, todays_macros.fats],
                 backgroundColor: ["#4caf50", "#2196f3", "#ff9800"],
               }],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (tooltipItem) => {
+                      const label = tooltipItem.label || "";
+                      const value = tooltipItem.raw || 0;
+                      return `${label}: ${value}g`;
+                    },
+                  },
+                },
+              },
             }}
           />
         ) : (

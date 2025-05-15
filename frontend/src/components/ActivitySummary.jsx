@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const ActivitySummary = ({ data }) => {
   const { sleep, steps, calories_burned, weight, water_intake } = data || {};
@@ -22,7 +23,16 @@ const ActivitySummary = ({ data }) => {
       <div>👣 Steps: {steps}</div>
       <div>🔥 Calories Burned: {calories_burned}</div>
       <div>⚖️ Weight: {weight} kg</div>
-      <div>💧 Water Intake: {water_intake} L</div>
+      <div>
+        💧 Water Intake:{" "}
+        {water_intake ? (
+          <Link to="/meals?filter=water" className="text-decoration-underline">
+            {water_intake} L
+          </Link>
+        ) : (
+          "0 L"
+        )}
+      </div>
     </div>
   );
 };

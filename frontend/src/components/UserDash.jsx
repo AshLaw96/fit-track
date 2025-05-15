@@ -8,24 +8,50 @@ import ChallengesMotivation from "./ChallengesMotivation";
 
 const UserDash = () => {
   const [dashboardData, setDashboardData] = useState(null);
+  const [meals, setMeals] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await api.get("/dashboard/");
-        setDashboardData(res.data);
-      } catch (err) {
+
+  // Fetch dashboard data
+  const fetchDashboard = async () => {
+    try {
+      const res = await api.get("/dashboard/");
+      setDashboardData(res.data);
+    } catch (err) {
         setError("Failed to load dashboard");
         console.error(err);
       }
-    };
+  };
 
+  // Fetch meal logs
+  const fetchMeals = async () => {
+    try {
+      const res = await api.get("/meals/");
+      setMeals(res.data.results || []);
+    } catch (err) {
+      setError("Failed to load meals");
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
     fetchDashboard();
+    fetchMeals();
   }, []);
 
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
   if (!dashboardData) return <div className="text-center mt-5">Loading...</div>;
+
+  // Calculate total water from meal logs
+  const totalWater =
+    meals?.filter((meal) => meal.meal_type === "drink" && meal.water_amount)
+          .reduce((sum, meal) => sum + parseFloat(meal.water_amount), 0) || 0;
+
+   // Merge water intake into activity summary
+  const activitySummaryWithWater = {
+    ...dashboardData.activity_summary,
+    water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
+  };
 
   return (
     <div className="container py-4 custom-wrap">
@@ -34,7 +60,7 @@ const UserDash = () => {
       </h2>
       <div className="row g-4">
         <div className="col-md-6">
-          <ActivitySummary data={dashboardData.activity_summary} />
+          <ActivitySummary data={activitySummaryWithWater} />
         </div>
         <div className="col-md-6">
           <WorkoutNutrition data={dashboardData.workout_nutrition} />
