@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
 import ExerciseLogPage from "./components/ExerciseLogPage";
+import MealLogPage from "./components/MealLogPage";
 import AuthPage from "./components/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
 import PasswordResetForm from "./components/PasswordResetForm";
@@ -19,6 +20,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/exercises" element={<ExerciseLogPage />} />
+          <Route path="/meals" element={<MealLogPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
           <Route

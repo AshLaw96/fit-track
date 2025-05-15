@@ -81,6 +81,12 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link className="nav-link header-link" to="/meals">
+                      Meal Log
+                      <i className="fa-solid fa-utensils header-icon"></i>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <button
                       className="nav-link btn btn-link header-link"
                       onClick={() => setShowModal(true)}
