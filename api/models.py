@@ -129,20 +129,40 @@ class Meal(models.Model):
     """
     Model representing a meal entry.
     """
+    MEAL_TYPES = [
+        ('breakfast', 'Breakfast'),
+        ('lunch', 'Lunch'),
+        ('dinner', 'Dinner'),
+        ('snack', 'Snack'),
+        ('drink', 'Drink'),
+    ]
+
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         related_name="meals"
+    )
+    meal_type = models.CharField(
+        max_length=20,
+        choices=MEAL_TYPES,
+        default='breakfast'
     )
     name = models.CharField(max_length=100)
     calories = models.IntegerField()
     protein = models.FloatField(null=True, blank=True)
     carbs = models.FloatField(null=True, blank=True)
     fats = models.FloatField(null=True, blank=True)
+    water_amount = models.FloatField(
+        null=True,
+        blank=True,
+        help_text="Liters of water consumed"
+    )
+    notes = models.TextField(blank=True)
+    date = models.DateField(default=date.today)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.user.username}"
+        return f"{self.meal_type} - {self.name} ({self.user.username})"
 
 
 # Sleep Log model
