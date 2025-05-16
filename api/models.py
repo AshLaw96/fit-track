@@ -110,7 +110,7 @@ class Exercise(models.Model):
     duration = models.PositiveIntegerField()
     calories_burned = models.PositiveIntegerField()
     notes = models.TextField(blank=True, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=date.today)
     category = models.CharField(
         max_length=50,
         choices=EXERCISE_CATEGORIES,
@@ -175,6 +175,9 @@ class SleepLog(models.Model):
         on_delete=models.CASCADE,
         related_name="sleep_logs"
     )
+    date = models.DateField(default=date.today)
+    bedtime = models.TimeField(null=True, blank=True)
+    wake_time = models.TimeField(null=True, blank=True)
     duration_hours = models.FloatField()
     quality_rating = models.IntegerField(
         choices=[
@@ -184,7 +187,16 @@ class SleepLog(models.Model):
             (4, "Excellent"),
         ]
     )
-    date = models.DateField(auto_now_add=True)
+    wake_feeling = models.CharField(
+        max_length=50,
+        choices=[
+            ("refreshed", "Refreshed"),
+            ("tired", "Tired"),
+            ("okay", "Okay"),
+        ],
+        blank=True,
+    )
+    notes = models.TextField(blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.date}"
