@@ -104,7 +104,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
             'id', 'type', 'category', 'name', 'duration',
             'calories_burned', 'notes', 'date', 'user'
         ]
-        read_only_fields = ['id', 'user', 'date']
+        read_only_fields = ['id', 'user']
 
     def validate_duration(self, value):
         if value <= 0:
@@ -165,16 +165,12 @@ class SleepLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = SleepLog
         fields = '__all__'
-        read_only_fields = ['user', 'date']
+        read_only_fields = ['user']
 
     def validate_duration_hours(self, value):
-        if value <= 0:
+        if value <= 0 or value > 24:
             raise serializers.ValidationError(
-                "Duration must be greater than 0."
-            )
-        if value > 24:
-            raise serializers.ValidationError(
-                "Sleep duration cannot exceed 24 hours."
+                "Duration must be between 0 and 24."
             )
         return value
 

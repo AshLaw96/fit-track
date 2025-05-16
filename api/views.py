@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import timedelta, datetime
 from collections import defaultdict
 from rest_framework import generics, permissions, viewsets, status
 from rest_framework.response import Response
@@ -187,10 +187,21 @@ class ExerciseViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = Exercise.objects.all()
+    queryset = Exercise.objects.none()
 
     def get_queryset(self):
-        return Exercise.objects.filter(user=self.request.user)
+        user = self.request.user
+        queryset = Exercise.objects.filter(user=user)
+
+        date_str = self.request.query_params.get("date")
+        if date_str:
+            try:
+                date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                queryset = queryset.filter(date=date)
+            except ValueError:
+                pass
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
