@@ -115,3 +115,9 @@ export const startTokenRefreshTimer = () => {
 };
 
 export default api;
+
+// --- SleepLog helpers ---
+export const getSleepLogs = () => api.get("/sleep_logs/");
+export const createSleepLog = (data) => api.post("/sleep_logs/", data);
+export const updateSleepLog = (id, data) => api.put(`/sleep_logs/${id}/`, data);
+export const deleteSleepLog = (id) => api.delete(`/sleep_logs/${id}/`);

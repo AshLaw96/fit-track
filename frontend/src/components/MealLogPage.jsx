@@ -77,12 +77,22 @@ const MealLogPage = ({ onDataChanged }) => {
   };
 
   const handleSave = async (formData) => {
+    const cleanedData = {
+      ...formData,
+      calories: parseFloat(formData.calories),
+      protein: formData.protein ? parseFloat(formData.protein) : 0,
+      carbs: formData.carbs ? parseFloat(formData.carbs) : 0,
+      fats: formData.fats ? parseFloat(formData.fats) : 0,
+      water_amount: formData.meal_type === "drink"
+        ? parseFloat(formData.water_amount || 0)
+        : null,
+    };
     try {
       if (selectedMeal) {
-        await api.put(`/meals/${selectedMeal.id}/`, formData);
+        await api.put(`/meals/${selectedMeal.id}/`, cleanedData);
         setSuccessMessage("Meal updated!");
       } else {
-        await api.post("/meals/", formData);
+        await api.post("/meals/", cleanedData);
         setSuccessMessage("Meal added!");
       }
       setShowModal(false);
