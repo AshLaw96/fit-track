@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Dashboard from "./components/Dashboard";
 import ExerciseLogPage from "./components/ExerciseLogPage";
 import MealLogPage from "./components/MealLogPage";
+import SleepLogPage from "./components/SleepLogPage";
 import AuthPage from "./components/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
 import PasswordResetForm from "./components/PasswordResetForm";
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/exercises" element={<ExerciseLogPage />} />
           <Route path="/meals" element={<MealLogPage />} />
+          <Route path="/sleep" element={<SleepLogPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
           <Route
