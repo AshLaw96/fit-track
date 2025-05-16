@@ -5,9 +5,11 @@ import WorkoutNutrition from "./WorkoutNutrition";
 import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
+import { format } from "date-fns";
 
 const UserDash = () => {
   const [dashboardData, setDashboardData] = useState(null);
+  const [exercises, setExercises] = useState(null);
   const [meals, setMeals] = useState(null);
   const [error, setError] = useState(null);
 
@@ -23,6 +25,17 @@ const UserDash = () => {
       }
   };
 
+  // Fetch exercise logs
+  const fetchExercises = async () => {
+  try {
+    const today = format(new Date(), "yyyy-MM-dd");
+    const res = await api.get(`/exercises/?date=${today}`);
+    setExercises(res.data.results || []);
+  } catch (err) {
+    console.error("Failed to load today's exercises", err);
+  }
+};
+
   // Fetch meal logs
   const fetchMeals = async () => {
     try {
@@ -36,11 +49,16 @@ const UserDash = () => {
 
   useEffect(() => {
     fetchDashboard();
+    fetchExercises();
     fetchMeals();
   }, []);
 
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
   if (!dashboardData) return <div className="text-center mt-5">Loading...</div>;
+
+  // Calculate total calories burned from exercise logs
+  const todaysCaloriesBurned =
+    exercises?.reduce((sum, exercise) => sum + parseFloat(exercise.calories_burned), 0) || 0;
 
   // Calculate total water from meal logs
   const totalWater =
@@ -60,7 +78,7 @@ const UserDash = () => {
       </h2>
       <div className="row g-4">
         <div className="col-md-6">
-          <ActivitySummary data={activitySummaryWithWater} />
+          <ActivitySummary data={{...activitySummaryWithWater, calories_burned: todaysCaloriesBurned}} />
         </div>
         <div className="col-md-6">
           <WorkoutNutrition data={dashboardData.workout_nutrition} />
