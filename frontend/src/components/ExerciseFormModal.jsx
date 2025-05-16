@@ -9,6 +9,7 @@ const ExerciseFormModal = ({ show, handleClose, onSave, exercise }) => {
     duration: "",
     calories_burned: "",
     notes: "",
+    date: "",
   });
 
   const [successMessage, setSuccessMessage] = useState("");
@@ -22,6 +23,7 @@ const ExerciseFormModal = ({ show, handleClose, onSave, exercise }) => {
         duration: exercise.duration || "",
         calories_burned: exercise.calories_burned || "",
         notes: exercise.notes || "",
+        date: exercise.date || "",
       });
     } else {
       setForm({
@@ -31,6 +33,7 @@ const ExerciseFormModal = ({ show, handleClose, onSave, exercise }) => {
         duration: "",
         calories_burned: "",
         notes: "",
+        date: new Date().toISOString().slice(0, 10),
       });
     }
     setSuccessMessage("");
@@ -131,6 +134,16 @@ const ExerciseFormModal = ({ show, handleClose, onSave, exercise }) => {
               value={form.notes}
               onChange={handleChange}
               placeholder="e.g. Warm-up routine, weather notes..."
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Date</Form.Label>
+            <Form.Control
+              name="date"
+              type="date"
+              value={form.date}
+              onChange={handleChange}
             />
           </Form.Group>
         </Form>
