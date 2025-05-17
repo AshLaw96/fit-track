@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const messages = [
+// Static encouragement tips
+const tips = [
   "Establish a regular bedtime routine!",
   "Avoid screens 1 hour before bed.",
   "Keep your bedroom cool and dark.",
@@ -8,29 +9,47 @@ const messages = [
   "Limit caffeine after noon."
 ];
 
-const getRandomMessage = (exclude) => {
-  const filtered = messages.filter(msg => msg !== exclude);
-  return filtered[Math.floor(Math.random() * filtered.length)];
-};
+// Helper to calculate average
+const calculateAverage = (arr) =>
+  arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
 
-const SleepEncouragement = () => {
-  const [message, setMessage] = useState("");
+const SleepEncouragement = ({ logs }) => {
+  const [tip, setTip] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
-    setMessage(getRandomMessage(""));
-  }, []);
+    // 1. Pick a random tip
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    setTip(randomTip);
 
-  const handleNewMessage = () => {
-    setMessage(getRandomMessage(message));
-  };
+    // 2. Analyze user sleep logs
+    if (Array.isArray(logs) && logs.length > 0) {
+      const validDurations = logs
+        .map((log) => parseFloat(log.duration_hours))
+        .filter((d) => !isNaN(d));
+
+      const userAvg = calculateAverage(validDurations);
+      const benchmarkAvg = 7.5;
+
+      // 3. Generate personalized feedback
+      if (userAvg >= benchmarkAvg) {
+        setFeedback(`💤 Great job! Your average sleep is ${userAvg.toFixed(1)} hours. Keep it up!`);
+      } else if (userAvg >= 6) {
+        setFeedback(`😴 You're getting some rest, but your average sleep is ${userAvg.toFixed(1)} hours. Try to aim for 7–8 hours!`);
+      } else {
+        setFeedback(`⚠️ Your average sleep is only ${userAvg.toFixed(1)} hours. Consider improving your sleep routine for better rest.`);
+      }
+    } else {
+      setFeedback("Add some sleep logs to start tracking your sleep habits.");
+    }
+  }, [logs]);
 
   return (
     <div className="card p-3 shadow-sm mt-3">
       <h5>Feedback & Encouragement</h5>
-      <p>🌙 {message}</p>
-      <button className="btn btn-sm btn-outline-primary mt-2" onClick={handleNewMessage}>
-        Show Another Tip
-      </button>
+      <p>{feedback}</p>
+      <hr />
+      <p><strong>Tip:</strong> {tip}</p>
     </div>
   );
 };
