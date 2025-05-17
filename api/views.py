@@ -688,6 +688,20 @@ class DashboardView(APIView):
         for log in nutrition_logs:
             calories_by_day[log.date] = log.calories
 
+        # First, group exercises by date
+        exercises_by_day = defaultdict(list)
+        for ex in exercise_logs:
+            exercises_by_day[ex.date].append(ex)
+
+        # Add estimated steps to each day's total
+        for d in dates:
+            estimated = sum(
+                estimate_steps_from_exercise(ex)
+                for ex in exercises_by_day[d]
+            )
+            steps_by_day[d] += estimated
+
+        # Weekly trends with estimated steps included
         weekly_trends = {
             "dates": [d.strftime("%Y-%m-%d") for d in dates],
             "steps": [steps_by_day[d] for d in dates],

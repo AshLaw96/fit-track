@@ -19,7 +19,16 @@ const ActivitySummary = ({ data }) => {
   return (
     <div className="card p-3 shadow">
       <h5 className="mb-3">Today's Activity Summary</h5>
-      <div>🛌 Sleep: {sleep} hrs</div>
+      <div>
+        🛌 Sleep:{" "}
+        {sleep ? (
+          <Link to="/sleep" className="text-decoration-underline">
+            {sleep} hrs
+          </Link>
+        ) : (
+          "0 hrs"
+        )}
+      </div>
       <div>👣 Steps: {steps}</div>
       <div>🔥 Calories Burned: {calories_burned}</div>
       <div>⚖️ Weight: {weight} kg</div>
