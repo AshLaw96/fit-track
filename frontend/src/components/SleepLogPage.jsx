@@ -115,6 +115,13 @@ const SleepLogPage = () => {
     setShowModal(false);
   };
 
+  const recentLogs = logs.filter(log => {
+    const logDate = new Date(log.date);
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    return logDate >= oneWeekAgo;
+  });
+
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -184,7 +191,7 @@ const SleepLogPage = () => {
 
       {/* Alarm and Encouragement */}
       <AlarmSetting alarm={alarm} setAlarm={setAlarm} />
-      <SleepEncouragement />
+      <SleepEncouragement logs={recentLogs} />
     </div>
   );
 };
