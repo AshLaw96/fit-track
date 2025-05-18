@@ -37,7 +37,6 @@ const UserDash = () => {
     }
   };
 
-  // 👇 Utility to get past 7 days
   const getLast7Days = () => {
     return Array.from({ length: 7 }).map((_, i) =>
       format(subDays(new Date(), 6 - i), "yyyy-MM-dd")
@@ -46,38 +45,65 @@ const UserDash = () => {
 
   const weeklyTrends = () => {
     const dates = getLast7Days();
-
     const trends = {
       dates,
-      calories: [],
+      calories_burned: [],
       sleep_hours: [],
       water_intake: [],
       steps: []
     };
 
     for (let date of dates) {
-      // Calories from exercises
       const dailyExercises = exercises.filter((ex) => ex.date === date);
       const calories = dailyExercises.reduce((sum, ex) => sum + (parseFloat(ex.calories_burned) || 0), 0);
-      trends.calories.push(calories);
+      trends.calories_burned.push(calories);
 
-      // Sleep
       const dailySleep = sleepLogs.filter((log) => log.date === date);
       const sleep = dailySleep.reduce((sum, log) => sum + (parseFloat(log.duration_hours) || 0), 0);
       trends.sleep_hours.push(sleep);
 
-      // Water from meals
       const dailyDrinks = meals.filter(
         (meal) => meal.date === date && meal.meal_type === "drink"
       );
       const water = dailyDrinks.reduce((sum, drink) => sum + (parseFloat(drink.water_amount) || 0), 0);
       trends.water_intake.push(water);
 
-      // No data source, placeholder
+      // Placeholder for steps (can replace with real data later)
       trends.steps.push(0);
     }
 
     return trends;
+  };
+
+  if (error) {
+    return <div className="text-center mt-5 text-danger">{error}</div>;
+  }
+
+  // Show loading state until all data is loaded
+  if (!dashboardData || !exercises.length || !meals.length || !sleepLogs.length) {
+    return <div className="text-center mt-5">Loading...</div>;
+  }
+
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  const todaysCaloriesBurned =
+    exercises
+      .filter((ex) => ex.date === today)
+      .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0);
+
+  const totalWater =
+    meals
+      .filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
+      .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0);
+
+  const todaySleep =
+    sleepLogs
+      .filter((log) => log.date === today)
+      .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0);
+
+  const activitySummaryWithWater = {
+    ...dashboardData.activity_summary,
+    water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
   };
 
   const analytics = {
@@ -86,33 +112,14 @@ const UserDash = () => {
     weekly_trends: weeklyTrends()
   };
 
-  if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
-  if (!dashboardData) return <div className="text-center mt-5">Loading...</div>;
-
-  const today = format(new Date(), "yyyy-MM-dd");
-
-  const todaysCaloriesBurned =
-    exercises.filter((ex) => ex.date === today).reduce((sum, exercise) => sum + parseFloat(exercise.calories_burned), 0);
-
-  const totalWater =
-    meals.filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
-         .reduce((sum, meal) => sum + parseFloat(meal.water_amount), 0);
-
-  const todaySleep = sleepLogs.filter((log) => log.date === today).reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0);
-
-  const activitySummaryWithWater = {
-    ...dashboardData.activity_summary,
-    water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
-  };
-
   return (
     <div className="container py-4 custom-wrap">
       <h2 className="mb-4 text-center custom-heading">
-        Welcome back, {dashboardData.user.first_name || "User"}!
+        Welcome back, {dashboardData.user?.first_name || "User"}!
       </h2>
       <div className="row g-4">
         <div className="col-md-6">
-          <ActivitySummary data={{...activitySummaryWithWater, calories_burned: todaysCaloriesBurned, sleep: todaySleep.toFixed(1)}} />
+          <ActivitySummary data={{ ...activitySummaryWithWater, calories_burned: todaysCaloriesBurned, sleep: todaySleep.toFixed(1) }} />
         </div>
         <div className="col-md-6">
           <WorkoutNutrition data={dashboardData.workout_nutrition} />

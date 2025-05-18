@@ -3,25 +3,35 @@ import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 
 const ProgressAnalytics = ({ data }) => {
+  // Early return if no data is passed
+  if (!data || typeof data !== "object") {
+    return (
+      <div className="card p-3 shadow-sm">
+        <h4 className="mb-3">Progress & Analytics</h4>
+        <div className="text-center text-muted my-5">
+          Loading analytics...
+        </div>
+      </div>
+    );
+  }
+
   const {
-    total_daily_logs,
-    total_nutrition_logs,
-    weekly_trends = {}
-  } = data || {};
+    total_daily_logs = 0,
+    total_nutrition_logs = 0,
+    weekly_trends = {},
+  } = data;
 
   const {
     dates = [],
     steps = [],
     sleep_hours = [],
-    calories = [],
-    water_intake = []
+    calories_burned = [],
+    water_intake = [],
   } = weekly_trends;
 
-  const isEmpty = 
-    steps.every((v) => v === 0) &&
-    sleep_hours.every((v) => v === 0) &&
-    calories.every((v) => v === 0) &&
-    water_intake.every((v) => v === 0);
+  const isEmpty = [steps, sleep_hours, calories_burned, water_intake].every(
+    (arr) => Array.isArray(arr) && arr.every((v) => v === 0)
+  );
 
   const chartData = (label, values, color) => ({
     labels: dates,
@@ -58,7 +68,7 @@ const ProgressAnalytics = ({ data }) => {
             <Bar data={chartData("Sleep (hrs)", sleep_hours, "#3f51b5")} />
           </div>
           <div className="mb-4">
-            <Bar data={chartData("Calories", calories, "#ff9800")} />
+            <Bar data={chartData("Calories Burned", calories_burned, "#ff9800")} />
           </div>
           <div className="mb-4">
             <Bar data={chartData("Water Intake (L)", water_intake, "#00bcd4")} />
