@@ -297,6 +297,10 @@ class DailyLog(models.Model):
     )
     notes = models.TextField(null=True, blank=True)
 
+    def get_total_calories(user, date):
+        log = NutritionLog.objects.filter(user=user, date=date).first()
+        return log.calories if log else 0
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
