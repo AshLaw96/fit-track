@@ -606,22 +606,16 @@ class DashboardView(APIView):
 
         def estimate_steps_from_exercise(ex):
             if ex.type == "cardio":
-                # More intense
                 return (ex.duration or 0) * 120
             elif ex.type == "strength":
-                # Less movement
                 return (ex.duration or 0) * 60
             elif ex.type == "flexibility":
-                # E.g. stretching
                 return (ex.duration or 0) * 30
             elif ex.type == "sports":
-                # General sports average
                 return (ex.duration or 0) * 100
             else:
-                # 'other' or unknown
                 return (ex.duration or 0) * 80
 
-        # Logs
         daily_logs = DailyLog.objects.filter(
             user=user,
             date__range=[week_ago, today]
@@ -630,11 +624,8 @@ class DashboardView(APIView):
             user=user,
             date__range=[week_ago, today]
         )
-
-        # Get today's meals
         todays_meals = Meal.objects.filter(user=user, date=today)
 
-        # Calculate macros
         todays_macros = {
             "protein": sum(m.protein or 0 for m in todays_meals),
             "carbs": sum(m.carbs or 0 for m in todays_meals),
@@ -645,55 +636,66 @@ class DashboardView(APIView):
             user=user,
             date__range=[week_ago, today]
         )
-
-        # Sum calories and estimate steps from exercises
         total_exercise_calories = sum(
             ex.calories_burned or 0 for ex in exercise_logs
         )
-        # ~100 steps/min
-        estimated_steps = sum(
-            (estimate_steps_from_exercise(ex) for ex in exercise_logs)
+
+        today_log = daily_logs.filter(date=today).first()
+        today_steps = today_log.steps if today_log else 0
+
+        today_exercise_logs = [ex for ex in exercise_logs if ex.date == today]
+        today_estimated_steps = sum(
+            estimate_steps_from_exercise(ex) for ex in today_exercise_logs
         )
 
-        # Challenges
         active_challenges = Challenge.objects.filter(
-            owner=user, end_date__gte=today
+            owner=user,
+            end_date__gte=today
         )
-        user_challenges = UserChallenge.objects.select_related("challenge") \
+        user_challenges = (
+            UserChallenge.objects
+            .select_related("challenge")
             .filter(user=user)
-
-        # Goals
+        )
         goals = Goal.objects.filter(user=user).order_by("-created_at")
 
-        # Stats
-        total_steps = sum(log.steps for log in daily_logs)
-        avg_sleep = sum(
-            log.sleep_hours or 0 for log in daily_logs
-        ) / max(len(daily_logs), 1)
-        avg_water = sum(
-            log.water_intake_l or 0 for log in daily_logs
-        ) / max(len(daily_logs), 1)
-        avg_calories = sum(
-            log.calories for log in nutrition_logs
-        ) / max(len(nutrition_logs), 1)
+        avg_sleep = (
+            sum(log.sleep_hours or 0 for log in daily_logs)
+            / max(len(daily_logs), 1)
+        )
+        avg_water = (
+            sum(log.water_intake_l or 0 for log in daily_logs)
+            / max(len(daily_logs), 1)
+        )
+        avg_calories = (
+            sum(log.calories for log in nutrition_logs) /
+            max(len(nutrition_logs), 1)
+        )
 
-        # Weekly Trends
+        # --- Weekly Trends ---
         steps_by_day = defaultdict(int)
         sleep_by_day = defaultdict(float)
         calories_by_day = defaultdict(int)
+        water_by_day = defaultdict(float)
 
         for log in daily_logs:
-            steps_by_day[log.date] = log.steps
+            steps_by_day[log.date] = log.steps or 0
             sleep_by_day[log.date] = log.sleep_hours or 0
-        for log in nutrition_logs:
-            calories_by_day[log.date] = log.calories
+            water_by_day[log.date] = log.water_intake_l or 0
 
-        # First, group exercises by date
+        # Add nutrition calories
+        for log in nutrition_logs:
+            calories_by_day[log.date] += log.calories or 0
+
+        # Add exercise calories
+        for ex in exercise_logs:
+            calories_by_day[ex.date] += ex.calories_burned or 0
+
+        # Add estimated steps from exercises
         exercises_by_day = defaultdict(list)
         for ex in exercise_logs:
             exercises_by_day[ex.date].append(ex)
 
-        # Add estimated steps to each day's total
         for d in dates:
             estimated = sum(
                 estimate_steps_from_exercise(ex)
@@ -701,25 +703,24 @@ class DashboardView(APIView):
             )
             steps_by_day[d] += estimated
 
-        # Weekly trends with estimated steps included
         weekly_trends = {
             "dates": [d.strftime("%Y-%m-%d") for d in dates],
             "steps": [steps_by_day[d] for d in dates],
             "sleep_hours": [sleep_by_day[d] for d in dates],
-            "calories": [calories_by_day[d] for d in dates],
+            "calories_burned": [calories_by_day[d] for d in dates],
+            "water_intake": [water_by_day[d] for d in dates],
         }
 
-        # Challenges with completion %
         challenges_joined = [
             {
                 "id": uc.id,
                 "title": uc.challenge.title,
                 "progress": uc.progress,
                 "target_value": uc.challenge.target_value,
-                "completion_percent": round(
-                    (uc.progress / uc.challenge.target_value) * 100, 2
+                "completion_percent": (
+                    round((uc.progress / uc.challenge.target_value) * 100, 2)
+                    if uc.challenge.target_value else 0.0
                 )
-                if uc.challenge.target_value else 0.0
             }
             for uc in user_challenges
         ]
@@ -730,21 +731,22 @@ class DashboardView(APIView):
             },
             "activity_summary": {
                 "logs": DailyLogSerializer(
-                    daily_logs.order_by("-date")[:5], many=True
+                    daily_logs.order_by("-date")[:5],
+                    many=True
                 ).data,
                 "avg_sleep_hours": round(avg_sleep, 2),
                 "avg_water_l": round(avg_water, 2),
                 "weight": (
                     daily_logs.latest("date").weight
-                    if daily_logs.exists()
-                    else None
+                    if daily_logs.exists() else None
                 ),
-                "steps": total_steps + estimated_steps,
+                "steps": today_steps + today_estimated_steps,
                 "calories_burned": total_exercise_calories
             },
             "workout_nutrition": {
                 "logs": NutritionLogSerializer(
-                    nutrition_logs.order_by("-date")[:5], many=True
+                    nutrition_logs.order_by("-date")[:5],
+                    many=True
                 ).data,
                 "avg_calories": round(avg_calories, 2),
                 "todays_macros": todays_macros,
@@ -753,18 +755,15 @@ class DashboardView(APIView):
                 "daily": {
                     "steps": {
                         "goal": 10000,
-                        "current": (
-                            daily_logs.latest("date").steps
-                            if daily_logs.exists()
-                            else 0
-                        )
+                        "current": (today_log.steps if today_log else 0)
                     },
                     "water": {
                         "goal": 2.5,
                         "current": (
-                            daily_logs.latest("date").water_intake_l
-                            if daily_logs.exists()
-                            else 0
+                            (
+                                daily_logs.latest("date").water_intake_l
+                                if daily_logs.exists() else 0
+                            )
                         )
                     }
                 },
