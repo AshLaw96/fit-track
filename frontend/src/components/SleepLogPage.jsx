@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   getSleepLogs,
   createSleepLog,
@@ -21,7 +21,7 @@ const defaultFormData = {
   notes: "",
 };
 
-const SleepLogPage = () => {
+const SleepLogPage = ({ onDataChanged }) => {
   const [logs, setLogs] = useState([]);
   const [formData, setFormData] = useState(defaultFormData);
   const [editingId, setEditingId] = useState(null);
@@ -31,11 +31,7 @@ const SleepLogPage = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  useEffect(() => {
-    fetchLogs();
-  }, []);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const res = await getSleepLogs();
       const data = Array.isArray(res.data) ? res.data : [];
@@ -44,7 +40,11 @@ const SleepLogPage = () => {
       console.error("Failed to fetch logs:", err);
       setError("Failed to fetch sleep logs");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const handleSubmit = async () => {
     const payload = {
@@ -57,7 +57,11 @@ const SleepLogPage = () => {
       notes: formData.notes || "",
     };
 
-    if (isNaN(payload.duration_hours) || payload.duration_hours <= 0 || payload.duration_hours > 24) {
+    if (
+      isNaN(payload.duration_hours) ||
+      payload.duration_hours <= 0 ||
+      payload.duration_hours > 24
+    ) {
       setToastMessage("Duration must be between 0 and 24 hours.");
       setShowToast(true);
       return;
@@ -78,10 +82,18 @@ const SleepLogPage = () => {
       setFormData(defaultFormData);
       setEditingId(null);
       setShowModal(false);
-      fetchLogs();
+
+      await fetchLogs();
+      onDataChanged?.(); // ✅ Notifies dashboard to refresh if provided
     } catch (err) {
       console.error("Error saving sleep log:", err.response?.data || err);
-      setToastMessage("Something went wrong while saving.");
+
+      setToastMessage(
+        err.response?.status === 401
+          ? "You must be logged in to save sleep logs."
+          : "Something went wrong while saving."
+      );
+
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -101,7 +113,8 @@ const SleepLogPage = () => {
     if (window.confirm("Are you sure you want to delete this log?")) {
       try {
         await deleteSleepLog(id);
-        fetchLogs();
+        await fetchLogs();
+        onDataChanged?.(); // ✅ Notifies dashboard to refresh
       } catch (err) {
         console.error("Delete failed:", err);
         alert("Error deleting log.");
@@ -115,7 +128,7 @@ const SleepLogPage = () => {
     setShowModal(false);
   };
 
-  const recentLogs = logs.filter(log => {
+  const recentLogs = logs.filter((log) => {
     const logDate = new Date(log.date);
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -191,6 +204,8 @@ const SleepLogPage = () => {
 
       {/* Alarm and Encouragement */}
       <AlarmSetting alarm={alarm} setAlarm={setAlarm} />
+
+      {/* Encouragement */}
       <SleepEncouragement logs={recentLogs} />
     </div>
   );
