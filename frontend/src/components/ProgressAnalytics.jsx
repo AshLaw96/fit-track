@@ -3,7 +3,6 @@ import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 
 const ProgressAnalytics = ({ data }) => {
-  // Early return if no data is passed
   if (!data || typeof data !== "object") {
     return (
       <div className="card p-3 shadow-sm">
@@ -29,10 +28,6 @@ const ProgressAnalytics = ({ data }) => {
     water_intake = [],
   } = weekly_trends;
 
-  const isEmpty = [steps, sleep_hours, calories_burned, water_intake].every(
-    (arr) => Array.isArray(arr) && arr.every((v) => v === 0)
-  );
-
   const chartData = (label, values, color) => ({
     labels: dates,
     datasets: [
@@ -55,25 +50,31 @@ const ProgressAnalytics = ({ data }) => {
         Total Nutrition Logs: <strong>{total_nutrition_logs}</strong>
       </div>
 
-      {isEmpty ? (
+      {steps?.some(v => v > 0) && (
+        <div className="mb-4">
+          <Bar data={chartData("Steps", steps, "#4caf50")} />
+        </div>
+      )}
+      {sleep_hours?.some(v => v > 0) && (
+        <div className="mb-4">
+          <Bar data={chartData("Sleep (hrs)", sleep_hours, "#3f51b5")} />
+        </div>
+      )}
+      {calories_burned?.some(v => v > 0) && (
+        <div className="mb-4">
+          <Bar data={chartData("Calories Burned", calories_burned, "#ff9800")} />
+        </div>
+      )}
+      {water_intake?.some(v => v > 0) && (
+        <div className="mb-4">
+          <Bar data={chartData("Water Intake (L)", water_intake, "#00bcd4")} />
+        </div>
+      )}
+
+      {![...steps, ...sleep_hours, ...calories_burned, ...water_intake].some(v => v > 0) && (
         <div className="text-center text-muted my-5">
           No progress data available yet. Start logging your activity to see trends here!
         </div>
-      ) : (
-        <>
-          <div className="mb-4">
-            <Bar data={chartData("Steps", steps, "#4caf50")} />
-          </div>
-          <div className="mb-4">
-            <Bar data={chartData("Sleep (hrs)", sleep_hours, "#3f51b5")} />
-          </div>
-          <div className="mb-4">
-            <Bar data={chartData("Calories Burned", calories_burned, "#ff9800")} />
-          </div>
-          <div className="mb-4">
-            <Bar data={chartData("Water Intake (L)", water_intake, "#00bcd4")} />
-          </div>
-        </>
       )}
     </div>
   );
