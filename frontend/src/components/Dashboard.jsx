@@ -3,10 +3,10 @@ import { useAuth } from "../contexts/AuthContext";
 import GuestDash from "./GuestDash";
 import UserDash from "./UserDash";
 
-const Dashboard = () => {
+const Dashboard = ({ dashboardData, fetchAllData }) => {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? <UserDash /> : <GuestDash />;
+  return isAuthenticated ? <UserDash dashboardData={dashboardData} fetchAllData={fetchAllData} /> : <GuestDash />;
 };
 
 export default Dashboard;
