@@ -1,125 +1,103 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../utils/api";
 import ActivitySummary from "./ActivitySummary";
 import WorkoutNutrition from "./WorkoutNutrition";
 import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
-import { format, subDays } from "date-fns";
+import { format, subDays, eachDayOfInterval } from "date-fns";
+import { estimateStepsFromExercise } from "../utils/stepEstimator";
 
-const UserDash = () => {
-  const [dashboardData, setDashboardData] = useState(null);
+const UserDash = ({ dashboardData, fetchAllData }) => {
   const [exercises, setExercises] = useState([]);
   const [meals, setMeals] = useState([]);
   const [sleepLogs, setSleepLogs] = useState([]);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchAllData();
+  const fetchLogs = useCallback(async () => {
+    try {
+      const [mealsRes, exercisesRes, sleepRes] = await Promise.all([
+        api.get("/meals/"),
+        api.get("/exercises/"),
+        api.get("/sleep_logs/"),
+      ]);
+      setMeals(mealsRes.data?.results || []);
+      setExercises(exercisesRes.data?.results || []);
+      setSleepLogs(Array.isArray(sleepRes.data) ? sleepRes.data : []);
+    } catch (err) {
+      console.error("Failed to fetch logs:", err);
+    }
   }, []);
 
-  const fetchAllData = async () => {
-    try {
-      const [dashboard, exerciseData, mealData, sleepData] = await Promise.all([
-        api.get("/dashboard/"),
-        api.get("/exercises/"),
-        api.get("/meals/"),
-        api.get("/sleep_logs/")
-      ]);
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
-      setDashboardData(dashboard.data);
-      setExercises(exerciseData.data.results || []);
-      setMeals(mealData.data.results || []);
-      setSleepLogs(sleepData.data.results || []);
-    } catch (err) {
-      setError("Failed to load dashboard");
-      console.error(err);
-    }
-  };
-
-  const getLast7Days = () => {
-    return Array.from({ length: 7 }).map((_, i) =>
-      format(subDays(new Date(), 6 - i), "yyyy-MM-dd")
-    );
-  };
-
-  const weeklyTrends = () => {
-    const dates = getLast7Days();
-    const trends = {
-      dates,
-      calories_burned: [],
-      sleep_hours: [],
-      water_intake: [],
-      steps: []
-    };
-
-    for (let date of dates) {
-      const dailyExercises = exercises.filter((ex) => ex.date === date);
-      const calories = dailyExercises.reduce((sum, ex) => sum + (parseFloat(ex.calories_burned) || 0), 0);
-      trends.calories_burned.push(calories);
-
-      const dailySleep = sleepLogs.filter((log) => log.date === date);
-      const sleep = dailySleep.reduce((sum, log) => sum + (parseFloat(log.duration_hours) || 0), 0);
-      trends.sleep_hours.push(sleep);
-
-      const dailyDrinks = meals.filter(
-        (meal) => meal.date === date && meal.meal_type === "drink"
-      );
-      const water = dailyDrinks.reduce((sum, drink) => sum + (parseFloat(drink.water_amount) || 0), 0);
-      trends.water_intake.push(water);
-
-      // Placeholder for steps (can replace with real data later)
-      trends.steps.push(0);
-    }
-
-    return trends;
-  };
-
-  if (error) {
-    return <div className="text-center mt-5 text-danger">{error}</div>;
-  }
-
-  // Show loading state until all data is loaded
-  if (!dashboardData || !exercises.length || !meals.length || !sleepLogs.length) {
+  if (!dashboardData || !exercises || !meals || !sleepLogs) {
     return <div className="text-center mt-5">Loading...</div>;
   }
 
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const todaysCaloriesBurned =
-    exercises
-      .filter((ex) => ex.date === today)
-      .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0);
+  const todaysCaloriesBurned = exercises
+    .filter((ex) => ex.date === today)
+    .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0);
 
-  const totalWater =
-    meals
-      .filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
-      .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0);
+  const totalWater = meals
+    .filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
+    .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0);
 
-  const todaySleep =
-    sleepLogs
-      .filter((log) => log.date === today)
-      .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0);
+  const todaySleep = sleepLogs
+    .filter((log) => log.date === today)
+    .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0);
 
   const activitySummaryWithWater = {
     ...dashboardData.activity_summary,
     water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
   };
 
-  const analytics = {
-    total_daily_logs: exercises.length + sleepLogs.length,
-    total_nutrition_logs: meals.length,
-    weekly_trends: weeklyTrends()
+  const last7Days = eachDayOfInterval({
+    start: subDays(new Date(), 6),
+    end: new Date(),
+  }).map((d) => format(d, "yyyy-MM-dd"));
+
+  const weeklyTrends = {
+    dates: last7Days,
+    steps: last7Days.map((date) =>
+      exercises
+        .filter((ex) => ex.date === date)
+        .reduce((sum, ex) => sum + estimateStepsFromExercise(ex), 0)
+    ),
+    sleep_hours: last7Days.map((date) =>
+      sleepLogs
+        .filter((log) => log.date === date)
+        .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0)
+    ),
+    calories_burned: last7Days.map((date) =>
+      exercises
+        .filter((ex) => ex.date === date)
+        .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0)
+    ),
+    water_intake: last7Days.map((date) =>
+      meals
+        .filter((meal) => meal.date === date && meal.meal_type === "drink" && meal.water_amount)
+        .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0)
+    ),
   };
 
   return (
     <div className="container py-4 custom-wrap">
       <h2 className="mb-4 text-center custom-heading">
-        Welcome back, {dashboardData.user?.first_name || "User"}!
+        Welcome back, {dashboardData.user.first_name || "User"}!
       </h2>
       <div className="row g-4">
         <div className="col-md-6">
-          <ActivitySummary data={{ ...activitySummaryWithWater, calories_burned: todaysCaloriesBurned, sleep: todaySleep.toFixed(1) }} />
+          <ActivitySummary
+            data={{
+              ...activitySummaryWithWater,
+              calories_burned: todaysCaloriesBurned,
+              sleep: todaySleep.toFixed(1),
+            }}
+          />
         </div>
         <div className="col-md-6">
           <WorkoutNutrition data={dashboardData.workout_nutrition} />
@@ -128,7 +106,12 @@ const UserDash = () => {
           <DailyGoals data={dashboardData.daily_goals} />
         </div>
         <div className="col-md-6">
-          <ProgressAnalytics data={analytics} />
+          <ProgressAnalytics
+            data={{
+              ...dashboardData.analytics,
+              weekly_trends: weeklyTrends,
+            }}
+          />
         </div>
         <div className="col-md-12">
           <ChallengesMotivation data={dashboardData.challenges} />
