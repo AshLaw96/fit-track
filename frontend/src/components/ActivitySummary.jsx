@@ -29,8 +29,26 @@ const ActivitySummary = ({ data }) => {
           "0 hrs"
         )}
       </div>
-      <div>👣 Steps: {steps}</div>
-      <div>🔥 Calories Burned: {calories_burned}</div>
+      <div>
+        👣 Steps:{} 
+          {steps ? (
+            <Link to="/exercises" className="text-decoration-underline">
+              {steps}
+            </Link>
+          ) : (
+            0
+          )}
+      </div>
+      <div>
+        🔥 Calories Burned:{}
+          {calories_burned ? (
+            <Link to="/exercises" className="text-decoration-underline">
+              {calories_burned}
+            </Link>
+          ) : (
+            0
+          )}
+      </div>
       <div>⚖️ Weight: {weight} kg</div>
       <div>
         💧 Water Intake:{" "}
