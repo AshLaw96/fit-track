@@ -12,6 +12,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   const [exercises, setExercises] = useState([]);
   const [meals, setMeals] = useState([]);
   const [sleepLogs, setSleepLogs] = useState([]);
+  const [profile, setProfile] = useState({ username: "User" });
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -29,6 +30,10 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   }, []);
 
   useEffect(() => {
+    const storedProfile = localStorage.getItem("userProfile");
+    if (storedProfile) {
+      setProfile(JSON.parse(storedProfile));
+    }
     fetchLogs();
   }, [fetchLogs]);
 
@@ -87,7 +92,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   return (
     <div className="container py-4 custom-wrap">
       <h2 className="mb-4 text-center custom-heading">
-        Welcome back, {dashboardData.user.first_name || "User"}!
+        Welcome back, {profile.username || "User"}!
       </h2>
       <div className="row g-4">
         <div className="col-md-6">

@@ -2,7 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ActivitySummary = ({ data }) => {
-  const { sleep, steps, calories_burned, weight, water_intake } = data || {};
+  const profile = JSON.parse(localStorage.getItem("userProfile")) || {};
+  const { sleep, steps, calories_burned, water_intake } = data || {};
+
+  // pull directly from profile
+  const weight = profile.weight;
 
   const hasData =
     sleep || steps || calories_burned || weight || water_intake;
@@ -49,7 +53,15 @@ const ActivitySummary = ({ data }) => {
             0
           )}
       </div>
-      <div>⚖️ Weight: {weight} kg</div>
+      <div>⚖️ Weight:{} 
+        {weight ? ( 
+          <Link to="/profile" className="text-decoration-underline">
+            {weight} kg
+          </Link>
+        ) : (
+          0 
+          )} kg
+      </div>
       <div>
         💧 Water Intake:{" "}
         {water_intake ? (
