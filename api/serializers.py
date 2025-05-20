@@ -16,10 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for the CustomUser model.
     """
-    profile_image = serializers.ImageField(
-        use_url=True, required=False, allow_null=True
-    )
-
     class Meta:
         model = CustomUser
         fields = [
@@ -29,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
             'dob',
             'height_cm',
             'weight_kg',
-            'profile_image'
+            'profile_image_url'
         ]
         read_only_fields = ['id']
 

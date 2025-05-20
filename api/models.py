@@ -14,9 +14,7 @@ class CustomUser(AbstractUser):
     dob = models.DateField(null=True, blank=True)
     height_cm = models.FloatField(null=True, blank=True)
     weight_kg = models.FloatField(null=True, blank=True)
-    profile_image = models.ImageField(
-        upload_to='profile/', null=True, blank=True
-    )
+    profile_image_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.username
