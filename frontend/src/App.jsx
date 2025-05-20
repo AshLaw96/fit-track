@@ -8,19 +8,21 @@ import Dashboard from "./components/Dashboard";
 import ExerciseLogPage from "./components/ExerciseLogPage";
 import MealLogPage from "./components/MealLogPage";
 import SleepLogPage from "./components/SleepLogPage";
+import UserProfile from "./components/UserProfile";
 import AuthPage from "./components/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
 import PasswordResetForm from "./components/PasswordResetForm";
 import PasswordResetConfirmForm from "./components/PasswordResetConfirmForm";
 import api from "./utils/api";
+import { useAuth } from "./contexts/AuthContext";
 
 const App = () => {
+  const { isAuthenticated } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
 
   const fetchAllData = useCallback(async () => {
     try {
       const res = await api.get("/dashboard/");
-      console.log("Fetched dashboard data:", res.data); // inside try block
       setDashboardData(res.data);
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
@@ -28,8 +30,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    fetchAllData();
-  }, [fetchAllData]);
+    if (isAuthenticated) {
+      fetchAllData();
+    }
+  }, [isAuthenticated, fetchAllData]);
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -53,6 +57,10 @@ const App = () => {
           <Route
             path="/sleep"
             element={<SleepLogPage onDataChanged={fetchAllData} />}
+          />
+          <Route
+            path="/profile"
+            element={<UserProfile onDataChanged={fetchAllData} />}
           />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
