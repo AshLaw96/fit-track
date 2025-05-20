@@ -3,12 +3,15 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now
 from datetime import timedelta, datetime
 from collections import defaultdict
 from rest_framework import generics, permissions, viewsets, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
@@ -737,7 +740,7 @@ class DashboardView(APIView):
                 "avg_sleep_hours": round(avg_sleep, 2),
                 "avg_water_l": round(avg_water, 2),
                 "weight": (
-                    daily_logs.latest("date").weight
+                    daily_logs.latest("date").weight_kg
                     if daily_logs.exists() else None
                 ),
                 "steps": today_steps + today_estimated_steps,
@@ -781,3 +784,31 @@ class DashboardView(APIView):
                 "joined": challenges_joined,
             }
         })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_profile_image(request):
+    """
+    Upload a profile image to Cloudinary.
+    """
+    file = request.FILES.get('image')
+    if not file:
+        return Response(
+            {'error': 'No image file provided'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Save directly to Cloudinary
+    path = f"profile_pics/{file.name}"
+    saved_path = default_storage.save(path, ContentFile(file.read()))
+    cloudinary_url = default_storage.url(saved_path)
+
+    # Save URL to the authenticated user
+    user = request.user
+    user.profile_image_url = cloudinary_url
+    user.save()
+
+    print("DEBUG: DEFAULT STORAGE:", default_storage.__class__.__name__)
+
+    return Response({'image_url': cloudinary_url}, status=status.HTTP_200_OK)

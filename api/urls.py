@@ -14,7 +14,7 @@ from .views import (
     WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
     CustomPasswordResetView,
     CustomPasswordResetConfirmView,
-    CustomTokenObtainPairView, DashboardView
+    CustomTokenObtainPairView, DashboardView, upload_profile_image
 )
 
 #  Create a router and register viewset with it
@@ -170,5 +170,11 @@ urlpatterns = [
         'dashboard/',
         DashboardView.as_view(),
         name='dashboard',
+    ),
+    # Profile Image Upload
+    path(
+        'upload_profile_image/',
+        upload_profile_image,
+        name='upload_profile_image',
     ),
 ]
