@@ -405,20 +405,22 @@ class ChallengeSerializer(serializers.ModelSerializer):
 class UserChallengeSerializer(serializers.ModelSerializer):
     """
     Serializer for the UserChallenge model.
+    Includes challenge title and target value for frontend visualization.
     """
+    title = serializers.CharField(source='challenge.title', read_only=True)
+    target = serializers.FloatField(
+        source='challenge.target_value',
+        read_only=True
+    )
+    metric = serializers.CharField(source='challenge.metric', read_only=True)
+
     class Meta:
         model = UserChallenge
         fields = [
-            'user', 'challenge', 'progress', 'completed'
+            'user', 'challenge', 'progress', 'completed',
+            'title', 'target', 'metric',
         ]
         read_only_fields = ['user']
-
-    def validate_progress(self, value):
-        if value < 0:
-            raise serializers.ValidationError(
-                "Progress must be a non-negative number."
-            )
-        return value
 
 
 class UserReportSerializer(serializers.ModelSerializer):
