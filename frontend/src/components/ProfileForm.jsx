@@ -1,7 +1,7 @@
 import React from "react";
 
 const ProfileForm = ({ profile, onChange }) => (
-  <form className="card p-3 mb-3">
+  <div className="card p-3 mb-3">
     <h5 className="custom-heading text-center mb-3">Your Info</h5>
     <div className="mb-3">
       <input
@@ -36,21 +36,21 @@ const ProfileForm = ({ profile, onChange }) => (
       <input
         className="form-control"
         type="number"
-        name="height"
+        name="height_cm"
         placeholder="Height (cm)"
-        value={profile.height}
+        value={profile.height_cm}
         onChange={onChange}
       />
       <input
         className="form-control"
         type="number"
-        name="weight"
+        name="weight_kg"
         placeholder="Weight (kg)"
-        value={profile.weight}
+        value={profile.weight_kg}
         onChange={onChange}
       />
     </div>
-  </form>
+  </div>
 );
 
 export default ProfileForm;

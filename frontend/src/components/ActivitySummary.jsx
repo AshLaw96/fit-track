@@ -1,12 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ActivitySummary = ({ data }) => {
-  const profile = JSON.parse(localStorage.getItem("userProfile")) || {};
+const ActivitySummary = ({ data, profile }) => {
   const { sleep, steps, calories_burned, water_intake } = data || {};
 
   // pull directly from profile
-  const weight = profile.weight;
+  const weight = profile?.weight_kg;
 
   const hasData =
     sleep || steps || calories_burned || weight || water_intake;
