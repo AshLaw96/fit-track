@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'django_filters',
     'rest_framework_simplejwt',
-    'api',
+    'api.apps.ApiConfig',
 ]
 
 # Enable JWT authentication

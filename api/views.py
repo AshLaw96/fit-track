@@ -3,8 +3,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now
@@ -790,8 +788,11 @@ class DashboardView(APIView):
 @permission_classes([IsAuthenticated])
 def upload_profile_image(request):
     """
-    Upload a profile image to Cloudinary.
+    Upload a profile image to Cloudinary and assign it to the current user.
     """
+    from django.core.files.storage import default_storage
+    from django.core.files.base import ContentFile
+
     file = request.FILES.get('image')
     if not file:
         return Response(
@@ -800,15 +801,12 @@ def upload_profile_image(request):
         )
 
     # Save directly to Cloudinary
-    path = f"profile_pics/{file.name}"
+    path = f"profile_pics/user_{request.user.id}_{file.name}"
     saved_path = default_storage.save(path, ContentFile(file.read()))
     cloudinary_url = default_storage.url(saved_path)
 
-    # Save URL to the authenticated user
-    user = request.user
-    user.profile_image_url = cloudinary_url
-    user.save()
-
-    print("DEBUG: DEFAULT STORAGE:", default_storage.__class__.__name__)
+    # Assign the image URL only to the current authenticated user
+    request.user.profile_image_url = cloudinary_url
+    request.user.save()
 
     return Response({'image_url': cloudinary_url}, status=status.HTTP_200_OK)
