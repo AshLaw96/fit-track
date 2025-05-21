@@ -30,10 +30,16 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   }, []);
 
   useEffect(() => {
-    const storedProfile = localStorage.getItem("userProfile");
-    if (storedProfile) {
-      setProfile(JSON.parse(storedProfile));
-    }
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/profile/");
+        setProfile(res.data);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    };
+
+    fetchProfile();
     fetchLogs();
   }, [fetchLogs]);
 
@@ -102,6 +108,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
               calories_burned: todaysCaloriesBurned,
               sleep: todaySleep.toFixed(1),
             }}
+            profile={profile}
           />
         </div>
         <div className="col-md-6">
