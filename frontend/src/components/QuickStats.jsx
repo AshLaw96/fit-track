@@ -1,7 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import api from "../utils/api"; // or your API utility
 
 const QuickStats = ({ activeCount, achievements }) => {
+  const [challengeProgress, setChallengeProgress] = useState([]);
+
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const res = await api.get("/user_challenges/");
+        const formatted = res.data.map((uc) => ({
+          name: uc.title,
+          progress: uc.progress,
+          target: uc.target,
+          percent: Math.min((uc.progress / uc.target) * 100, 100),
+        }));
+        setChallengeProgress(formatted);
+      } catch (err) {
+        console.error("Error fetching challenge data:", err);
+      }
+    };
+
+    fetchChallenges();
+  }, []);
+
   const renderStars = (count) =>
     Array.from({ length: 3 }).map((_, i) =>
       i < count ? <FaStar key={i} className="text-warning" /> : <FaRegStar key={i} className="text-muted" />
@@ -15,19 +38,29 @@ const QuickStats = ({ activeCount, achievements }) => {
         <h3 className="fw-bold text-primary">{activeCount}</h3>
       </div>
 
-      <div className="d-flex justify-content-center align-items-end gap-2 mb-4" style={{ height: "100px" }}>
-        {[60, 30, 80, 100, 50].map((h, i) => (
-          <div key={i} className="bg-secondary rounded" style={{ width: "10px", height: `${h}%` }}></div>
-        ))}
-      </div>
+      {/* Challenge Progress Bar Chart */}
+      {challengeProgress.length > 0 && (
+        <>
+          <h6 className="text-center fw-bold">Challenge Progress</h6>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={challengeProgress}>
+              <XAxis dataKey="name" />
+              <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+              <Tooltip formatter={(val) => `${val.toFixed(1)}%`} />
+              <Bar dataKey="percent" fill="#0d6efd" />
+            </BarChart>
+          </ResponsiveContainer>
+        </>
+      )}
 
-      <div>
+      {/* Achievements */}
+      <div className="mt-4">
         <h6 className="text-center fw-bold">Achievements</h6>
         <div className="d-flex justify-content-around mt-2">
           {["Sleep", "Diet", "Fitness"].map((label) => (
             <div key={label} className="text-center">
               <p className="mb-1">{label}</p>
-              <div>{renderStars(achievements[label.toLowerCase()])}</div>
+              <div>{renderStars(achievements[label.toLowerCase()] || 0)}</div>
             </div>
           ))}
         </div>
