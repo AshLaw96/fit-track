@@ -502,6 +502,57 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
         return UserChallenge.objects.filter(user=self.request.user)
 
 
+# --- Public Challenge List View ---
+class PublicChallengeListView(generics.ListAPIView):
+    """
+    List all challenges not yet joined by the user (public feed).
+    """
+    serializer_class = ChallengeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        joined_ids = (
+            UserChallenge.objects
+            .filter(user=user)
+            .values_list('challenge_id', flat=True)
+        )
+        return (
+            Challenge.objects
+            # only public challenges
+            .filter(is_public=True)
+            .exclude(id__in=joined_ids)
+            .exclude(owner=user)
+        )
+
+
+# --- Challenge Leaderboard View ---
+class ChallengeLeaderboardView(generics.ListAPIView):
+    serializer_class = UserChallengeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        challenge_id = self.kwargs["challenge_id"]
+        return (
+            UserChallenge.objects
+            .filter(challenge__id=challenge_id)
+            .order_by("-progress")
+        )
+
+
+class CurrentUserChallengeView(generics.RetrieveAPIView):
+    serializer_class = UserChallengeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return (
+            UserChallenge.objects
+            .filter(user=self.request.user)
+            .order_by('-challenge__start_date')
+            .first()
+        )
+
+
 # --- User Report Views ---
 class UserReportListView(generics.ListCreateAPIView):
     """

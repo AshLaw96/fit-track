@@ -136,6 +136,24 @@ urlpatterns = [
         UserChallengeDetailView.as_view(),
         name='user_challenge_detail',
     ),
+    # Public Challenges
+    path(
+        'challenges/public/',
+        PublicChallengeListView.as_view(),
+        name='public_challenge_list',
+    ),
+    # Current User Challenge
+    path(
+        'user_challenges/current/',
+        CurrentUserChallengeView.as_view(),
+        name='user_current_challenge',
+    ),
+    # Challenge Leaderboard
+    path(
+        'user_challenges/leaderboard/<int:challenge_id>/',
+        ChallengeLeaderboardView.as_view(),
+        name='challenge_leaderboard',
+    ),
     # User Reports
     path(
         'user_reports/',
