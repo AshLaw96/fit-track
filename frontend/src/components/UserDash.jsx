@@ -13,6 +13,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   const [meals, setMeals] = useState([]);
   const [sleepLogs, setSleepLogs] = useState([]);
   const [profile, setProfile] = useState({ username: "User" });
+  const [challengeData, setChallengeData] = useState({});
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -42,6 +43,19 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
     fetchProfile();
     fetchLogs();
   }, [fetchLogs]);
+
+  const fetchChallengeData = async () => {
+    try {
+      const res = await api.get("/challenges/");
+      setChallengeData(res.data);
+    } catch (err) {
+      console.error("Failed to fetch challenges:", err);
+    }
+  }
+
+  useEffect(() => {
+    fetchChallengeData();
+  }, []);
 
   if (!dashboardData || !exercises || !meals || !sleepLogs) {
     return <div className="text-center mt-5">Loading...</div>;
@@ -126,7 +140,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
           />
         </div>
         <div className="col-md-12">
-          <ChallengesMotivation data={dashboardData.challenges} />
+          <ChallengesMotivation data={challengeData} refreshData={fetchChallengeData} />
         </div>
       </div>
     </div>
