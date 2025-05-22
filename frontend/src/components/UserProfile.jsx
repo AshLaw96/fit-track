@@ -4,10 +4,13 @@ import ProfileImage from "./ProfileImage";
 import ProfileForm from "./ProfileForm";
 import QuickStats from "./QuickStats";
 import DeleteAccount from "./DeleteAccount";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activity, setActivity] = useState(null);
 
   // Fetch profile on mount
   useEffect(() => {
@@ -25,6 +28,7 @@ const UserProfile = () => {
         setProfile(sanitized);
       } catch (err) {
         console.error("Failed to load profile:", err);
+        toast.error("Failed to load profile.");
       } finally {
         setLoading(false);
       }
@@ -32,11 +36,29 @@ const UserProfile = () => {
     fetchProfile();
   }, []);
 
+  // Fetch activity streak data
+useEffect(() => {
+  const fetchActivity = async () => {
+    try {
+      const res = await api.get("/activity/");
+      console.log("Fetched activity:", res.data);
+      setActivity(res.data);
+    } catch (err) {
+      console.error("Failed to load user activity:", err);
+      toast.error("Could not load activity data.");
+    }
+  };
+
+  fetchActivity();
+}, []);
+
+  // Handle input change in the form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -47,10 +69,10 @@ const UserProfile = () => {
       };
 
       await api.patch("/profile/", payload);
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
     } catch (err) {
       console.error("Failed to update profile:", err);
-      alert("Profile update failed. Please check your input.");
+      toast.error("Profile update failed. Please check your input.");
     }
   };
 
@@ -62,15 +84,20 @@ const UserProfile = () => {
     fitness: 2,
   };
 
-  const activeCount = 20;
+  const activeCount = activity?.streak_count || 0;
+  console.log("Active count (streak):", activity?.streak_count);
+
 
   return (
     <div className="container py-4 custom-wrap">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h3 className="text-center custom-heading">Your Profile</h3>
       <ProfileImage />
       <form onSubmit={handleSubmit}>
         <ProfileForm profile={profile} onChange={handleChange} />
-        <button type="submit" className="btn btn-primary w-100">Save Changes</button>
+        <button type="submit" className="btn btn-primary w-100">
+          Save Changes
+        </button>
       </form>
       <QuickStats activeCount={activeCount} achievements={achievements} />
       <DeleteAccount />
