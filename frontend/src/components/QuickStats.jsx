@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import api from "../utils/api"; // or your API utility
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import api from "../utils/api";
 
 const QuickStats = ({ activeCount, achievements }) => {
   const [challengeProgress, setChallengeProgress] = useState([]);
@@ -10,12 +10,15 @@ const QuickStats = ({ activeCount, achievements }) => {
     const fetchChallenges = async () => {
       try {
         const res = await api.get("/user_challenges/");
-        const formatted = res.data.map((uc) => ({
+        const formatted = res.data.results.map((uc) => {
+        const percent = uc.target > 0 ? Math.min((uc.progress / uc.target) * 100, 100) : 0;
+        return {
           name: uc.title,
           progress: uc.progress,
           target: uc.target,
-          percent: Math.min((uc.progress / uc.target) * 100, 100),
-        }));
+          percent,
+        };
+      });
         setChallengeProgress(formatted);
       } catch (err) {
         console.error("Error fetching challenge data:", err);
@@ -47,7 +50,8 @@ const QuickStats = ({ activeCount, achievements }) => {
               <XAxis dataKey="name" />
               <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
               <Tooltip formatter={(val) => `${val.toFixed(1)}%`} />
-              <Bar dataKey="percent" fill="#0d6efd" />
+              <Legend verticalAlign="top" height={36} />
+              <Bar dataKey="percent" fill="#0d6efd" name="Completion %" />
             </BarChart>
           </ResponsiveContainer>
         </>
