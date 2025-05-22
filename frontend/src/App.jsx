@@ -16,6 +16,8 @@ import PasswordResetConfirmForm from "./components/PasswordResetConfirmForm";
 import api from "./utils/api";
 import { useAuth } from "./contexts/AuthContext";
 import NotFound from "./components/NotFound";
+import Goodbye from "./components/Goodbye";
+
 
 const App = () => {
   const { isAuthenticated } = useAuth();

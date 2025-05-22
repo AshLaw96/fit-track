@@ -177,4 +177,10 @@ urlpatterns = [
         upload_profile_image,
         name='upload_profile_image',
     ),
+    # Delete Account
+    path(
+        'delete_account/',
+        DeleteAccountView.as_view(),
+        name='delete_account',
+    ),
 ]

@@ -831,3 +831,17 @@ def custom_500_view(request):
         status=status.HTTP_500_INTERNAL_SERVER_ERROR
     )
 
+
+class DeleteAccountView(APIView):
+    """
+    API view to delete the user's account.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response(
+            {'message': 'Account deleted successfully'},
+            status=status.HTTP_204_NO_CONTENT
+        )
