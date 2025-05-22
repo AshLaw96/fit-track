@@ -345,6 +345,7 @@ class Challenge(models.Model):
     target_value = models.FloatField()
     start_date = models.DateField()
     end_date = models.DateField()
+    is_public = models.BooleanField(default=False)
 
     def clean(self):
         if self.start_date > self.end_date:

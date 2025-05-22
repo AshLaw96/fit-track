@@ -398,7 +398,7 @@ class ChallengeSerializer(serializers.ModelSerializer):
         model = Challenge
         fields = [
             'id', 'owner', 'title', 'description', 'metric', 'target_value',
-            'start_date', 'end_date'
+            'start_date', 'end_date', 'is_public'
         ]
 
 

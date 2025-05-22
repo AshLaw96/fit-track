@@ -457,8 +457,13 @@ class ChallengeListView(generics.ListCreateAPIView):
         return Challenge.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        # Set the owner to the currently authenticated user
-        serializer.save(owner=self.request.user)
+        # Create challenge
+        challenge = serializer.save(owner=self.request.user)
+        # Auto-join it
+        UserChallenge.objects.get_or_create(
+            user=self.request.user,
+            challenge=challenge
+        )
 
 
 class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -482,12 +487,15 @@ class UserChallengeListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Filter user challenges for the requesting user
         return UserChallenge.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        # Set the user to the currently authenticated user
-        serializer.save(user=self.request.user)
+        try:
+            serializer.save(user=self.request.user)
+        except IntegrityError:
+            raise serializers.ValidationError(
+                "You have already joined this challenge."
+            )
 
 
 class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
