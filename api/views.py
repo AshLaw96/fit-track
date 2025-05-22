@@ -1,22 +1,24 @@
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now
-from datetime import timedelta, datetime
-from collections import defaultdict
-from rest_framework import generics, permissions, viewsets, status
+from rest_framework import generics, permissions, viewsets, status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
-import os
+from collections import defaultdict
+from datetime import timedelta, datetime
 import logging
+import os
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
@@ -302,34 +304,16 @@ class AchievementDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Achievement.objects.filter(user=self.request.user)
 
 
-# --- UserActivity Views ---
-class UserActivityListCreateView(generics.ListCreateAPIView):
+# --- UserActivity View ---
+class UserActivityDetailView(generics.RetrieveUpdateAPIView):
     """
-    API view to list and create user activities.
-    """
-    serializer_class = UserActivitySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = UserActivity.objects.none()
-
-    def get_queryset(self):
-        return UserActivity.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class UserActivityDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API view to retrieve, update, or delete a user activity.
+    API view to retrieve or update a user's activity.
     """
     serializer_class = UserActivitySerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    queryset = UserActivity.objects.none()
-
-    def get_queryset(self):
-        return UserActivity.objects.filter(user=self.request.user)
+    def get_object(self):
+        return get_object_or_404(UserActivity, user=self.request.user)
 
 
 # --- Goal Progress Views ---

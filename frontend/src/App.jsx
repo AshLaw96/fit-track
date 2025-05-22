@@ -75,6 +75,9 @@ const App = () => {
             path="*"
             element={<NotFound />}
           />
+          <Route
+            path="/goodbye"
+            element={<Goodbye />}
           />
         </Routes>
       </main>

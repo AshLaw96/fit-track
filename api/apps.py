@@ -9,6 +9,10 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
+
+        # Import signals to ensure they are registered
+        import api.signals  # noqa: F401
+
         # Force correct storage wrapper
         module_path, class_name = settings.DEFAULT_FILE_STORAGE.rsplit('.', 1)
         storage_class = getattr(import_module(module_path), class_name)

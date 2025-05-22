@@ -5,16 +5,16 @@ from .views import (
     UserProfileView, GoalListView, GoalDetailView, ExerciseViewSet,
     MealListCreateView, MealDetailView, SleepLogListCreateView,
     SleepLogDetailView, AchievementListCreateView, AchievementDetailView,
-    UserActivityListCreateView, UserActivityDetailView,
-    GoalProgressListCreateView, GoalProgressDetailView, UserStreakView,
-    DailyLogDetailView, DailyLogListView, NutritionLogListView,
-    NutritionLogDetailView, ChallengeListView, ChallengeDetailView,
-    UserChallengeListView, UserChallengeDetailView, UserReportListView,
-    UserReportDetailView, FriendListView, FriendDetailView,
-    WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
-    CustomPasswordResetView,
-    CustomPasswordResetConfirmView,
-    CustomTokenObtainPairView, DashboardView, upload_profile_image
+    UserActivityDetailView, GoalProgressListCreateView,
+    GoalProgressDetailView, UserStreakView, DailyLogDetailView,
+    DailyLogListView, NutritionLogListView, NutritionLogDetailView,
+    ChallengeListView, ChallengeDetailView, UserChallengeListView,
+    UserChallengeDetailView, UserReportListView, UserReportDetailView,
+    FriendListView, FriendDetailView, WorkoutPlanListView,
+    WorkoutPlanDetailView, RegisterView, CustomPasswordResetView,
+    CustomPasswordResetConfirmView, CustomTokenObtainPairView,
+    DashboardView, upload_profile_image, PublicChallengeListView,
+    ChallengeLeaderboardView, CurrentUserChallengeView, DeleteAccountView
 )
 
 #  Create a router and register viewset with it
@@ -75,13 +75,8 @@ urlpatterns = [
     # User Activity
     path(
         'activity/',
-        UserActivityListCreateView.as_view(),
-        name='activity_list_create',
-    ),
-    path(
-        'activity/<int:pk>/',
         UserActivityDetailView.as_view(),
-        name='activity_detail',
+        name='user_activity',
     ),
     # Goal Progress
     path(
