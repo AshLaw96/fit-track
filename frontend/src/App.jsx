@@ -15,6 +15,7 @@ import PasswordResetForm from "./components/PasswordResetForm";
 import PasswordResetConfirmForm from "./components/PasswordResetConfirmForm";
 import api from "./utils/api";
 import { useAuth } from "./contexts/AuthContext";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   const { isAuthenticated } = useAuth();
@@ -70,7 +71,8 @@ const App = () => {
           />
           <Route
             path="*"
-            element={<div className="text-center p-4">404 - Page Not Found</div>}
+            element={<NotFound />}
+          />
           />
         </Routes>
       </main>

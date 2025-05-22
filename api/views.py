@@ -810,3 +810,24 @@ def upload_profile_image(request):
     request.user.save()
 
     return Response({'image_url': cloudinary_url}, status=status.HTTP_200_OK)
+
+
+def custom_404_view(request, exception):
+    """
+    Custom 404 error view.
+    """
+    return Response(
+        {'error': 'Resource not found'},
+        status=status.HTTP_404_NOT_FOUND
+    )
+
+
+def custom_500_view(request):
+    """
+    Custom 500 error view.
+    """
+    return Response(
+        {'error': 'Internal server error'},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+
