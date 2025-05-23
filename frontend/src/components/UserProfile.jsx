@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activity, setActivity] = useState(null);
 
   // Fetch profile on mount
   useEffect(() => {
@@ -35,22 +34,6 @@ const UserProfile = () => {
     };
     fetchProfile();
   }, []);
-
-  // Fetch activity streak data
-useEffect(() => {
-  const fetchActivity = async () => {
-    try {
-      const res = await api.get("/activity/");
-      console.log("Fetched activity:", res.data);
-      setActivity(res.data);
-    } catch (err) {
-      console.error("Failed to load user activity:", err);
-      toast.error("Could not load activity data.");
-    }
-  };
-
-  fetchActivity();
-}, []);
 
   // Handle input change in the form
   const handleChange = (e) => {
@@ -84,10 +67,6 @@ useEffect(() => {
     fitness: 2,
   };
 
-  const activeCount = activity?.streak_count || 0;
-  console.log("Active count (streak):", activity?.streak_count);
-
-
   return (
     <div className="container py-4 custom-wrap">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -99,7 +78,7 @@ useEffect(() => {
           Save Changes
         </button>
       </form>
-      <QuickStats activeCount={activeCount} achievements={achievements} />
+      <QuickStats achievements={achievements} />
       <DeleteAccount />
     </div>
   );

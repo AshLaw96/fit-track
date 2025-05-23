@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useNotifications } from "../contexts/NotificationContext";
+import { triggerNotification } from "../utils/NotificationTriggers";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import api from "../utils/api";
 
-const QuickStats = ({ activeCount, achievements }) => {
+const QuickStats = ({ achievements }) => {
   const [challengeProgress, setChallengeProgress] = useState([]);
+  const [activeCount, setActiveCount] = useState(0);
+  const { addNotification } = useNotifications();
+  const notifiedRef = useRef(false);
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -27,6 +32,26 @@ const QuickStats = ({ activeCount, achievements }) => {
 
     fetchChallenges();
   }, []);
+
+  useEffect(() => {
+    const fetchActivity = async () => {
+      try {
+        const res = await api.get("/activity/streak/");
+        const streak = res.data.streak_count || 0;
+        setActiveCount(streak);
+
+        if (streak >= 7 && !notifiedRef.current) {
+          triggerNotification(addNotification, "streak", { count: streak });
+          notifiedRef.current = true;
+        }
+      } catch (err) {
+        console.error("Failed to fetch activity streak:", err);
+        setActiveCount(0);
+      }
+    };
+
+    fetchActivity();
+  }, [addNotification]);
 
   const renderStars = (count) =>
     Array.from({ length: 3 }).map((_, i) =>
