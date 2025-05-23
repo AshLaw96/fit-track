@@ -274,6 +274,21 @@ class SleepLogDetailView(generics.RetrieveUpdateDestroyAPIView):
         return SleepLog.objects.filter(user=self.request.user)
 
 
+class SleepScheduleView(generics.RetrieveUpdateAPIView):
+    """
+    API view to retrieve and update sleep schedule.
+    """
+    serializer_class = SleepScheduleSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        obj, _ = SleepSchedule.objects.get_or_create(user=self.request.user)
+        return obj
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 # --- Achievement Views ---
 class AchievementListCreateView(generics.ListCreateAPIView):
     """
@@ -304,7 +319,16 @@ class AchievementDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Achievement.objects.filter(user=self.request.user)
 
 
-# --- UserActivity View ---
+# --- User activity streak View ---
+class UserActivityStreakView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        activity, _ = UserActivity.objects.get_or_create(user=request.user)
+        calculate_user_streak(activity)
+        return Response({"streak_count": activity.streak_count})
+
+
 class UserActivityDetailView(generics.RetrieveUpdateAPIView):
     """
     API view to retrieve or update a user's activity.
@@ -888,3 +912,25 @@ class DeleteAccountView(APIView):
             {'message': 'Account deleted successfully'},
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+class NotificationListView(generics.ListAPIView):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return (
+            Notification.objects
+            .filter(user=self.request.user, read=False)
+            .order_by('-timestamp')
+        )
+
+
+class MarkAllNotificationsRead(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        Notification.objects.filter(
+            user=request.user, read=False
+        ).update(read=True)
+        return Response({"status": "success"})
