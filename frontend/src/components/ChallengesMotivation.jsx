@@ -118,7 +118,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             <strong>Current Challenge:</strong>
             {current ? (
               <>
-                <p>{current.title}</p>
+                <p>{current.challenge?.title || "Unknown"}</p>
                 <div className="progress">
                   <div
                     className="progress-bar"
@@ -141,7 +141,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <ul>
                 {leaderboard.map((entry, i) => (
                   <li key={i}>
-                    {entry.user}: {(entry.progress / entry.target * 100).toFixed(1)}%
+                    {entry.user}:{" "}
+                    {entry.target > 0
+                      ? `${((entry.progress / entry.target) * 100).toFixed(1)}%`
+                      : "N/A"}
                   </li>
                 ))}
               </ul>
