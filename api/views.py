@@ -22,7 +22,7 @@ import os
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
-    UserReport, Friend, WorkoutPlan
+    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification
 )
 from .serializers import (
     UserSerializer, GoalSerializer, ExerciseSerializer, MealSerializer,
@@ -30,10 +30,13 @@ from .serializers import (
     GoalProgressSerializer, UserStreakSerializer, DailyLogSerializer,
     NutritionLogSerializer, ChallengeSerializer, UserChallengeSerializer,
     UserReportSerializer, FriendSerializer, WorkoutPlanSerializer,
-    RegisterSerializer,
-    CustomTokenObtainPairSerializer,
-    GoalWithProgressSerializer
+    RegisterSerializer, CustomTokenObtainPairSerializer,
+    GoalWithProgressSerializer, SleepScheduleSerializer,
+    NotificationSerializer
 )
+from .utils.activity import calculate_user_streak
+from .utils.notifications import send_notification
+from .utils.leaderboard import check_and_notify_leaderboard_change
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -352,7 +355,28 @@ class GoalProgressListCreateView(generics.ListCreateAPIView):
         return GoalProgress.objects.filter(goal__user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save()
+        progress = serializer.save()
+        goal = progress.goal
+
+        # Recalculate total progress
+        total_progress = sum(
+            entry.progress_value for entry in goal.progress_entries.all()
+        )
+        goal.current_value = total_progress
+
+        # If not already achieved and now meets/exceeds target
+        if goal.status != 'achieved' and total_progress >= goal.target_value:
+            goal.status = 'achieved'
+            goal.save()
+
+            send_notification(
+                user=goal.user,
+                title="Daily Goal Achieved 🎯",
+                message="You've completed today's goal!",
+                type="goal"
+            )
+        else:
+            goal.save()
 
 
 # Retrieve, update or delete a specific progress entry
@@ -516,6 +540,14 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         # Filter user challenges for the requesting user
         return UserChallenge.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        # After saving progress, check leaderboard rank
+        check_and_notify_leaderboard_change(
+            instance.challenge_id,
+            self.request.user
+        )
 
 
 # --- Public Challenge List View ---
@@ -911,6 +943,35 @@ class DeleteAccountView(APIView):
         return Response(
             {'message': 'Account deleted successfully'},
             status=status.HTTP_204_NO_CONTENT
+        )
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response(
+                {'detail': 'Both current and new password are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.check_password(current_password):
+            return Response(
+                {'detail': 'Current password is incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+        return Response(
+            {'detail': 'Password updated successfully.'},
+            status=status.HTTP_200_OK
         )
 
 
