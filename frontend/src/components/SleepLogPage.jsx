@@ -84,7 +84,8 @@ const SleepLogPage = ({ onDataChanged }) => {
       setShowModal(false);
 
       await fetchLogs();
-      onDataChanged?.(); // ✅ Notifies dashboard to refresh if provided
+      // Notifies dashboard to refresh if provided
+      onDataChanged?.();
     } catch (err) {
       console.error("Error saving sleep log:", err.response?.data || err);
 

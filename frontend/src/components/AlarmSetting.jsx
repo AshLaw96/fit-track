@@ -1,9 +1,21 @@
 import React from "react";
+import api from "../utils/api";
 
 const AlarmSetting = ({ alarm, setAlarm }) => {
-  const handleChange = (e) => {
-    setAlarm({ ...alarm, [e.target.name]: e.target.value });
+  const handleChange = async (e) => {
+    const newAlarm = { ...alarm, [e.target.name]: e.target.value };
+    setAlarm(newAlarm);
+
+    try {
+      await api.put("/sleep/schedule/", {
+        target_bedtime: newAlarm.sleep,
+        target_wake_time: newAlarm.wake,
+      });
+    } catch (err) {
+      console.error("Failed to save sleep schedule:", err);
+    }
   };
+
 
   return (
     <div className="card p-3 shadow-sm mt-3">

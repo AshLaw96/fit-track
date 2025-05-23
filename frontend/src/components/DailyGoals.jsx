@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect, useRef, useMemo } from "react";
+import { useNotifications } from "../contexts/NotificationContext";
+import { triggerNotification } from "../utils/NotificationTriggers";
 
 const DailyGoals = ({ data }) => {
-  const daily = data?.daily || {};
+  const daily = useMemo(() => data?.daily || {}, [data]);
   const goals = data?.goals || [];
+  const { addNotification } = useNotifications();
+  const notifiedRef = useRef(false);
 
   const hasDailyGoals = Object.keys(daily).length > 0;
+
+  useEffect(() => {
+    if (!hasDailyGoals || notifiedRef.current) return;
+
+    const allMet = Object.values(daily).every(({ goal, current }) => current >= goal);
+    if (allMet) {
+      triggerNotification(addNotification, "daily-goal");
+      notifiedRef.current = true;
+    }
+  }, [daily, hasDailyGoals, addNotification]);
 
   return (
     <div className="card p-3 shadow-sm">
