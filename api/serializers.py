@@ -8,7 +8,7 @@ from .models import (
     SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog,
     NutritionLog, Challenge, UserChallenge,
-    UserReport, Friend, WorkoutPlan
+    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification
 )
 
 
@@ -174,6 +174,13 @@ class SleepLogSerializer(serializers.ModelSerializer):
         if value not in [1, 2, 3, 4]:
             raise serializers.ValidationError("Invalid quality rating.")
         return value
+
+
+class SleepScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SleepSchedule
+        fields = '__all__'
+        read_only_fields = ['user']
 
 
 class AchievementSerializer(serializers.ModelSerializer):
@@ -544,3 +551,12 @@ class GoalWithProgressSerializer(serializers.ModelSerializer):
         if obj.target_value > 0:
             return round((obj.current_value / obj.target_value) * 100, 2)
         return 0.0
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Notification model.
+    """
+    class Meta:
+        model = Notification
+        fields = ['id', 'title', 'message', 'type', 'read', 'timestamp']
