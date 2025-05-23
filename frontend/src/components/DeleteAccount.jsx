@@ -1,19 +1,33 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { MdDelete } from "react-icons/md";
-import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 import { useAuth } from "../contexts/AuthContext";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import "../styles/DeleteAccount.css";
 
 const DeleteAccount = () => {
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useContext(useAuth);
+  const { logout } = useAuth();
 
   const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
-    if (!confirmed) return;
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action will permanently delete your account.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#dc3545",
+      customClass: {
+        popup: "custom-swal",
+      },
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       setLoading(true);
@@ -24,12 +38,21 @@ const DeleteAccount = () => {
       if (logout) logout();
 
       setDeleted(true);
-      alert("Your account has been deleted.");
+
+      await Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Your account has been successfully deleted.",
+        confirmButtonColor: "#0d6efd",
+        customClass: {
+          popup: "custom-swal",
+        },
+      });
 
       navigate("/goodbye");
     } catch (error) {
       console.error("Failed to delete account:", error);
-      alert("There was an error deleting your account. Please try again later.");
+      toast.error("Error deleting account. Please try again.");
     } finally {
       setLoading(false);
     }
