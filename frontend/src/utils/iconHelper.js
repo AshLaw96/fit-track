@@ -9,15 +9,24 @@ import {
   FaQuestionCircle,
   FaSpa,
   FaCoffee,
+  FaBell,
+  FaEye,
+  FaEyeSlash,
+  FaLock,
 } from "react-icons/fa";
+
 import {
   MdBreakfastDining,
   MdLunchDining,
   MdDinnerDining,
+  MdDarkMode,
+  MdOutlineLanguage,
+  MdPassword,
 } from "react-icons/md";
+
 import { GiFruitBowl, GiMeal } from "react-icons/gi";
 
-// Exercise icons
+// Exercise Icons
 const exerciseIconMap = {
   run: <FaRunning />,
   jog: <FaRunning />,
@@ -40,7 +49,7 @@ export const getExerciseIcon = (name) => {
   return exerciseIconMap[match] || <FaQuestionCircle />;
 };
 
-// Meal icons
+// Meal Icons
 export const getMealIcon = (type) => {
   switch (type?.toLowerCase()) {
     case "breakfast":
@@ -56,4 +65,15 @@ export const getMealIcon = (type) => {
     default:
       return <GiMeal title="Meal" />;
   }
+};
+
+// Settings Icons
+export const Icons = {
+  Password: MdPassword,
+  Bell: FaBell,
+  DarkMode: MdDarkMode,
+  Language: MdOutlineLanguage,
+  Lock: FaLock,
+  Eye: FaEye,
+  EyeSlash: FaEyeSlash,
 };

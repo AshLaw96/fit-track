@@ -99,6 +99,12 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
+                    <Link className="nav-link header-link" to="/settings">
+                      Settings
+                      <i className="fa-solid fa-cog header-icon"></i>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <button
                       className="nav-link btn btn-link header-link"
                       onClick={() => setShowModal(true)}

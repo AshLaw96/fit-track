@@ -17,6 +17,7 @@ import api from "./utils/api";
 import { useAuth } from "./contexts/AuthContext";
 import NotFound from "./components/NotFound";
 import Goodbye from "./components/Goodbye";
+import SettingsPage from "./components/SettingsPage";
 
 
 const App = () => {
@@ -64,6 +65,10 @@ const App = () => {
           <Route
             path="/profile"
             element={<UserProfile onDataChanged={fetchAllData} />}
+          />
+          <Route
+            path="/settings"
+            element={<SettingsPage />}
           />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />
