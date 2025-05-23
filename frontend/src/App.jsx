@@ -18,6 +18,7 @@ import { useAuth } from "./contexts/AuthContext";
 import NotFound from "./components/NotFound";
 import Goodbye from "./components/Goodbye";
 import SettingsPage from "./components/SettingsPage";
+import NotificationBell from "./components/NotificationBell";
 
 
 const App = () => {
@@ -43,6 +44,7 @@ const App = () => {
     <div className="d-flex flex-column min-vh-100">
       <Header />
       <main className="flex-grow-1">
+        <NotificationBell />
         <Routes>
           <Route
             path="/"
