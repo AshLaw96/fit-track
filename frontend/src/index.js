@@ -10,6 +10,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 
 import ErrorBoundary from "./components/ErrorBoundary";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,7 +18,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <ErrorBoundary>
-          <App />
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
         </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>
