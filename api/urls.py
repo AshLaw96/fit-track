@@ -14,7 +14,9 @@ from .views import (
     WorkoutPlanDetailView, RegisterView, CustomPasswordResetView,
     CustomPasswordResetConfirmView, CustomTokenObtainPairView,
     DashboardView, upload_profile_image, PublicChallengeListView,
-    ChallengeLeaderboardView, CurrentUserChallengeView, DeleteAccountView
+    ChallengeLeaderboardView, CurrentUserChallengeView, DeleteAccountView,
+    UserActivityStreakView, ChangePasswordView, SleepScheduleView,
+    NotificationListView, MarkAllNotificationsRead
 )
 
 #  Create a router and register viewset with it
@@ -40,6 +42,11 @@ urlpatterns = [
         CustomPasswordResetConfirmView.as_view(),
         name='password_reset_confirm',
     ),
+    path(
+        'change-password/',
+        ChangePasswordView.as_view(),
+        name='change_password',
+    ),
     # User Profile
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     # Goals
@@ -61,6 +68,11 @@ urlpatterns = [
         SleepLogDetailView.as_view(),
         name='sleep_log_detail',
     ),
+    path(
+        'sleep/schedule/',
+        SleepScheduleView.as_view(),
+        name='sleep_schedule',
+    ),
     # Achievements
     path(
         'achievements/',
@@ -77,6 +89,11 @@ urlpatterns = [
         'activity/',
         UserActivityDetailView.as_view(),
         name='user_activity',
+    ),
+    path(
+        'activity/streak/',
+        UserActivityStreakView.as_view(),
+        name='user_activity_streak',
     ),
     # Goal Progress
     path(
@@ -195,5 +212,16 @@ urlpatterns = [
         'delete_account/',
         DeleteAccountView.as_view(),
         name='delete_account',
+    ),
+    # Notification
+    path(
+        'notifications/',
+        NotificationListView.as_view(),
+        name='notifications',
+    ),
+    path(
+        'notifications/mark_read/',
+        MarkAllNotificationsRead.as_view(),
+        name='mark_all_notifications_read',
     ),
 ]
