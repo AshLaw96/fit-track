@@ -200,6 +200,20 @@ class SleepLog(models.Model):
         return f"{self.user.username} - {self.date}"
 
 
+# Sleep Schedule model
+class SleepSchedule(models.Model):
+    """
+    Model representing a user's sleep schedule.
+    """
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    target_bedtime = models.TimeField(null=True, blank=True)
+    target_wake_time = models.TimeField(null=True, blank=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.user.username} schedule"
+
+
 # Achievement model
 class Achievement(models.Model):
     """
@@ -363,6 +377,7 @@ class UserChallenge(models.Model):
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
     progress = models.FloatField(default=0.0)
     completed = models.BooleanField(default=False)
+    last_known_rank = models.IntegerField(null=True, blank=True)
 
     class Meta:
         constraints = [
@@ -440,3 +455,20 @@ class Friend(models.Model):
 
     def __str__(self):
         return f"{self.user.username} & {self.friend_user.username} Friends"
+
+
+# Notification model
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="notifications"
+    )
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    type = models.CharField(max_length=50, default="general")
+    read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"
