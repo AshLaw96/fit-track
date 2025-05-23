@@ -1,0 +1,39 @@
+.notification-modal {
+  position: fixed;
+  top: 20%;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  padding: 1rem;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.notification-item {
+  margin-bottom: 1rem;
+}
+.notification-item a {
+  color: blue;
+  text-decoration: underline;
+}
+.notification-bell {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
+}
+.notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
