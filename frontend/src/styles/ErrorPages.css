@@ -1,6 +1,7 @@
 .error-container {
   font-family: 'Roboto', sans-serif;
   color: var(--text-color);
+  background-color: var(--bg-color);
   margin-top: 4rem;
   text-align: center;
 }
@@ -25,7 +26,29 @@
   margin-bottom: 2rem;
 }
 
+/* Button */
+.btn-secondary {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-color);
+}
+
 .btn-return-home {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
+}
+
+
+/* Icon color to match text */
+.error-heading i {
+  margin-right: 0.5rem;
+  color: inherit;
 }

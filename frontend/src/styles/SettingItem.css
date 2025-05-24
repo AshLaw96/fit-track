@@ -42,7 +42,7 @@
 .password-form button {
   padding: 0.6rem;
   background-color: var(--primary-color);
-  color: white;
+  color: var(--bg-color);
   border: none;
   border-radius: 8px;
   font-weight: 600;

@@ -30,6 +30,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.dark-mode {
+  --bg-color: var(--dark-bg);
+  --text-color: var(--dark-text);
+  --primary-color: var(--dark-primary);
+  --secondary-color: var(--dark-secondary);
+  --accent-color: var(--dark-accent);
+}
+
 h1, h2, h3, h4, h5 {
   font-family: 'Inter', sans-serif;
 }
@@ -60,6 +68,11 @@ h1, h2, h3, h4, h5 {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
+}
+
+.auth-card {
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* Layout Wrapper */
@@ -93,7 +106,7 @@ h1, h2, h3, h4, h5 {
 
 .btn-confirm {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--bg-color);
   border: none;
   padding: 8px 20px;
   border-radius: 8px;

@@ -1,77 +1,53 @@
 .auth-title {
-    font-family: "Inter", sans-serif;
-    color: var(--primary-color);
+  font-family: "Inter", sans-serif;
+  color: var(--primary-color);
 }
-  
+
 .auth-form-wrapper {
-    max-width: 400px;
-    width: 100%;
+  max-width: 400px;
+  width: 100%;
 }
 
 .auth-form input {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: 1px solid #ccc;
-    font-family: "Roboto", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid #ccc;
+  font-family: "Roboto", sans-serif;
 }
 
 /* Buttons */
 .btn-primary {
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-    font-family: "Inter", sans-serif;
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  font-family: "Inter", sans-serif;
+  color: #fff;
 }
-  
+
 .btn-primary:hover {
-    background-color: #162C6B !important;
-    border-color: #162C6B !important;
+  background-color: #162C6B !important;
+  border-color: #162C6B !important;
 }
-  
+
 .btn-success {
-    background-color: var(--secondary-color) !important;
-    border-color: var(--secondary-color) !important;
-    color: #162C6B !important;
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
+  color: #162C6B !important;
 }
 
 /* Button link reset */
 .btn-link {
-    font-family: "Inter", sans-serif;
-    color: var(--primary-color);
-    text-decoration: underline;
+  font-family: "Inter", sans-serif;
+  color: var(--primary-color);
+  text-decoration: underline;
 }
-  
+
 .btn-link:hover {
-    color: #162C6B;
+  color: #162C6B;
 }
-  
-/* Auth card layout (shared with Register form, AuthPage */
+
+/* Auth card layout */
 .auth-card {
-    background-color: var(--bg-color) !important;
-    border-radius: 0.5rem;
+  background-color: var(--bg-color) !important;
+  border-radius: 0.5rem;
 }
 
-/* @media (prefers-color-scheme: dark) {
-    .auth-card {
-        background-color: var(--dark-card) !important;
-    }
-
-    .auth-form h3 {
-        color: var(--dark-primary);
-    }
-
-    .btn-primary {
-        background-color: var(--dark-primary) !important;
-        border-color: var(--dark-primary) !important;
-    }
-
-    .btn-primary:hover {
-        background-color: #172341 !important;
-        border-color: #172341 !important;
-    }
-
-    .btn-success {
-        background-color: var(--dark-secondary) !important;
-        border-color: var(--dark-secondary) !important;
-        color: var(--dark-text) !important;
-    }
-} */

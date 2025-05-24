@@ -1,28 +1,28 @@
 .footer {
-    background-color: var(--bg-color);
-    border-top: 1px solid #ddd;
+  background-color: var(--bg-color);
+  border-top: 1px solid #ddd;
 }
-  
+
 .footer-text {
-    font-family: "Roboto", sans-serif;
-    color: var(--text-color);
-    font-size: 0.9rem;
+  font-family: "Roboto", sans-serif;
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
-  
+
 .footer-icons {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
-  
+
 .footer-icon-link {
-    color: var(--text-color);
-    font-size: 1.5rem;
-    transition: color 0.2s ease;
+  color: var(--text-color);
+  font-size: 1.5rem;
+  transition: color 0.2s ease;
 }
-  
+
 .footer-icon-link:hover,
 .footer-icon-link:focus {
-    color: var(--primary-color);
-}  
+  color: var(--primary-color);
+}
