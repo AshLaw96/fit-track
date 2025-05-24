@@ -1,4 +1,6 @@
+from django.contrib.auth.models import update_last_login
 from django.utils import timezone
+from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
@@ -10,6 +12,7 @@ from .models import (
     NutritionLog, Challenge, UserChallenge,
     UserReport, Friend, WorkoutPlan, SleepSchedule, Notification
 )
+from .utils.notifications import send_notification
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -64,6 +67,26 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         data['user'] = UserSerializer(self.user).data
+
+        user = self.user
+        today = now().date()
+
+        # Check if they've already received a reminder today
+        if not Notification.objects.filter(
+            user=user,
+            type="reminder",
+            timestamp__date=today
+        ).exists():
+            send_notification(
+                user,
+                title="New Day, New Energy 💪",
+                message="Make today count. You're stronger than you think.",
+                type="reminder"
+            )
+
+        # Manually update last_login
+        update_last_login(None, user)
+
         return data
 
 
