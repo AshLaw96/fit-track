@@ -1,0 +1,357 @@
+/* Modal background and text */
+body.dark-mode .modal-content {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  border: 1px solid #475569;
+}
+
+/* Modal header */
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #475569;
+}
+
+/* Form controls inside modal */
+body.dark-mode .form-control,
+body.dark-mode .form-select,
+body.dark-mode textarea {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border: 1px solid #475569;
+}
+
+/* Placeholder color for form controls */
+body.dark-mode .form-control::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Form label */
+body.dark-mode .form-label {
+  color: var(--dark-text);
+}
+
+/* Alert success */
+body.dark-mode .alert-success {
+  background-color: #14532d;
+  border-color: #16a34a;
+  color: #d1fae5;
+}
+
+/* Buttons (Bootstrap variants) */
+body.dark-mode .btn-secondary {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+body.dark-mode .btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Dark mode alert */
+body.dark-mode .alert-warning {
+  background-color: #4a4a4a;
+  color: var(--dark-text);
+  border-color: var(--secondary-color);
+}
+
+/* Dark mode btn-link */
+body.dark-mode .btn-link {
+  color: var(--secondary-color);
+}
+body.dark-mode .btn-link:hover {
+  color: var(--accent-color);
+}
+
+/* Container background for full page */
+body.dark-mode .container {
+  background-color: var(--bg-color);
+}
+
+/* General wrapper background */
+body.dark-mode .custom-wrap {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+/* Table overrides */
+body.dark-mode table {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border-color: #475569;
+}
+
+body.dark-mode .table thead,
+body.dark-mode .table-light {
+  background-color: var(--dark-primary);
+  color: var(--dark-text);
+}
+
+body.dark-mode .table-bordered th,
+body.dark-mode .table-bordered td {
+  border-color: #475569;
+}
+
+/* Form controls */
+body.dark-mode .form-select,
+body.dark-mode .form-control,
+body.dark-mode select {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border: 1px solid #475569;
+}
+
+body.dark-mode .form-select option {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+}
+
+/* Success alert */
+body.dark-mode .alert-success {
+  background-color: #14532d;
+  color: #d1fae5;
+  border-color: #16a34a;
+}
+
+/* Cards */
+body.dark-mode .card {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+
+/* Buttons (outline variants override Bootstrap defaults) */
+body.dark-mode .btn-outline-primary {
+  color: var(--dark-secondary);
+  border-color: var(--dark-secondary);
+}
+
+body.dark-mode .btn-outline-primary:hover {
+  background-color: var(--dark-secondary);
+  color: var(--dark-bg);
+}
+
+body.dark-mode .btn-outline-danger {
+  color: #f87171;
+  border-color: #f87171;
+}
+
+body.dark-mode .btn-outline-danger:hover {
+  background-color: #f87171;
+  color: var(--dark-bg);
+}
+
+/* Add Button (success) */
+body.dark-mode .btn-success {
+  background-color: #15803d;
+  border-color: #15803d;
+  color: white;
+}
+
+body.dark-mode .btn-success:hover {
+  background-color: #166534;
+}
+
+/* Text muted override */
+body.dark-mode .text-muted {
+  color: #9ca3af !important;
+}
+
+body.dark-mode .auth-card {
+  background-color: var(--dark-card) !important;
+  color: var(--dark-text);
+}
+
+body.dark-mode .btn-link {
+  color: var(--dark-accent);
+}
+
+body.dark-mode .btn-link:hover {
+  color: #facc15;
+}
+
+body.dark-mode .btn-success {
+  background-color: var(--dark-secondary) !important;
+  border-color: var(--dark-secondary) !important;
+  color: var(--dark-text) !important;
+}
+
+body.dark-mode .btn-primary {
+  background-color: var(--dark-primary) !important;
+  border-color: var(--dark-primary) !important;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #172341 !important;
+  border-color: #172341 !important;
+}
+
+body.dark-mode .auth-form input {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border: 1px solid #475569;
+}
+
+body.dark-mode .auth-title {
+  color: var(--dark-accent);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .auto-up {
+  background-color: var(--dark-primary);
+  color: var(--dark-text);
+  /* softer reverse contrast */
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .auto-up:hover {
+  background-color: #1e293b;
+}
+
+/* Dark mode support */
+body.dark-mode .error-container {
+  color: var(--dark-text);
+  background-color: var(--dark-bg);
+}
+
+body.dark-mode .error-500-heading {
+  color: var(--dark-accent);
+}
+
+body.dark-mode .error-404-heading {
+  color: var(--dark-secondary);
+}
+
+body.dark-mode .btn-return-home {
+  color: var(--dark-text);
+}
+
+body.dark-mode .btn-secondary {
+  background-color: var(--dark-primary);
+  color: var(--dark-text);
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: var(--dark-secondary);
+  color: var(--dark-text);
+}
+
+/* Dark mode support */
+body.dark-mode .footer {
+  background-color: var(--dark-bg);
+  border-top: 1px solid var(--dark-card);
+}
+
+body.dark-mode .footer-text {
+  color: var(--dark-text);
+}
+
+body.dark-mode .footer-icon-link {
+  color: var(--dark-text);
+}
+
+body.dark-mode .footer-icon-link:hover,
+body.dark-mode .footer-icon-link:focus {
+  color: var(--dark-secondary);
+}
+
+/* --- DARK MODE SUPPORT --- */
+body.dark-mode .header-title {
+  color: var(--dark-secondary);
+}
+
+body.dark-mode .header-link {
+  color: var(--dark-text);
+}
+
+body.dark-mode .header-link:hover,
+body.dark-mode .header-link:focus {
+  color: var(--dark-secondary);
+}
+
+body.dark-mode .navbar-nav .nav-link {
+  color: var(--dark-text);
+}
+
+body.dark-mode .navbar-nav .nav-link:hover {
+  color: var(--dark-secondary);
+}
+
+/* --- DARK MODE SUPPORT --- */
+body.dark-mode .modal-content {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+body.dark-mode .modal-title {
+  color: var(--dark-secondary);
+}
+
+/* --- DARK MODE --- */
+body.dark-mode .notification-modal {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .notification-item a {
+  color: var(--dark-secondary);
+}
+
+body.dark-mode .notification-dot {
+  background: var(--dark-accent);
+}
+
+/* --- DARK MODE --- */
+body.dark-mode .setting-item {
+  background-color: var(--dark-card);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-secondary);
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .setting-label {
+  color: var(--dark-secondary);
+}
+
+body.dark-mode .password-form input {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-secondary);
+}
+
+body.dark-mode .password-form button {
+  background-color: var(--dark-primary);
+  color: var(--dark-text);
+  border: none;
+}
+
+body.dark-mode .password-form button:hover {
+  background-color: var(--dark-secondary);
+}
+
+/* Dark mode inputs/select */
+body.dark-mode .dropdown-content input,
+body.dark-mode .dropdown-content select {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-secondary);
+}
+
+/* Dark mode button */
+body.dark-mode .btn.btn-primary {
+  background-color: var(--dark-primary);
+  color: var(--dark-text);
+}
