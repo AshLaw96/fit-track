@@ -6,27 +6,27 @@ import { Icons } from "../utils/iconHelper";
 import { useNotifications } from "../contexts/NotificationContext";
 import "../styles/SettingsPage.css";
 import { useTheme } from "../contexts/ThemeContext";
+import { useUnits } from "../contexts/UnitsContext";
 
 const SettingsPage = () => {
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [units, setUnits] = useState("metric");
+  const {units, setUnits} = useUnits();
   const [privacy, setPrivacy] = useState("private");
   const {darkMode, setDarkMode} = useTheme();
 
   const { addNotification } = useNotifications();
 
   const handleToggleNotifications = () => {
-  setNotifications(!notifications);
+    setNotifications(!notifications);
 
-  if (!notifications) {
-    addNotification({
-      title: "Welcome!",
-      description: "Notifications are now enabled.",
-      link: "/dashboard",
-    });
-  }
-};
+    if (!notifications) {
+      addNotification({
+        title: "Welcome!",
+        description: "Notifications are now enabled.",
+        link: "/dashboard",
+      });
+    }
+  };
 
   return (
     <div className="custom-wrap">
