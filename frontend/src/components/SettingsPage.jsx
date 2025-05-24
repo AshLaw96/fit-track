@@ -5,12 +5,14 @@ import ChangePassword from "../components/ChangePassword";
 import { Icons } from "../utils/iconHelper";
 import { useNotifications } from "../contexts/NotificationContext";
 import "../styles/SettingsPage.css";
+import { useTheme } from "../contexts/ThemeContext";
 
 const SettingsPage = () => {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [units, setUnits] = useState("metric");
   const [privacy, setPrivacy] = useState("private");
+  const {darkMode, setDarkMode} = useTheme();
 
   const { addNotification } = useNotifications();
 

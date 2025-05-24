@@ -3,7 +3,7 @@ import "../styles/footer.css";
 
 const Footer = () => {
   return (
-    <footer className="footer bg-light py-4 mt-auto">
+    <footer className="footer py-4 mt-auto">
       <div className="container text-center">
         <p className="footer-text mb-2">
           &copy; {new Date().getFullYear()} FitTrack. All rights reserved.
