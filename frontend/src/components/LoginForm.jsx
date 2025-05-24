@@ -5,6 +5,7 @@ import "../styles/auth.css";
 import { useAuth } from "../contexts/AuthContext";
 import {  useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {  useNotifications } from "../contexts/NotificationContext";
 
 const LoginForm = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ const LoginForm = ({ onSuccess }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { fetchNotifications } = useNotifications();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,6 +24,8 @@ const LoginForm = ({ onSuccess }) => {
       api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
 
       startTokenRefreshTimer();
+
+      await fetchNotifications();
 
       toast.success("Login successful!");
 

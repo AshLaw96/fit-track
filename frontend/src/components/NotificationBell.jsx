@@ -9,7 +9,10 @@ const NotificationBell = () => {
 
   const handleClick = () => {
     setModalOpen(true);
-    // mark as viewed
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
     clearNotifications();
   };
 
@@ -18,14 +21,14 @@ const NotificationBell = () => {
       {showBell && (
         <div className="notification-bell" onClick={handleClick}>
           <Icons.Bell />
-          <span className="notification-dot" />
+          {showBell && <span className="notification-dot" />}
         </div>
       )}
 
       {modalOpen && (
         <Modal
           notifications={notifications}
-          onClose={() => setModalOpen(false)}
+          onClose={handleClose}
         />
       )}
     </>
