@@ -123,14 +123,14 @@ const Navbar = () => {
                       <i className="fa-solid fa-user-plus header-icon"></i>
                     </Link>
                   </li>
-                  <li className="nav-item">
-                    <Link className="nav-link header-link" to="/help">
-                      Help
-                      <i className="fa-solid fa-circle-question header-icon"></i>
-                    </Link>
-                  </li>
                 </>
               )}
+                <li className="nav-item">
+                  <Link className="nav-link header-link" to="/help">
+                    Help
+                    <i className="fa-solid fa-circle-question header-icon"></i>
+                  </Link>
+                </li>
             </ul>
           </div>
         </div>
