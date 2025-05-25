@@ -40,8 +40,6 @@ export const NotificationProvider = ({ children }) => {
 
   // Memoized fetchNotifications that uses addNotification
   const fetchNotifications = useCallback(async () => {
-    const token = localStorage.getItem("access_token");
-
     try {
       const response = await api.get("/notifications/");
       const data = response.data;
