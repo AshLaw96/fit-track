@@ -19,6 +19,11 @@ import NotFound from "./components/NotFound";
 import Goodbye from "./components/Goodbye";
 import SettingsPage from "./components/SettingsPage";
 import NotificationBell from "./components/NotificationBell";
+import FAQ from "./components/Help/FAQ";
+import HelpPage from "./components/HelpPage";
+import Troubleshooting from "./components/Help/Troubleshooting";
+import ContactSupport from "./components/Help/ContactSupport";
+import Tutorials from "./components/Help/Tutorials";
 
 
 const App = () => {
@@ -71,6 +76,26 @@ const App = () => {
           <Route
             path="/settings"
             element={<SettingsPage />}
+          />
+          <Route
+            path="/help"
+            element={<HelpPage />}
+          />
+          <Route
+            path="/help/faq"
+            element={<FAQ />}
+          />
+          <Route
+            path="/help/troubleshooting"
+            element={<Troubleshooting />}
+          />
+          <Route
+            path="/help/contact"
+            element={<ContactSupport />}
+          />
+          <Route
+            path="/help/tutorials"
+            element={<Tutorials />}
           />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/reset-password" element={<PasswordResetForm />} />

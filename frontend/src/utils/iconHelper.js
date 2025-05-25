@@ -13,8 +13,10 @@ import {
   FaEye,
   FaEyeSlash,
   FaLock,
+  FaTools,
+  FaHeadset,
+  FaGraduationCap,
 } from "react-icons/fa";
-
 import {
   MdBreakfastDining,
   MdLunchDining,
@@ -23,7 +25,6 @@ import {
   MdOutlineLanguage,
   MdPassword,
 } from "react-icons/md";
-
 import { GiFruitBowl, GiMeal } from "react-icons/gi";
 
 // Exercise Icons
@@ -76,4 +77,12 @@ export const Icons = {
   Lock: FaLock,
   Eye: FaEye,
   EyeSlash: FaEyeSlash,
+};
+
+// Help Icons
+export const HelpIcons = {
+  Tools: FaTools,
+  Headset: FaHeadset,
+  GraduationCap: FaGraduationCap,
+  Question: FaQuestionCircle,
 };
