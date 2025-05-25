@@ -4,11 +4,16 @@ import { Link } from "react-router-dom";
 const ActivitySummary = ({ data, profile }) => {
   const { sleep, steps, calories_burned, water_intake } = data || {};
 
-  // pull directly from profile
-  const weight = profile?.weight_kg;
+  // Extract weight safely from profile
+  const weight = profile?.weight_kg ?? 0;
 
-  const hasData =
-    sleep || steps || calories_burned || weight || water_intake;
+  // Handle unit display
+  const displayWeight =
+    profile?.unit_preference === "imperial"
+      ? `${(weight * 2.205).toFixed(1)} lbs`
+      : `${weight} kg`;
+
+  const hasData = sleep || steps || calories_burned || weight || water_intake;
 
   if (!hasData) {
     return (
@@ -33,33 +38,34 @@ const ActivitySummary = ({ data, profile }) => {
         )}
       </div>
       <div>
-        👣 Steps:{} 
-          {steps ? (
-            <Link to="/exercises" className="text-decoration-underline">
-              {steps}
-            </Link>
-          ) : (
-            0
-          )}
-      </div>
-      <div>
-        🔥 Calories Burned:{}
-          {calories_burned ? (
-            <Link to="/exercises" className="text-decoration-underline">
-              {calories_burned}
-            </Link>
-          ) : (
-            0
-          )}
-      </div>
-      <div>⚖️ Weight:{} 
-        {weight ? ( 
-          <Link to="/profile" className="text-decoration-underline">
-            {weight} kg
+        👣 Steps:{" "}
+        {steps ? (
+          <Link to="/exercises" className="text-decoration-underline">
+            {steps}
           </Link>
         ) : (
-          0 
-          )} kg
+          0
+        )}
+      </div>
+      <div>
+        🔥 Calories Burned:{" "}
+        {calories_burned ? (
+          <Link to="/exercises" className="text-decoration-underline">
+            {calories_burned}
+          </Link>
+        ) : (
+          0
+        )}
+      </div>
+      <div>
+        ⚖️ Weight:{" "}
+        {weight ? (
+          <Link to="/profile" className="text-decoration-underline">
+            {displayWeight}
+          </Link>
+        ) : (
+          "0 kg"
+        )}
       </div>
       <div>
         💧 Water Intake:{" "}
