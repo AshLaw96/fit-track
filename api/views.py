@@ -2,8 +2,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.db.models import F
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
@@ -489,12 +491,21 @@ class ChallengeListView(generics.ListCreateAPIView):
         return Challenge.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        # Create challenge
         challenge = serializer.save(owner=self.request.user)
-        # Auto-join it
-        UserChallenge.objects.get_or_create(
+        print(
+            f"[DEBUG] Created challenge ID: {challenge.id}, "
+            f"is_public: {challenge.is_public}, "
+            f"owner: {self.request.user.id}"
+        )
+
+        user_chal, created = UserChallenge.objects.get_or_create(
             user=self.request.user,
             challenge=challenge
+        )
+        print(
+            f"[DEBUG] UserChallenge "
+            f"{'created' if created else 'already existed'} "
+            f"for user {self.request.user.id} and challenge {challenge.id}"
         )
 
 
@@ -543,6 +554,18 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
+
+        # Award point if challenge is completed
+        if instance.progress >= instance.target and not instance.completed:
+            instance.completed = True
+            instance.save(update_fields=["completed"])
+
+            # Add a point to the user's account
+            User = get_user_model()
+            User.objects.filter(id=instance.user.id).update(
+                points=F('points') + 1
+            )
+
         # After saving progress, check leaderboard rank
         check_and_notify_leaderboard_change(
             instance.challenge_id,
@@ -565,13 +588,26 @@ class PublicChallengeListView(generics.ListAPIView):
             .filter(user=user)
             .values_list('challenge_id', flat=True)
         )
-        return (
+        qs = (
             Challenge.objects
-            # only public challenges
             .filter(is_public=True)
             .exclude(id__in=joined_ids)
             .exclude(owner=user)
         )
+        print(
+            f"[DEBUG] User {user.id} has joined challenges: {list(joined_ids)}"
+        )
+        try:
+            print(
+                f"[DEBUG] Public challenges count for user {user.id}: "
+                f"{qs.count()}"
+            )
+        except Exception as e:
+            print(
+                f"[ERROR] Failed to count queryset: {e} | "
+                f"qs type: {type(qs)}"
+            )
+        return qs
 
 
 # --- Challenge Leaderboard View ---
@@ -584,7 +620,9 @@ class ChallengeLeaderboardView(generics.ListAPIView):
         return (
             UserChallenge.objects
             .filter(challenge__id=challenge_id)
-            .order_by("-progress")
+            .select_related("user")
+            # rank by user points
+            .order_by("-user__points")
         )
 
 
@@ -761,6 +799,10 @@ class DashboardView(APIView):
             UserChallenge.objects
             .select_related("challenge")
             .filter(user=user)
+        )
+        print(
+            "[DEBUG] Dashboard: Found {} user challenges "
+            "for user {}".format(user_challenges.count(), user.id)
         )
         goals = Goal.objects.filter(user=user).order_by("-created_at")
 
