@@ -4,27 +4,26 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Dashboard from "./components/Dashboard";
-import ExerciseLogPage from "./components/ExerciseLogPage";
-import MealLogPage from "./components/MealLogPage";
-import SleepLogPage from "./components/SleepLogPage";
-import UserProfile from "./components/UserProfile";
-import AuthPage from "./components/AuthPage";
+import Dashboard from "./components/Dash/Dashboard";
+import ExerciseLogPage from "./components/Exercises/ExerciseLogPage";
+import MealLogPage from "./components/Meals/MealLogPage";
+import SleepLogPage from "./components/Sleep/SleepLogPage";
+import UserProfile from "./components/Profile/UserProfile";
+import AuthPage from "./components/Auth/AuthPage";
 import AutoScrollUp from "./components/AutoScrollUp";
-import PasswordResetForm from "./components/PasswordResetForm";
-import PasswordResetConfirmForm from "./components/PasswordResetConfirmForm";
+import PasswordResetForm from "./components/Auth/PasswordResetForm";
+import PasswordResetConfirmForm from "./components/Auth/PasswordResetConfirmForm";
 import api from "./utils/api";
 import { useAuth } from "./contexts/AuthContext";
 import NotFound from "./components/NotFound";
-import Goodbye from "./components/Goodbye";
-import SettingsPage from "./components/SettingsPage";
+import Goodbye from "./components/Profile/Goodbye";
+import SettingsPage from "./components/Settings/SettingsPage";
 import NotificationBell from "./components/NotificationBell";
 import FAQ from "./components/Help/FAQ";
-import HelpPage from "./components/HelpPage";
+import HelpPage from "./components/Help/HelpPage";
 import Troubleshooting from "./components/Help/Troubleshooting";
 import ContactSupport from "./components/Help/ContactSupport";
 import Tutorials from "./components/Help/Tutorials";
-
 
 const App = () => {
   const { isAuthenticated } = useAuth();
