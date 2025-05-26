@@ -2,10 +2,17 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1040;
+  z-index: 1040 !important;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(30, 58, 138, 1);
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+.modal {
+  z-index: 1050 !important;
 }
 
 /* Clean up modal container */
@@ -19,12 +26,13 @@
 
 .modal-content {
   border-radius: 16px;
-  background-color: var(--bg-color);
+  background-color: var(--bg-color) !important;
   color: var(--text-color);
   font-family: 'Inter', sans-serif;
   padding: 2rem;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  opacity: 1;
+  opacity: 1 !important;
+  z-index: 1060 !important;
 }
 
 .modal-title {
@@ -35,4 +43,15 @@
 .modal-content p {
   font-size: 1.1rem;
   margin: 1rem 0;
+}
+
+.modal,
+.modal-backdrop,
+.modal-content {
+  opacity: 1 !important;
+  transition: none !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }

@@ -20,7 +20,7 @@
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
   font-family: "Inter", sans-serif;
-  color: #fff;
+  color: var(--bg-color);
 }
 
 .btn-primary:hover {
@@ -49,5 +49,23 @@
 .auth-card {
   background-color: var(--bg-color) !important;
   border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+.auth-form input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.auth-form input,
+.btn-primary,
+.btn-link {
+  transition: all 0.2s ease-in-out;
+}
+
+.auth-form input:focus,
+.btn-primary:focus,
+.btn-link:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}

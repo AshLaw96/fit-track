@@ -139,15 +139,36 @@ input.form-control {
   margin-bottom: 1.5rem;
 }
 
+body,
+input,
+button,
+.auth-card,
+.card {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+input:focus,
+button:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+::placeholder {
+  color: #999;
+  opacity: 1;
+  font-style: italic;
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 @media (min-width: 768px) {
   .custom-wrap {
     padding: 2rem;
     max-width: 1000px;
     margin: 0 auto;
   }
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
