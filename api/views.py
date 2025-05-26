@@ -588,17 +588,22 @@ class ChallengeLeaderboardView(generics.ListAPIView):
         )
 
 
-class CurrentUserChallengeView(generics.RetrieveAPIView):
+class ActiveUserChallengesView(generics.ListAPIView):
+    """
+    Return all active challenges for the current user
+    (i.e., ones that are ongoing and the user has joined).
+    """
     serializer_class = UserChallengeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        return (
-            UserChallenge.objects
-            .filter(user=self.request.user)
-            .order_by('-challenge__start_date')
-            .first()
-        )
+    def get_queryset(self):
+        user = self.request.user
+        today = timezone.now().date()
+        return UserChallenge.objects.filter(
+            user=user,
+            challenge__start_date__lte=today,
+            challenge__end_date__gte=today
+        ).select_related('challenge')
 
 
 # --- User Report Views ---

@@ -14,7 +14,7 @@ from .views import (
     WorkoutPlanDetailView, RegisterView, CustomPasswordResetView,
     CustomPasswordResetConfirmView, CustomTokenObtainPairView,
     DashboardView, upload_profile_image, PublicChallengeListView,
-    ChallengeLeaderboardView, CurrentUserChallengeView, DeleteAccountView,
+    ChallengeLeaderboardView, ActiveUserChallengesView, DeleteAccountView,
     UserActivityStreakView, ChangePasswordView, SleepScheduleView,
     NotificationListView, MarkAllNotificationsRead
 )
@@ -156,9 +156,9 @@ urlpatterns = [
     ),
     # Current User Challenge
     path(
-        'user_challenges/current/',
-        CurrentUserChallengeView.as_view(),
-        name='user_current_challenge',
+        'user_challenges/active/',
+        ActiveUserChallengesView.as_view(),
+        name='user_active_challenges',
     ),
     # Challenge Leaderboard
     path(
