@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import LogoutModal from "./LogoutModal";
+import LogoutModal from "./Auth/LogoutModal";
 import "../styles/header.css";
 import { useAuth } from "../contexts/AuthContext";
 
