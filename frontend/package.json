@@ -15,6 +15,7 @@
     "date-fns": "^4.1.0",
     "fuse.js": "^7.1.0",
     "jwt-decode": "^4.0.0",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",

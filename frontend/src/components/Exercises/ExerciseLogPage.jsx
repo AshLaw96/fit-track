@@ -1,9 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import api from "../../utils/api";
 import ExerciseFormModal from "./ExerciseFormModal";
 import { getExerciseIcon } from "../../utils/iconHelper";
 import { isThisWeek, isThisMonth, parseISO, format } from "date-fns";
 import Swal from "sweetalert2";
+import debounce from "lodash.debounce";
+
+const formatDate = (dateStr) => format(parseISO(dateStr), "MMM d, yyyy");
+const capitalize = (str) => str?.charAt(0).toUpperCase() + str?.slice(1);
 
 const ExerciseLogPage = ({ onDataChanged }) => {
   const [exercises, setExercises] = useState([]);
@@ -12,23 +16,39 @@ const ExerciseLogPage = ({ onDataChanged }) => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  // Fetch exercises (reusable)
   const fetchExercises = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/exercises/");
-      const data = Array.isArray(res.data.results) ? res.data.results : [];
+      let data = Array.isArray(res.data.results) ? res.data.results : [];
+
+      // Sort by date descending
+      data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
       setExercises(data);
+      setErrorMessage("");
     } catch (err) {
       console.error("Failed to fetch exercises:", err);
+      setErrorMessage("Failed to fetch exercises");
       setExercises([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchExercises();
-  }, []);
+  // Debounced version for useEffect only
+  const debouncedFetchExercises = useMemo(() => debounce(fetchExercises, 300), []);
 
-  const applyFilter = useCallback(() => {
+  useEffect(() => {
+    debouncedFetchExercises();
+    return () => debouncedFetchExercises.cancel();
+  }, [debouncedFetchExercises]);
+
+  useEffect(() => {
     if (filter === "week") {
       setFiltered(exercises.filter((ex) => isThisWeek(parseISO(ex.date))));
     } else if (filter === "month") {
@@ -37,10 +57,6 @@ const ExerciseLogPage = ({ onDataChanged }) => {
       setFiltered(exercises);
     }
   }, [exercises, filter]);
-
-  useEffect(() => {
-    applyFilter();
-  }, [applyFilter]);
 
   const handleAdd = () => {
     setSelectedExercise(null);
@@ -65,17 +81,16 @@ const ExerciseLogPage = ({ onDataChanged }) => {
         confirmButton: "btn-confirm",
         cancelButton: "btn-cancel",
         title: "swal-title",
-        content: "swal-content"
+        content: "swal-content",
       },
-      // disable default styles
-      buttonsStyling: false
+      buttonsStyling: false,
     });
 
     if (!result.isConfirmed) return;
 
     try {
       await api.delete(`/exercises/${id}/`);
-      await fetchExercises();
+      await fetchExercises(); // Still usable here
       setSuccessMessage("Exercise deleted successfully!");
       onDataChanged?.();
       setTimeout(() => setSuccessMessage(""), 3000);
@@ -95,11 +110,12 @@ const ExerciseLogPage = ({ onDataChanged }) => {
         setSuccessMessage("Exercise added successfully!");
       }
       setShowModal(false);
-      await fetchExercises();
+      await fetchExercises(); // Still usable here
       onDataChanged?.();
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       console.error("Save failed:", err);
+      setErrorMessage("Failed to save the exercise.");
     }
   };
 
@@ -111,12 +127,18 @@ const ExerciseLogPage = ({ onDataChanged }) => {
         <div className="alert alert-success text-center">{successMessage}</div>
       )}
 
+      {errorMessage && (
+        <div className="alert alert-danger text-center">{errorMessage}</div>
+      )}
+
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <label className="fw-bold">Filter:</label>
+        <label htmlFor="filterSelect" className="fw-bold">Filter:</label>
         <select
+          id="filterSelect"
           className="form-select w-50"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
+          aria-label="Filter exercises"
         >
           <option value="all">All</option>
           <option value="week">This Week</option>
@@ -124,96 +146,105 @@ const ExerciseLogPage = ({ onDataChanged }) => {
         </select>
       </div>
 
-      {/* Desktop Table */}
-      <div className="d-none d-md-block">
-        <table className="table table-bordered text-center align-middle">
-          <thead className="table-light">
-            <tr>
-              <th>Type</th>
-              <th>Name</th>
-              <th>Duration</th>
-              <th>Calories</th>
-              <th>Notes</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+      {loading ? (
+        <p className="text-center">Loading...</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-center">No exercises found.</p>
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <div className="d-none d-md-block">
+            <table className="table table-bordered text-center align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Duration</th>
+                  <th>Calories</th>
+                  <th>Notes</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((ex) => (
+                  <tr key={ex.id}>
+                    <td>
+                      <span className="me-1">{getExerciseIcon(ex.name)}</span>
+                      {capitalize(ex.type)}
+                    </td>
+                    <td>{ex.name}</td>
+                    <td>{ex.duration} min</td>
+                    <td>{ex.calories_burned}</td>
+                    <td>{ex.notes}</td>
+                    <td>{formatDate(ex.date)}</td>
+                    <td>
+                      <div className="d-grid gap-1">
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() => handleEdit(ex)}
+                          aria-label={`Edit ${ex.name}`}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDelete(ex.id)}
+                          aria-label={`Delete ${ex.name}`}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="d-block d-md-none">
             {filtered.map((ex) => (
-              <tr key={ex.id}>
-                <td>
-                  <span className="me-1">{getExerciseIcon(ex.name)}</span>
-                  {ex.type.charAt(0).toUpperCase() + ex.type.slice(1)}
-                </td>
-                <td>{ex.name}</td>
-                <td>{ex.duration} min</td>
-                <td>{ex.calories_burned}</td>
-                <td>{ex.notes}</td>
-                <td>{format(parseISO(ex.date), "MMM d, yyyy")}</td>
-                <td>
-                  <div className="d-grid gap-1">
+              <div className="card mb-3 shadow-sm" key={ex.id}>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h5 className="card-title mb-0">
+                      {getExerciseIcon(ex.name)} {capitalize(ex.type)}
+                    </h5>
+                    <small className="text-muted">{format(parseISO(ex.date), "MMM d")}</small>
+                  </div>
+                  <p className="mb-1 fw-bold">{ex.name}</p>
+                  <p className="mb-1">{ex.duration} min — {ex.calories_burned} kcal</p>
+                  {ex.notes && (
+                    <p className="mb-2 text-muted" style={{ fontSize: "0.9rem" }}>
+                      <i>{ex.notes}</i>
+                    </p>
+                  )}
+                  <div className="d-flex justify-content-end gap-2">
                     <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handleEdit(ex)}
+                      aria-label={`Edit ${ex.name}`}
                     >
                       Edit
                     </button>
                     <button
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleDelete(ex.id)}
+                      aria-label={`Delete ${ex.name}`}
                     >
                       Delete
                     </button>
                   </div>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile Cards */}
-      <div className="d-block d-md-none">
-        {filtered.map((ex) => (
-          <div className="card mb-3 shadow-sm" key={ex.id}>
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h5 className="card-title mb-0">
-                  {getExerciseIcon(ex.name)}{" "}
-                  {ex.type.charAt(0).toUpperCase() + ex.type.slice(1)}
-                </h5>
-                <small className="text-muted">
-                  {format(parseISO(ex.date), "MMM d")}
-                </small>
-              </div>
-              <p className="mb-1 fw-bold">{ex.name}</p>
-              <p className="mb-1">{ex.duration} min — {ex.calories_burned} kcal</p>
-              {ex.notes && (
-                <p className="mb-2 text-muted" style={{ fontSize: "0.9rem" }}>
-                  <i>{ex.notes}</i>
-                </p>
-              )}
-              <div className="d-flex justify-content-end gap-2">
-                <button
-                  className="btn btn-sm btn-outline-primary"
-                  onClick={() => handleEdit(ex)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => handleDelete(ex.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
           </div>
-        ))}
-      </div>
+        </>
+      )}
 
       <div className="text-center mt-4">
-        <button className="btn btn-success" onClick={handleAdd}>
+        <button className="btn btn-success" onClick={handleAdd} aria-label="Add new exercise">
           <i className="fa-solid fa-plus me-2"></i> Add Exercise
         </button>
       </div>
