@@ -10,6 +10,7 @@ import SleepLogList from "./SleepLogList";
 import SleepLogChart from "./SleepLogChart";
 import SleepEncouragement from "./SleepEncouragement";
 import AlarmSetting from "./AlarmSetting";
+import Swal from "sweetalert2";
 
 const defaultFormData = {
   date: "",
@@ -31,28 +32,69 @@ const SleepLogPage = ({ onDataChanged }) => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  // Fetch logs function - correctly handling pagination response
   const fetchLogs = useCallback(async () => {
     try {
       const res = await getSleepLogs();
-      const data = Array.isArray(res.data) ? res.data : [];
+      const data = Array.isArray(res.data.results) ? res.data.results : [];
       setLogs(data);
+      setError(null);
     } catch (err) {
       console.error("Failed to fetch logs:", err);
       setError("Failed to fetch sleep logs");
     }
   }, []);
 
+  // On mount, fetch logs
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
 
+  // Toast auto-hide
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  // Notify parent about average sleep
+  useEffect(() => {
+    if (logs.length && onDataChanged) {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const recentLogs = logs.filter((log) => new Date(log.date) >= oneWeekAgo);
+
+      const avgDuration =
+        recentLogs.reduce((acc, log) => acc + parseFloat(log.duration_hours || 0), 0) /
+        (recentLogs.length || 1);
+
+      onDataChanged({ averageSleepHours: parseFloat(avgDuration.toFixed(1)) });
+    }
+  }, [logs, onDataChanged]);
+
+  // Handle form submit (create or update)
   const handleSubmit = async () => {
+    const bedtime = new Date(`1970-01-01T${formData.bedtime}`);
+    const wakeTime = new Date(`1970-01-01T${formData.wake_time}`);
+    const calculatedDuration = (wakeTime - bedtime + 86400000) % 86400000 / 3600000;
+
+    if (
+      formData.bedtime &&
+      formData.wake_time &&
+      (isNaN(calculatedDuration) || calculatedDuration > 24)
+    ) {
+      setToastMessage("Bedtime and wake time must form a valid sleep duration.");
+      setShowToast(true);
+      return;
+    }
+
     const payload = {
       ...formData,
       duration_hours: parseFloat(formData.duration_hours),
       quality_rating: parseInt(formData.quality_rating),
-      bedtime: formData.bedtime || null,
-      wake_time: formData.wake_time || null,
+      bedtime: formData.bedtime || "",
+      wake_time: formData.wake_time || "",
       wake_feeling: formData.wake_feeling || "",
       notes: formData.notes || "",
     };
@@ -77,15 +119,12 @@ const SleepLogPage = ({ onDataChanged }) => {
       }
 
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-
       setFormData(defaultFormData);
       setEditingId(null);
       setShowModal(false);
 
+      // Refresh logs after adding/updating
       await fetchLogs();
-      // Notifies dashboard to refresh if provided
-      onDataChanged?.();
     } catch (err) {
       console.error("Error saving sleep log:", err.response?.data || err);
 
@@ -96,7 +135,6 @@ const SleepLogPage = ({ onDataChanged }) => {
       );
 
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -111,18 +149,41 @@ const SleepLogPage = ({ onDataChanged }) => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this log?")) {
-      try {
-        await deleteSleepLog(id);
-        await fetchLogs();
-        // Notifies dashboard to refresh
-        onDataChanged?.();
-      } catch (err) {
-        console.error("Delete failed:", err);
-        alert("Error deleting log.");
-      }
-    }
-  };
+  const result = await Swal.fire({
+    title: "Delete Sleep Log?",
+    text: "This will permanently remove the sleep entry from your log.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "Cancel",
+    customClass: {
+      popup: "custom-swal",
+      confirmButton: "btn-confirm",
+      cancelButton: "btn-cancel",
+      title: "swal-title",
+      content: "swal-content",
+    },
+    buttonsStyling: false,
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await deleteSleepLog(id);
+    await fetchLogs(); // Refresh logs
+    Swal.fire({
+      icon: "success",
+      title: "Deleted!",
+      text: "Sleep log deleted successfully.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+    onDataChanged?.();
+  } catch (err) {
+    console.error("Failed to delete sleep log:", err);
+    Swal.fire("Error", "Failed to delete the sleep log.", "error");
+  }
+};
 
   const handleCloseModal = () => {
     setFormData(defaultFormData);
@@ -130,12 +191,9 @@ const SleepLogPage = ({ onDataChanged }) => {
     setShowModal(false);
   };
 
-  const recentLogs = logs.filter((log) => {
-    const logDate = new Date(log.date);
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    return logDate >= oneWeekAgo;
-  });
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const recentLogs = logs.filter((log) => new Date(log.date) >= oneWeekAgo);
 
   return (
     <div className="container py-4">
@@ -147,6 +205,12 @@ const SleepLogPage = ({ onDataChanged }) => {
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
+
+      {logs.length === 0 && !error && (
+        <div className="alert alert-info text-center">
+          No sleep logs yet. Start by adding one!
+        </div>
+      )}
 
       {/* Modal */}
       {showModal && (
