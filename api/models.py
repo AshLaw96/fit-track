@@ -413,7 +413,6 @@ class UserReport(models.Model):
 class WorkoutPlan(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    exercises = models.ManyToManyField(Exercise)
     description = models.TextField(blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
 
@@ -427,6 +426,22 @@ class WorkoutPlan(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.user.username}"
+
+
+# Daily Workout model
+class DailyWorkout(models.Model):
+    workout_plan = models.ForeignKey(
+        WorkoutPlan,
+        on_delete=models.CASCADE,
+        related_name='daily_workouts'
+    )
+    date = models.DateField()
+    time = models.TimeField()
+    activity = models.CharField(max_length=100)
+    duration = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.date} - {self.time} - {self.activity}"
 
 
 # Friendship model

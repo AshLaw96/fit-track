@@ -872,6 +872,25 @@ class DashboardView(APIView):
             for uc in user_challenges
         ]
 
+        latest_plan = (
+            WorkoutPlan.objects
+            .filter(user=user)
+            .order_by("-date_created")
+            .prefetch_related("daily_workouts")
+            .first()
+        )
+
+        if latest_plan:
+            workout_plan_data = WorkoutPlanSerializer(latest_plan).data
+            workout_plan_data["user_id"] = user.id
+            workout_plan_data["workout_plan_id"] = latest_plan.id
+        else:
+            workout_plan_data = {
+                "daily_workouts": [],
+                "user_id": user.id,
+                "workout_plan_id": None,
+            }
+
         return Response({
             "user": {
                 "first_name": user.first_name,
@@ -891,6 +910,7 @@ class DashboardView(APIView):
                 "calories_burned": total_exercise_calories
             },
             "workout_nutrition": {
+                **workout_plan_data,
                 "logs": NutritionLogSerializer(
                     nutrition_logs.order_by("-date")[:5],
                     many=True

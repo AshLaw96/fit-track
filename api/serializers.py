@@ -6,11 +6,10 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
 from datetime import date
 from .models import (
-    CustomUser, Goal, Exercise, Meal,
-    SleepLog, Achievement, UserActivity,
-    GoalProgress, UserStreak, DailyLog,
-    NutritionLog, Challenge, UserChallenge,
-    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification
+    CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
+    GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge,
+    UserChallenge, UserReport, Friend, WorkoutPlan, SleepSchedule,
+    Notification, DailyWorkout
 )
 from .utils.notifications import send_notification
 
@@ -509,46 +508,56 @@ class FriendSerializer(serializers.ModelSerializer):
         return data
 
 
+class DailyWorkoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DailyWorkout
+        fields = ['id', 'date', 'time', 'activity', 'duration']
+
+        def validate_time(self, value):
+            if not value:
+                raise serializers.ValidationError("Time is required.")
+            return value
+
+
 class WorkoutPlanSerializer(serializers.ModelSerializer):
     """
     Serializer for the WorkoutPlan model without nesting `Exercise` serializer.
     Instead of nested exercise data, we handle the relationship via
     `exercise_ids`.
     """
-    exercises = serializers.PrimaryKeyRelatedField(
-        queryset=Exercise.objects.all(),
-        many=True
-    )
+    daily_workouts = DailyWorkoutSerializer(many=True)
 
     class Meta:
         model = WorkoutPlan
         fields = [
-            'id', 'user', 'title', 'description', 'exercises', 'date_created'
+            'id',
+            'user',
+            'title',
+            'description',
+            'date_created',
+            'daily_workouts'
         ]
         read_only_fields = ['user', 'date_created']
 
     def create(self, validated_data):
-        # Get the list of exercise IDs
-        exercises = validated_data.pop('exercises')
+        daily_data = validated_data.pop('daily_workouts')
         user = self.context['request'].user
-        workout_plan = WorkoutPlan.objects.create(user=user, **validated_data)
-
-        # Add the exercises to the workout plan
-        workout_plan.exercises.set(exercises)
-        return workout_plan
+        plan = WorkoutPlan.objects.create(user=user, **validated_data)
+        for entry in daily_data:
+            DailyWorkout.objects.create(workout_plan=plan, **entry)
+        return plan
 
     def update(self, instance, validated_data):
-        # Get the list of exercise IDs
-        exercises = validated_data.pop('exercises', None)
+        daily_data = validated_data.pop('daily_workouts', None)
 
-        # Update other fields on instance
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
-        if exercises is not None:
-            # Update the exercises for the workout plan
-            instance.exercises.set(exercises)
+        if daily_data is not None:
+            instance.daily_workouts.all().delete()
+            for entry in daily_data:
+                DailyWorkout.objects.create(workout_plan=instance, **entry)
 
         return instance
 
