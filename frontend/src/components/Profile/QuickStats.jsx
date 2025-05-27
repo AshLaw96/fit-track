@@ -1,38 +1,52 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNotifications } from "../../contexts/NotificationContext";
-import { triggerNotification } from "../../utils//NotificationTriggers";
-import { FaStar, FaRegStar } from "react-icons/fa";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { triggerNotification } from "../../utils/NotificationTriggers";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import api from "../../utils/api";
+import AchievementStars from "./AchievementStars"; // 🔹 New component
 
 const QuickStats = ({ achievements }) => {
   const [challengeProgress, setChallengeProgress] = useState([]);
   const [activeCount, setActiveCount] = useState(0);
+  const [loadingChallenges, setLoadingChallenges] = useState(true);
   const { addNotification } = useNotifications();
   const notifiedRef = useRef(false);
 
+  // Load challenge progress
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
         const res = await api.get("/user_challenges/");
         const formatted = res.data.results.map((uc) => {
-        const percent = uc.target > 0 ? Math.min((uc.progress / uc.target) * 100, 100) : 0;
-        return {
-          name: uc.title,
-          progress: uc.progress,
-          target: uc.target,
-          percent,
-        };
-      });
+          const percent =
+            uc.target > 0 ? Math.min((uc.progress / uc.target) * 100, 100) : 0;
+          return {
+            name: uc.title,
+            progress: uc.progress,
+            target: uc.target,
+            percent,
+          };
+        });
         setChallengeProgress(formatted);
       } catch (err) {
         console.error("Error fetching challenge data:", err);
+      } finally {
+        setLoadingChallenges(false);
       }
     };
 
     fetchChallenges();
   }, []);
 
+  // Load user streak count
   useEffect(() => {
     const fetchActivity = async () => {
       try {
@@ -53,21 +67,20 @@ const QuickStats = ({ achievements }) => {
     fetchActivity();
   }, [addNotification]);
 
-  const renderStars = (count) =>
-    Array.from({ length: 3 }).map((_, i) =>
-      i < count ? <FaStar key={i} className="text-warning" /> : <FaRegStar key={i} className="text-muted" />
-    );
-
   return (
-    <div className="card p-3">
+    <div className="card p-4 mt-4 shadow-sm">
       <h5 className="custom-heading text-center mb-3">Quick Stats</h5>
+
+      {/* Active Days */}
       <div className="text-center mb-3">
         <p className="text-muted small mb-1">Active Days</p>
         <h3 className="fw-bold text-primary">{activeCount}</h3>
       </div>
 
-      {/* Challenge Progress Bar Chart */}
-      {challengeProgress.length > 0 && (
+      {/* Challenge Progress */}
+      {loadingChallenges ? (
+        <p className="text-center text-muted small">Loading challenge progress...</p>
+      ) : challengeProgress.length > 0 ? (
         <>
           <h6 className="text-center fw-bold">Challenge Progress</h6>
           <ResponsiveContainer width="100%" height={200}>
@@ -80,6 +93,8 @@ const QuickStats = ({ achievements }) => {
             </BarChart>
           </ResponsiveContainer>
         </>
+      ) : (
+        <p className="text-center text-muted small">No challenges found.</p>
       )}
 
       {/* Achievements */}
@@ -87,10 +102,11 @@ const QuickStats = ({ achievements }) => {
         <h6 className="text-center fw-bold">Achievements</h6>
         <div className="d-flex justify-content-around mt-2">
           {["Sleep", "Diet", "Fitness"].map((label) => (
-            <div key={label} className="text-center">
-              <p className="mb-1">{label}</p>
-              <div>{renderStars(achievements[label.toLowerCase()] || 0)}</div>
-            </div>
+            <AchievementStars
+              key={label}
+              label={label}
+              count={achievements[label.toLowerCase()] || 0}
+            />
           ))}
         </div>
       </div>

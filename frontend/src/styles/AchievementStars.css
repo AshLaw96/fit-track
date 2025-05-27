@@ -1,0 +1,8 @@
+.achievement-star {
+  font-size: 1.3rem;
+  transition: color 0.3s ease;
+}
+
+.text-accent {
+  color: var(--text-color, #0d6efd); /* fallback to primary */
+}
