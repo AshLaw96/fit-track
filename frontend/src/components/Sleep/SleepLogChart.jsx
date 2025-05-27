@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -16,22 +16,26 @@ const average = (arr) =>
 const SleepLogChart = ({ logs }) => {
   const [view, setView] = useState("week");
 
+  // Call hooks unconditionally
+  const filteredLogs = useMemo(() => {
+    if (!Array.isArray(logs)) return [];
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - (view === "week" ? 7 : 30));
+    return logs.filter((log) => new Date(log.date) >= cutoff);
+  }, [logs, view]);
+
+  const validDurations = useMemo(() => {
+    return filteredLogs
+      .map((log) => (log.duration_hours != null ? parseFloat(log.duration_hours) : NaN))
+      .filter((d) => !isNaN(d));
+  }, [filteredLogs]);
+
+  const userAvg = useMemo(() => Number(average(validDurations).toFixed(1)), [validDurations]);
+
+  // Now conditionally render
   if (!Array.isArray(logs)) {
     return <div className="text-muted">No sleep data available yet.</div>;
   }
-
-  const today = new Date();
-  const cutoff = new Date(today);
-  cutoff.setDate(today.getDate() - (view === "week" ? 7 : 30));
-
-  const filteredLogs = logs.filter(
-    (log) => new Date(log.date) >= cutoff
-  );
-
-  const validDurations = filteredLogs
-    .map((log) => parseFloat(log.duration_hours))
-    .filter((d) => !isNaN(d));
-  const userAvg = average(validDurations).toFixed(1);
 
   if (filteredLogs.length === 0 || validDurations.length === 0) {
     return (
@@ -42,16 +46,7 @@ const SleepLogChart = ({ logs }) => {
   }
 
   const avgUserAvg = view === "week" ? 7.5 : 7.2;
-
-  const chartData = [
-    {
-      name: `${view === "week" ? "Weekly" : "Monthly"} Avg`,
-      "Your Sleep": parseFloat(userAvg),
-      "Avg User": avgUserAvg,
-    },
-  ];
-
-  const showBadge = parseFloat(userAvg) >= 8;
+  const showBadge = userAvg >= 8;
 
   return (
     <div className="card p-3 mt-4 shadow-sm">
@@ -59,39 +54,45 @@ const SleepLogChart = ({ logs }) => {
         <h5 className="mb-0" aria-label="Sleep Duration Comparison">
           Sleep Duration Comparison
         </h5>
-        <div className="btn-group btn-group-sm">
+        <div className="btn-group btn-group-sm" role="group" aria-label="Select time range">
           <button
             className={`btn ${view === "week" ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => setView("week")}
+            aria-pressed={view === "week"}
           >
             Weekly
           </button>
           <button
             className={`btn ${view === "month" ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => setView("month")}
+            aria-pressed={view === "month"}
           >
             Monthly
           </button>
         </div>
       </div>
 
-      {parseFloat(userAvg) < 6 && (
-        <div className="alert alert-warning mb-2">
+      {userAvg < 6 && (
+        <div className="alert alert-warning mb-2" role="alert" aria-live="polite">
           ⚠️ Your {view} average sleep is below 6 hours. Consider adjusting your sleep habits.
         </div>
       )}
 
       {showBadge && (
-        <div className="alert alert-success mb-2">
+        <div className="alert alert-success mb-2" role="alert" aria-live="polite">
           🏆 Great job! Your {view} average sleep is {userAvg} hrs. Keep it up!
         </div>
       )}
 
       <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={chartData}>
+        <BarChart data={[{
+          name: `${view === "week" ? "Weekly" : "Monthly"} Avg`,
+          "Your Sleep": userAvg,
+          "Avg User": avgUserAvg,
+        }]}>
           <XAxis dataKey="name" />
-          <YAxis domain={[0, 10]} />
-          <Tooltip />
+          <YAxis domain={[0, 10]} label={{ value: 'Hours', angle: -90, position: 'insideLeft' }} />
+          <Tooltip formatter={(value) => `${value} hrs`} />
           <Legend />
           <Bar dataKey="Your Sleep" fill="#8884d8" animationDuration={800}>
             <LabelList dataKey="Your Sleep" position="top" />

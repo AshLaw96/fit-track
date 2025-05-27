@@ -11,43 +11,55 @@ const formatDate = (dateStr) => {
       });
 };
 
+const formatDuration = (duration) => {
+  return typeof duration === "number"
+    ? `${duration.toFixed(1)} hrs`
+    : duration
+    ? `${parseFloat(duration).toFixed(1)} hrs`
+    : "N/A";
+};
+
 const SleepLogList = ({ logs, onEdit, onDelete }) => {
   if (!Array.isArray(logs)) {
     return <div className="text-muted">No sleep logs available.</div>;
   }
 
   return (
-    <div className="card p-3 mt-4 shadow-sm">
-      <h5 className="text-center mb-3">Your Sleep Logs</h5>
+    <div className="custom-wrap mt-4">
+      <h5 className="custom-heading text-center mb-3">Your Sleep Logs</h5>
       {logs.length === 0 ? (
-        <p>No logs found.</p>
+        <p className="text-center text-muted">No logs found.</p>
       ) : (
-        <ul className="list-group">
+        <ul className="list-group shadow-sm">
           {logs.map((log) => (
             <li
               key={log.id}
               className="list-group-item d-flex justify-content-between align-items-start flex-column flex-md-row"
             >
-              <div>
-                <strong>{formatDate(log.date)}</strong> -{" "}
-                {log.duration_hours ? `${log.duration_hours} hrs` : "No duration"} - Rating:{" "}
+              <div className="pe-md-3 mb-2 mb-md-0 w-100">
+                <strong>
+                  <time dateTime={log.date}>{formatDate(log.date)}</time>
+                </strong>{" "}
+                — {formatDuration(log.duration_hours)} — Rating:{" "}
                 {log.quality_rating ?? "N/A"}
                 <br />
                 <small className="text-muted">
-                  Bedtime: {log.bedtime || "N/A"} | Wake: {log.wake_time || "N/A"} | Feeling:{" "}
+                  Bedtime:{" "}
+                  {log.bedtime ? <time>{log.bedtime}</time> : "N/A"} | Wake:{" "}
+                  {log.wake_time ? <time>{log.wake_time}</time> : "N/A"} | Feeling:{" "}
                   {log.wake_feeling || "N/A"}
                 </small>
               </div>
-              <div className="mt-2 mt-md-0">
+              <div className="d-flex gap-2">
                 <button
-                  className="btn btn-sm btn-secondary me-2"
+                  className="btn btn-sm btn-outline-primary"
                   onClick={() => onEdit(log)}
                   aria-label={`Edit sleep log for ${log.date}`}
                 >
                   Edit
                 </button>
                 <button
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-sm btn-outline-danger"
                   onClick={() => onDelete(log.id)}
                   aria-label={`Delete sleep log for ${log.date}`}
                 >
