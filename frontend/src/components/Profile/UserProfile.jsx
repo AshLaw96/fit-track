@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   // Fetch profile on mount
   useEffect(() => {
@@ -35,15 +36,14 @@ const UserProfile = () => {
     fetchProfile();
   }, []);
 
-  // Handle input change in the form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const payload = {
         ...profile,
@@ -56,10 +56,12 @@ const UserProfile = () => {
     } catch (err) {
       console.error("Failed to update profile:", err);
       toast.error("Profile update failed. Please check your input.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  if (loading || !profile) return <p>Loading...</p>;
+  if (loading || !profile) return <p className="text-center">Loading profile...</p>;
 
   const achievements = {
     sleep: 2,
@@ -70,14 +72,32 @@ const UserProfile = () => {
   return (
     <div className="container py-4 custom-wrap">
       <ToastContainer position="top-right" autoClose={3000} />
-      <h3 className="text-center custom-heading">Your Profile</h3>
+      <h3 className="text-center custom-heading mb-4">Your Profile</h3>
+
       <ProfileImage />
-      <form onSubmit={handleSubmit}>
+
+      <form onSubmit={handleSubmit} className="mb-4">
         <ProfileForm profile={profile} onChange={handleChange} />
-        <button type="submit" className="btn btn-primary w-100">
-          Save Changes
+        <button
+          type="submit"
+          className="btn btn-outline-primary w-100 mt-3"
+          disabled={saving}
+        >
+          {saving ? (
+            <>
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </button>
       </form>
+
       <QuickStats achievements={achievements} />
       <DeleteAccount />
     </div>
