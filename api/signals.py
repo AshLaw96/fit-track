@@ -2,7 +2,7 @@ from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django.db.models.signals import post_save
-from .models import UserActivity, CustomUser, Notification
+from .models import UserActivity, CustomUser, Notification, Goal, Achievement
 from .utils.activity import calculate_user_streak
 from .utils.notifications import send_notification
 
@@ -37,3 +37,24 @@ def send_daily_motivation(sender, user, request, **kwargs):
         message="Make today count. You're stronger than you think.",
         type="reminder"
     )
+
+
+def check_and_award_achievement(user, goal):
+    achieved_count = Goal.objects.filter(
+        user=user,
+        goal_type=goal.goal_type,
+        status="achieved"
+    ).count()
+
+    # Award up to 3 stars (e.g., 1 achievement per completed goal)
+    if achieved_count <= 3 and not Achievement.objects.filter(
+        user=user,
+        category=goal.goal_type,
+        title=f"{goal.goal_type.title()} Star {achieved_count}"
+    ).exists():
+        Achievement.objects.create(
+            user=user,
+            category=goal.goal_type,
+            title=f"{goal.goal_type.title()} Star {achieved_count}",
+            description=f"Completed {achieved_count} {goal.goal_type} goals!"
+        )

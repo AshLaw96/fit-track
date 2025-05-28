@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import SleepSchedule, UserChallenge
+from .models import SleepSchedule, UserChallenge, Goal
 from .utils.notifications import send_notification
 
 
@@ -55,3 +55,17 @@ def check_and_send_challenge_deadlines():
             continue
 
         send_notification(uc.user, title, msg, type="challenge_deadline")
+
+
+@shared_task
+def expire_unachieved_goals():
+    today = timezone.now().date()
+
+    unachieved_goals = Goal.objects.filter(
+        deadline__lt=today,
+        status='in_progress'
+    )
+
+    for goal in unachieved_goals:
+        goal.status = 'failed'
+        goal.save()

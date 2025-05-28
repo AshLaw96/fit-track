@@ -59,9 +59,23 @@ class Goal(models.Model):
     deadline = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        prev_status = None
+        if self.pk:
+            prev_status = Goal.objects.get(pk=self.pk).status
+
         if self.current_value >= self.target_value:
             self.status = 'achieved'
+
         super().save(*args, **kwargs)
+
+        # Create achievement if newly achieved
+        if self.status == 'achieved' and prev_status != 'achieved':
+            Achievement.objects.get_or_create(
+                user=self.user,
+                category=self.goal_type,
+                title=f"{self.goal_type.title()} Goal Achieved",
+                defaults={"description": "You achieved your goal!"}
+            )
 
     def __str__(self):
         return f"{self.user.username} - {self.goal_type} goal"
@@ -489,6 +503,10 @@ class Notification(models.Model):
     message = models.TextField()
     type = models.CharField(max_length=50, default="general")
     read = models.BooleanField(default=False)
+    link = models.URLField(
+        null=True, blank=True,
+        help_text="Optional link for more details."
+    )
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

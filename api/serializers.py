@@ -12,6 +12,7 @@ from .models import (
     Notification, DailyWorkout
 )
 from .utils.notifications import send_notification
+from .signals import check_and_award_achievement
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -277,7 +278,19 @@ class GoalProgressSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Remove goal_id from validated_data
         validated_data.pop('goal_id', None)
-        return super().create(validated_data)
+        instance = super().create(validated_data)
+
+        # Re-check and save goal status
+        goal = instance.goal
+        goal.current_value += instance.progress_value
+        goal.save()
+
+        if goal.status == "achieved":
+            check_and_award_achievement(
+                goal.user, goal
+            )
+
+        return instance
 
 
 class UserStreakSerializer(serializers.ModelSerializer):

@@ -22,3 +22,11 @@ app.conf.beat_schedule.update({
         'schedule': crontab(hour=8, minute=0),
     }
 })
+
+app.conf.beat_schedule.update({
+    'expire-unachieved-daily-goals-every-night': {
+        'task': 'api.tasks.expire_unachieved_goals',
+        # every day at 12:05 AM
+        'schedule': crontab(hour=0, minute=5),
+    }
+})
