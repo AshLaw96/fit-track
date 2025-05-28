@@ -97,7 +97,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
 
   return (
     <div className="container py-4 custom-wrap">
-      <h2 className="mb-4 text-center custom-heading">
+      <h2 className="mb-4 text-center custom-heading page-title">
         Welcome back, {profile.username || "User"}!
       </h2>
       <div className="row g-4">

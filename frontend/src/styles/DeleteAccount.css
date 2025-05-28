@@ -1,4 +1,14 @@
 .delete-account-btn {
   border-radius: 0.5rem;
   font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.delete-account-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.delete-account-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

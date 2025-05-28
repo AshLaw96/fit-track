@@ -2,11 +2,13 @@ import React from "react";
 import "../styles/footer.css";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="footer py-4 mt-auto">
       <div className="container text-center">
         <p className="footer-text mb-2">
-          &copy; {new Date().getFullYear()} FitTrack. All rights reserved.
+          &copy; {currentYear} FitTrack. All rights reserved.
         </p>
         <div className="footer-icons">
           <a

@@ -198,7 +198,7 @@ const SleepLogPage = ({ onDataChanged }) => {
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="text-center">Sleep Log</h2>
+        <h2 className="text-center page-title">Sleep Log</h2>
         <button className="btn btn-success" onClick={() => setShowModal(true)}>
           + Add Entry
         </button>

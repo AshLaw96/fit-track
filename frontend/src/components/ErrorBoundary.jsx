@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/ErrorPages.css";
+import { Link } from "react-router-dom";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -18,16 +19,20 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="container error-container">
+        <div
+          className="container error-container"
+          role="alert"
+          aria-live="assertive"
+        >
           <h1 className="error-heading error-500-heading">
-           <i class="fa-solid fa-triangle-exclamation"></i> 500 - Oops! Something went wrong.
+            <i className="fa-solid fa-triangle-exclamation"></i> 500 - Oops! Something went wrong.
           </h1>
           <p className="error-message">
             We're experiencing some technical difficulties right now. Don't worry — your fitness progress is safe! Please try again later or head back home.
           </p>
-          <a href="/" className="btn btn-secondary btn-return-home">
+          <Link to="/" className="btn btn-secondary btn-return-home">
             Return Home
-          </a>
+          </Link>
         </div>
       );
     }

@@ -118,29 +118,21 @@ export default api;
 
 // --- SleepLog helpers ---
 export const getSleepLogs = async () => {
-  console.log("Fetching sleep logs...");
   const response = await api.get("/sleep_logs/");
-  console.log("Sleep logs response:", response);
   return response;
 };
 
 export const createSleepLog = async (data) => {
-  console.log("Creating sleep log with data:", data);
   const response = await api.post("/sleep_logs/", data);
-  console.log("Created sleep log response:", response);
   return response;
 };
 
 export const updateSleepLog = async (id, data) => {
-  console.log(`Updating sleep log ${id} with data:`, data);
   const response = await api.put(`/sleep_logs/${id}/`, data);
-  console.log("Updated sleep log response:", response);
   return response;
 };
 
 export const deleteSleepLog = async (id) => {
-  console.log(`Deleting sleep log ${id}`);
   const response = await api.delete(`/sleep_logs/${id}/`);
-  console.log("Deleted sleep log response:", response);
   return response;
 };

@@ -1,0 +1,8 @@
+iframe[src*="tidio"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 80vh !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+}

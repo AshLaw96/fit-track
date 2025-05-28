@@ -121,7 +121,7 @@ const ExerciseLogPage = ({ onDataChanged }) => {
 
   return (
     <div className="custom-wrap">
-      <h2 className="custom-heading">Exercise Log</h2>
+      <h2 className="custom-heading page-title">Exercise Log</h2>
 
       {successMessage && (
         <div className="alert alert-success text-center">{successMessage}</div>

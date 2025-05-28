@@ -104,7 +104,7 @@ const MealLogPage = ({ onDataChanged }) => {
 
   return (
     <div className="custom-wrap">
-      <h2 className="custom-heading">Meal Log</h2>
+      <h2 className="custom-heading page-title">Meal Log</h2>
       {successMessage && <div className="alert alert-success text-center">{successMessage}</div>}
 
       {/* Desktop Table */}
