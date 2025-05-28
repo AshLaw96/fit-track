@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Link } from "react-router-dom";
 import FAQItem from "./FAQItem";
@@ -52,42 +52,56 @@ const faqData = [
 
 const FAQ = () => {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Fuse setup: memoize to avoid re-creating on each render
-  const fuse = useMemo(() => {
-    return new Fuse(faqData, {
-      keys: ["question", "answer"],
-      threshold: 0.35,
-    });
-  }, []);
+  const fuse = useMemo(() => new Fuse(faqData, {
+    keys: ["question", "answer"],
+    threshold: 0.35,
+    includeMatches: true,
+  }), []);
 
-  const filteredFAQs = search
-    ? fuse.search(search).map((result) => result.item)
-    : faqData;
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const filteredFAQs = useMemo(() => {
+    if (!debouncedSearch) return faqData;
+    return fuse.search(debouncedSearch).map(res => ({
+      ...res.item,
+      matches: res.matches,
+    }));
+  }, [debouncedSearch, fuse]);
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading">Frequently Asked Questions</h3>
+      <h3 className="custom-heading mb-3">Frequently Asked Questions</h3>
 
       <input
         type="text"
         placeholder="Search FAQs..."
-        className="form-control mb-4"
+        className="form-control form-control-lg mb-4"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {filteredFAQs.length > 0 ? (
         filteredFAQs.map((faq, index) => (
-          <FAQItem key={index} question={faq.question} answer={faq.answer} />
+          <FAQItem
+            key={index}
+            question={faq.question}
+            answer={faq.answer}
+            matches={faq.matches}
+          />
         ))
       ) : (
-        <div className="card text-center">
+        <div className="card p-3 text-center">
           <p className="mb-0">No matching FAQs found.</p>
         </div>
       )}
+
       <div className="mt-4 text-center">
-        <Link to="/help" className="btn btn-outline-secondary mb-4">
+        <Link to="/help" className="btn btn-outline-secondary">
           ← Back to Help page
         </Link>
       </div>
