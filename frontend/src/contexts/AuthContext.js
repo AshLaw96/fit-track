@@ -17,10 +17,24 @@ export const AuthProvider = ({ children }) => {
     return !!localStorage.getItem("access_token");
   });
 
+  const [user, setUser] = useState(null);
+
+  const login = (access, refresh) => {
+    localStorage.setItem("access_token", access);
+    localStorage.setItem("refresh_token", refresh);
+    setIsAuthenticated(true);
+
+    const decoded = jwtDecode(access);
+    setUser({ ...decoded });
+
+    navigate("/");
+  };
+
   const logout = useCallback(() => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     setIsAuthenticated(false);
+    setUser(null);
   }, []);
 
   const refreshToken = useCallback(async () => {
@@ -68,15 +82,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, [isAuthenticated, refreshToken, logout]);
 
-  const login = (access, refresh) => {
-    localStorage.setItem("access_token", access);
-    localStorage.setItem("refresh_token", refresh);
-    setIsAuthenticated(true);
-    navigate("/");
-  };
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, user, setUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
