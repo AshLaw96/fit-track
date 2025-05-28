@@ -6,16 +6,28 @@ import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
-  const navbarCollapseRef = useRef();
+  const navbarCollapseRef = useRef(null);
+  const bsCollapseInstance = useRef(null); // store bootstrap collapse instance here
   const location = useLocation();
   const { isAuthenticated: isLoggedIn } = useAuth();
 
-  // Collapse on route change
   useEffect(() => {
-    collapseNavbar();
+    // Initialize Bootstrap collapse instance once
+    if (navbarCollapseRef.current && !bsCollapseInstance.current) {
+      bsCollapseInstance.current = new window.bootstrap.Collapse(navbarCollapseRef.current, {
+        toggle: false,
+      });
+    }
+  }, []);
+
+  // Collapse navbar on route change
+  useEffect(() => {
+    if (bsCollapseInstance.current) {
+      bsCollapseInstance.current.hide();
+    }
   }, [location]);
 
-  // Collapse on outside click
+  // Collapse navbar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -24,7 +36,7 @@ const Navbar = () => {
         !navbarCollapseRef.current.contains(event.target) &&
         !event.target.classList.contains("navbar-toggler")
       ) {
-        collapseNavbar();
+        bsCollapseInstance.current.hide();
       }
     };
 
@@ -32,18 +44,9 @@ const Navbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const collapseNavbar = () => {
-    const collapseElement = navbarCollapseRef.current;
-    if (collapseElement && collapseElement.classList.contains("show")) {
-      new window.bootstrap.Collapse(collapseElement, {
-        toggle: true,
-      });
-    }
-  };
-
   return (
     <>
-      <nav className="navbar navbar-expand-md navbar-light bg-white shadow-sm py-3 mb-4">
+      <nav className="navbar navbar-expand-md shadow-sm py-3 mb-4">
         <div className="container px-3">
           <Link className="navbar-brand header-title" to="/">
             FitTrack
@@ -60,13 +63,14 @@ const Navbar = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
           <div
             className="collapse navbar-collapse"
             id="navbarLinks"
             ref={navbarCollapseRef}
           >
             <ul className="navbar-nav ms-auto">
-            {isLoggedIn ? (
+              {isLoggedIn ? (
                 <>
                   <li className="nav-item">
                     <Link className="nav-link header-link" to="/">
@@ -116,21 +120,19 @@ const Navbar = () => {
                   </li>
                 </>
               ) : (
-                <>
-                  <li className="nav-item">
-                    <Link className="nav-link header-link" to="/auth">
-                      Login / Register
-                      <i className="fa-solid fa-user-plus header-icon"></i>
-                    </Link>
-                  </li>
-                </>
-              )}
                 <li className="nav-item">
-                  <Link className="nav-link header-link" to="/help">
-                    Help
-                    <i className="fa-solid fa-circle-question header-icon"></i>
+                  <Link className="nav-link header-link" to="/auth">
+                    Login / Register
+                    <i className="fa-solid fa-user-plus header-icon"></i>
                   </Link>
                 </li>
+              )}
+              <li className="nav-item">
+                <Link className="nav-link header-link" to="/help">
+                  Help
+                  <i className="fa-solid fa-circle-question header-icon"></i>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
