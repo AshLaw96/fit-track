@@ -14,7 +14,7 @@ const DeleteAccount = () => {
   const { logout } = useAuth();
 
   const handleDelete = async () => {
-    const result = await Swal.fire({
+    const confirmationOptions = {
       title: "Are you sure?",
       text: "This action will permanently delete your account.",
       icon: "warning",
@@ -22,20 +22,17 @@ const DeleteAccount = () => {
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#dc3545",
-      customClass: {
-        popup: "custom-swal",
-      },
-    });
+      customClass: { popup: "custom-swal" },
+    };
 
+    const result = await Swal.fire(confirmationOptions);
     if (!result.isConfirmed) return;
 
     try {
       setLoading(true);
       await api.delete("/delete_account/");
-
-      // Clear auth
       localStorage.clear();
-      if (logout) logout();
+      logout?.();
 
       setDeleted(true);
 
@@ -44,26 +41,25 @@ const DeleteAccount = () => {
         title: "Deleted!",
         text: "Your account has been successfully deleted.",
         confirmButtonColor: "#0d6efd",
-        customClass: {
-          popup: "custom-swal",
-        },
+        customClass: { popup: "custom-swal" },
       });
 
       navigate("/goodbye");
     } catch (error) {
-      console.error("Failed to delete account:", error);
-      toast.error("Error deleting account. Please try again.");
+      console.error("Account deletion failed:", error);
+      toast.error("Could not delete account. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mt-4">
+    <div className="mt-4" aria-live="polite">
       <button
-        className="btn btn-danger w-100 d-flex align-items-center justify-content-center delete-account-btn"
+        className={`btn btn-danger w-100 d-flex align-items-center justify-content-center delete-account-btn ${deleted ? "btn-outline-danger" : ""}`}
         onClick={handleDelete}
         disabled={loading || deleted}
+        aria-disabled={loading || deleted}
       >
         <MdDelete className="me-2" />
         {loading ? "Deleting..." : deleted ? "Account Deleted" : "Delete Account"}

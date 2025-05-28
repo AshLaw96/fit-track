@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaUserEdit, FaCamera, FaSpinner } from "react-icons/fa";
 import api from "../../utils/api";
+import "../../styles/ProfileImage.css";
 
 const ProfileImage = () => {
   const fileInputRef = useRef();
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -15,6 +17,7 @@ const ProfileImage = () => {
         if (savedUrl) setImageUrl(savedUrl);
       } catch (err) {
         console.error("Could not load profile:", err);
+        setError("Could not load profile image.");
       }
     };
 
@@ -26,6 +29,7 @@ const ProfileImage = () => {
     if (!file) return;
 
     setLoading(true);
+    setError(null);
 
     try {
       const formData = new FormData();
@@ -41,7 +45,7 @@ const ProfileImage = () => {
       }
     } catch (err) {
       console.error("Upload failed:", err);
-      alert("Image upload failed. Please try again.");
+      setError("Image upload failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -51,18 +55,18 @@ const ProfileImage = () => {
 
   return (
     <div className="text-center position-relative mb-4">
-      {imageUrl ? (
+      {loading && !imageUrl ? (
+        <div className="profile-image loading">
+          <FaSpinner className="fa-spin text-muted" size={24} />
+        </div>
+      ) : imageUrl ? (
         <img
           src={imageUrl}
           alt="Profile"
-          className="rounded-circle border shadow-sm"
-          style={{ width: 96, height: 96, objectFit: "cover" }}
+          className="profile-image"
         />
       ) : (
-        <div
-          className="rounded-circle bg-secondary d-flex justify-content-center align-items-center mx-auto"
-          style={{ width: 96, height: 96 }}
-        >
+        <div className="profile-image default">
           <FaUserEdit className="text-white" size={32} />
         </div>
       )}
@@ -71,6 +75,7 @@ const ProfileImage = () => {
         type="button"
         className="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle shadow-sm"
         title="Edit Photo"
+        aria-label="Edit profile photo"
         onClick={triggerFileSelect}
         disabled={loading}
       >
@@ -88,6 +93,8 @@ const ProfileImage = () => {
       <p className="text-muted small mt-2">
         {loading ? "Uploading..." : "Click to add or edit profile image"}
       </p>
+
+      {error && <p className="text-danger small">{error}</p>}
     </div>
   );
 };
