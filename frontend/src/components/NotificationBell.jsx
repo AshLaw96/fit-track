@@ -16,13 +16,25 @@ const NotificationBell = () => {
     clearNotifications();
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setModalOpen(true);
+    }
+  };
+
   return (
     <>
       {showBell && (
-        <div className="notification-bell" onClick={handleClick}>
+        <button
+          className="notification-bell"
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          aria-label={`You have ${notifications.length} new notifications`}
+        >
           <Icons.Bell />
-          {showBell && <span className="notification-dot" />}
-        </div>
+          <span className="notification-dot" />
+        </button>
       )}
 
       {modalOpen && (

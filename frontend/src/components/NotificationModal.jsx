@@ -3,10 +3,10 @@ import "../styles/NotificationModal.css";
 
 const NotificationModal = ({ notifications, onClose }) => {
   return (
-    <div className="notification-modal">
+    <div className="notification-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="modal-header">
-        <h3>Notifications</h3>
-        <button onClick={onClose}>X</button>
+        <h3 id="modal-title">Notifications</h3>
+        <button onClick={onClose} aria-label="Close notifications modal">X</button>
       </div>
       <div className="modal-body">
         {notifications.length === 0 ? (

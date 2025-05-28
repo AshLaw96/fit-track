@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import api from "../utils/api";
 
 const NotificationContext = createContext();
@@ -15,31 +9,50 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [showBell, setShowBell] = useState(false);
 
-  // Memoized addNotification
-  const addNotification = useCallback((notification) => {
-    setNotifications((prev) => {
-      if (prev.find((n) => n.id === notification.id)) return prev;
-      return [...prev, notification];
-    });
-    setShowBell(true);
-  }, []);
+  // Track allowNotifications preference (default true)
+  const [allowNotifications, setAllowNotificationsState] = useState(() => {
+    const stored = localStorage.getItem("allowNotifications");
+    return stored !== null ? JSON.parse(stored) : true;
+  });
 
-  const markNotificationsRead = async () => {
+  useEffect(() => {
+    localStorage.setItem("allowNotifications", JSON.stringify(allowNotifications));
+  }, [allowNotifications]);
+
+  // update allowNotifications
+  const setAllowNotifications = (enabled) => {
+    setAllowNotificationsState(enabled);
+  };
+
+  // Add a notification (only if allowed)
+  const addNotification = useCallback(
+    (notification) => {
+      if (!allowNotifications) return; // Ignore if notifications not allowed
+
+      setNotifications((prev) => {
+        if (prev.find((n) => n.id === notification.id)) return prev;
+        return [...prev, notification];
+      });
+      setShowBell(true);
+    },
+    [allowNotifications]
+  );
+
+  // Clear notifications & mark them read on server
+  const clearNotifications = useCallback(async () => {
+    setNotifications([]);
+    setShowBell(false);
     try {
       await api.post("/notifications/mark_read/");
     } catch (err) {
       console.error("Failed to mark notifications as read", err);
     }
-  };
+  }, []);
 
-  const clearNotifications = async () => {
-    setNotifications([]);
-    setShowBell(false);
-    await markNotificationsRead();
-  };
-
-  // Memoized fetchNotifications that uses addNotification
+  // Fetch notifications from API
   const fetchNotifications = useCallback(async () => {
+    if (!allowNotifications) return; // Skip fetching if not allowed
+
     try {
       const response = await api.get("/notifications/");
       const data = response.data;
@@ -48,44 +61,22 @@ export const NotificationProvider = ({ children }) => {
           id: note.id,
           title: note.title,
           description: note.message,
-          link: "/notifications",
+          link: note.link || "/",
         })
       );
     } catch (err) {
       console.error("[fetchNotifications] Error fetching notifications", err);
     }
-  }, [addNotification]);
+  }, [addNotification, allowNotifications]);
 
+  // Auto-fetch notifications if allowed on mount & every 60 seconds
+  useEffect(() => {
+    if (!allowNotifications) return;
 
- useEffect(() => {
-  const checkTokenAndFetch = () => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      fetchNotifications();
-      const interval = setInterval(fetchNotifications, 60000);
-      return () => clearInterval(interval);
-    }
-  };
-
-  // Initial check
-  checkTokenAndFetch();
-
-  // Listen for storage changes (when another tab logs in)
-  window.addEventListener("storage", checkTokenAndFetch);
-
-  // Polling every 60 seconds
-  const interval = setInterval(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      fetchNotifications();
-    }
-  }, 60000);
-
-  return () => {
-    window.removeEventListener("storage", checkTokenAndFetch);
-    clearInterval(interval);
-  };
-}, [fetchNotifications]);
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications, allowNotifications]);
 
   return (
     <NotificationContext.Provider
@@ -95,6 +86,8 @@ export const NotificationProvider = ({ children }) => {
         addNotification,
         clearNotifications,
         fetchNotifications,
+        allowNotifications,
+        setAllowNotifications,
       }}
     >
       {children}

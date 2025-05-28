@@ -604,6 +604,11 @@ class NotificationSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Notification
+        fields = [
+            'id', 'title', 'message', 'type', 'read', 'timestamp', 'link'
+        ]
+
+
 class UserPreferenceSerializer(serializers.ModelSerializer):
     """
     Serializer for user preferences, such as dark mode.
