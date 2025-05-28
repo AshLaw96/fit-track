@@ -11,8 +11,13 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [achievementCounts, setAchievementCounts] = useState({
+    sleep: 0,
+    diet: 0,
+    fitness: 0,
+  });
 
-  // Fetch profile on mount
+  // Fetch profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -34,6 +39,33 @@ const UserProfile = () => {
       }
     };
     fetchProfile();
+  }, []);
+
+  // Fetch achievements
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const res = await api.get("/achievements/");
+        const all = Array.isArray(res.data?.results) ? res.data.results : [];
+
+        // Group and count achievements by category
+        const grouped = all.reduce(
+          (acc, item) => {
+            const cat = item.category.toLowerCase();
+            if (["sleep", "diet", "fitness"].includes(cat)) {
+              acc[cat] = (acc[cat] || 0) + 1;
+            }
+            return acc;
+          },
+          { sleep: 0, diet: 0, fitness: 0 }
+        );
+
+        setAchievementCounts(grouped);
+      } catch (err) {
+        console.error("Failed to fetch achievements:", err);
+      }
+    };
+    fetchAchievements();
   }, []);
 
   const handleChange = (e) => {
@@ -63,16 +95,10 @@ const UserProfile = () => {
 
   if (loading || !profile) return <p className="text-center">Loading profile...</p>;
 
-  const achievements = {
-    sleep: 2,
-    diet: 3,
-    fitness: 2,
-  };
-
   return (
     <div className="container py-4 custom-wrap">
       <ToastContainer position="top-right" autoClose={3000} />
-      <h3 className="text-center custom-heading mb-4">Your Profile</h3>
+      <h3 className="text-center custom-heading mb-4 page-title">Your Profile</h3>
 
       <ProfileImage />
 
@@ -98,7 +124,7 @@ const UserProfile = () => {
         </button>
       </form>
 
-      <QuickStats achievements={achievements} />
+      <QuickStats achievements={achievementCounts} />
       <DeleteAccount />
     </div>
   );
