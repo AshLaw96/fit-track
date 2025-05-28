@@ -1,31 +1,55 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useUnits } from "../../contexts/UnitsContext";
 
 const ActivitySummary = ({ data, profile }) => {
+  const { units } = useUnits();
   const { avg_sleep_hours, steps, calories_burned, water_intake } = data || {};
   const sleep = avg_sleep_hours;
+  const weightKg = profile?.weight_kg ?? 0;
 
-  // Extract weight safely from profile
-  const weight = profile?.weight_kg ?? 0;
+  // Convert weight
+  const displayWeight = (() => {
+    switch (units.weight) {
+      case "pounds":
+        return `${(weightKg * 2.205).toFixed(1)} lbs`;
+      case "grams":
+        return `${(weightKg * 1000).toFixed(0)} g`;
+      case "kilograms":
+      default:
+        return `${weightKg} kg`;
+    }
+  })();
 
-  // Handle unit display
-  const displayWeight =
-    profile?.unit_preference === "imperial"
-      ? `${(weight * 2.205).toFixed(1)} lbs`
-      : `${weight} kg`;
+  // Convert water intake
+  const displayWaterIntake = (() => {
+    if (water_intake == null) return units.volume === "gallons" ? "0 gal" : units.volume === "milliliters" ? "0 mL" : "0 L";
+
+    switch (units.volume) {
+      case "gallons":
+        return `${(water_intake * 0.264172).toFixed(2)} gal`;
+      case "milliliters":
+        return `${(water_intake * 1000).toFixed(0)} mL`;
+      case "liters":
+      default:
+        return `${water_intake.toFixed(1)} L`;
+    }
+  })();
 
   const hasData =
-  avg_sleep_hours != null ||
-  steps != null ||
-  calories_burned != null ||
-  weight != null ||
-  water_intake != null;
+    avg_sleep_hours != null ||
+    steps != null ||
+    calories_burned != null ||
+    weightKg != null ||
+    water_intake != null;
 
   if (!hasData) {
     return (
       <div className="card p-3 shadow">
         <h5 className="mb-3">Today's Activity Summary</h5>
-        <div className="text-muted">No activity data yet. Start logging your day!</div>
+        <div className="text-muted">
+          No activity data yet. Start logging your day!
+        </div>
       </div>
     );
   }
@@ -33,6 +57,7 @@ const ActivitySummary = ({ data, profile }) => {
   return (
     <section className="card p-3 shadow" aria-label="Today's Activity Summary">
       <h5 className="mb-3">Today's Activity Summary</h5>
+
       <div>
         🛌 Sleep:{" "}
         {sleep != null ? (
@@ -43,6 +68,7 @@ const ActivitySummary = ({ data, profile }) => {
           "0 hrs"
         )}
       </div>
+
       <div>
         👣 Steps:{" "}
         {steps != null ? (
@@ -53,6 +79,7 @@ const ActivitySummary = ({ data, profile }) => {
           0
         )}
       </div>
+
       <div>
         🔥 Calories Burned:{" "}
         {calories_burned != null ? (
@@ -63,25 +90,19 @@ const ActivitySummary = ({ data, profile }) => {
           0
         )}
       </div>
+
       <div>
         ⚖️ Weight:{" "}
-        {weight ? (
-          <Link to="/profile" className="text-decoration-underline">
-            {displayWeight}
-          </Link>
-        ) : (
-          "0 kg"
-        )}
+        <Link to="/profile" className="text-decoration-underline">
+          {displayWeight}
+        </Link>
       </div>
+
       <div>
         💧 Water Intake:{" "}
-        {water_intake != null ? (
-          <Link to="/meals?filter=water" className="text-decoration-underline">
-            {water_intake.toFixed(1)} L
-          </Link>
-        ) : (
-          "0 L"
-        )}
+        <Link to="/meals?filter=water" className="text-decoration-underline">
+          {displayWaterIntake}
+        </Link>
       </div>
     </section>
   );

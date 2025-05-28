@@ -1,43 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import SettingToggle from "./SettingToggle";
 import SettingDropdown from "./SettingDropdown";
 import ChangePassword from "./ChangePassword";
 import { Icons } from "../../utils/iconHelper";
 import { useNotifications } from "../../contexts/NotificationContext";
-import "../../styles/SettingsPage.css";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useUnits } from "../../contexts/UnitsContext";
+import "../../styles/SettingsPage.css";
 
 const SettingsPage = () => {
-  const [notifications, setNotifications] = useState(true);
-  const {units, setUnits} = useUnits();
-  const [privacy, setPrivacy] = useState("private");
-  const {darkMode, setDarkMode} = useTheme();
-
-  const { addNotification } = useNotifications();
+  const { units, setUnits } = useUnits();
+  const { darkMode, setDarkMode } = useTheme();
+  const { addNotification, allowNotifications, setAllowNotifications } = useNotifications();
 
   const handleToggleNotifications = () => {
-    setNotifications(!notifications);
+    const newValue = !allowNotifications;
+    setAllowNotifications(newValue);
 
-    if (!notifications) {
+    if (newValue) {
       addNotification({
-        title: "Welcome!",
-        description: "Notifications are now enabled.",
-        link: "/dashboard",
+        title: "Notifications Enabled",
+        description: "You'll now receive alerts and reminders.",
+        link: "/",
       });
     }
   };
 
   return (
-    <div className="custom-wrap">
-      <h2 className="custom-heading">Settings</h2>  
-      
+    <div className="custom-wrap settings-page" role="region" aria-labelledby="settings-heading">
+      <h2 id="settings-heading" className="custom-heading mb-4 page-title">Settings</h2>
+
       <ChangePassword />
 
       <SettingToggle
         label="Allow Notifications"
         Icon={Icons.Bell}
-        enabled={notifications}
+        enabled={allowNotifications}
         onToggle={handleToggleNotifications}
       />
 
@@ -49,26 +47,41 @@ const SettingsPage = () => {
       />
 
       <SettingDropdown
-        label="Units of Measure"
-        Icon={Icons.Language}
-        value={units}
+        label="Weight Units"
+        Icon={Icons.Weight}
+        value={units.weight}
         options={[
-          { value: "metric", label: "Metric" },
-          { value: "imperial", label: "Imperial" },
+          { value: "kilograms", label: "Kilograms" },
+          { value: "grams", label: "Grams" },
+          { value: "pounds", label: "Pounds" },
         ]}
-        onChange={setUnits}
+        onChange={(value) => setUnits({ ...units, weight: value })}
       />
 
       <SettingDropdown
-        label="Privacy Settings"
-        Icon={Icons.Lock}
-        value={privacy}
+        label="Volume Units"
+        Icon={Icons.Fluid}
+        value={units.volume}
         options={[
-          { value: "private", label: "Private" },
-          { value: "public", label: "Public" },
+          { value: "liters", label: "Liters" },
+          { value: "milliliters", label: "Milliliters" },
+          { value: "gallons", label: "Gallons" },
         ]}
-        onChange={setPrivacy}
+        onChange={(value) => setUnits({ ...units, volume: value })}
       />
+
+      <SettingDropdown
+        label="Length Units"
+        Icon={Icons.Ruler}
+        value={units.length}
+        options={[
+          { value: "centimeters", label: "Centimeters" },
+          { value: "meters", label: "Meters" },
+          { value: "inches", label: "Inches" },
+        ]}
+        onChange={(value) => setUnits({ ...units, length: value })}
+      />
+
     </div>
   );
 };

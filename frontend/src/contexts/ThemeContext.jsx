@@ -1,25 +1,52 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
+import api from "../utils/api";
 
 const ThemeContext = createContext();
-
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("darkMode") === "true";
-  });
+  const { user, setUser, isAuthenticated } = useAuth();
+  const [darkMode, setDarkMode] = useState(false);
 
+  // Fetch user's dark mode preference from backend
   useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
+    const fetchPreference = async () => {
+      if (!isAuthenticated || !user) return;
+
+      try {
+        const res = await api.get("/preferences/");
+        const prefersDark = res.data.prefers_dark_mode;
+        setDarkMode(prefersDark);
+        document.body.classList.toggle("dark-mode", prefersDark);
+      } catch (err) {
+        console.error("Error fetching theme preference:", err);
+      }
+    };
+
+    fetchPreference();
+  }, [user, isAuthenticated]);
+
+  // Toggle & persist preference
+  const handleSetDarkMode = async (enabled) => {
+    setDarkMode(enabled);
+    document.body.classList.toggle("dark-mode", enabled);
+
+    if (user) {
+      setUser({ ...user, prefersDarkMode: enabled });
+
+      try {
+        await api.post("/preferences/", {
+          prefers_dark_mode: enabled,
+        });
+      } catch (err) {
+        console.error("Error saving theme preference:", err);
+      }
     }
-    localStorage.setItem("darkMode", darkMode);
-  }, [darkMode]);
+  };
 
   return (
-    <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+    <ThemeContext.Provider value={{ darkMode, setDarkMode: handleSetDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );

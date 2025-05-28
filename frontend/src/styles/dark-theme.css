@@ -1,3 +1,26 @@
+body.dark-mode header,
+body.dark-mode main,
+body.dark-mode.navbar {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+body.dark-mode .navbar-toggler-icon {
+  /* invert the icon colors if it's an image/SVG */
+  filter: invert(100%);
+  /* or */
+  /* if it's a font icon */
+  color: var(--dark-accent);
+}
+
+body.dark-mode .header-title,
+body.dark-mode .page-title {
+  /* brighter accent for titles */
+  color: var(--dark-accent);
+  /* subtle glow for better visibility */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
 /* Modal background and text */
 body.dark-mode .modal-content {
   background-color: var(--dark-bg);
