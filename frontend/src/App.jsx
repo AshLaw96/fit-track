@@ -24,6 +24,7 @@ import HelpPage from "./components/Help/HelpPage";
 import Troubleshooting from "./components/Help/Troubleshooting";
 import ContactSupport from "./components/Help/ContactSupport";
 import Tutorials from "./components/Help/Tutorials";
+import ChatWidget from "./components/Help/ChatWidget";
 
 const App = () => {
   const { isAuthenticated } = useAuth();
@@ -49,6 +50,7 @@ const App = () => {
       <Header />
       <main className="flex-grow-1">
         <NotificationBell />
+        <ChatWidget />
         <Routes>
           <Route
             path="/"

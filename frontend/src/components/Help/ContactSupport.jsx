@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ChatWidget from "./ChatWidget";
 
 const ContactSupport = () => {
   const [form, setForm] = useState({
@@ -19,41 +18,56 @@ const ContactSupport = () => {
     });
   };
 
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic front-end validation
-    if (!form.name || !form.email || !form.message) {
+    const { name, email, message } = form;
+
+    if (!name.trim() || !email.trim() || !message.trim()) {
       setError("Please fill out all required fields.");
       return;
     }
 
-    // Simulate submission
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setError("");
+    setSubmitted(true);
+
     setTimeout(() => {
-      setSubmitted(true);
-      setError("");
-      // Optional: send to backend/API here
+      console.log("Message submitted:", form);
+      // Optionally reset form or send to backend here
     }, 500);
   };
 
   return (
     <div className="custom-wrap">
       <h3 className="custom-heading">Contact Support</h3>
-      <p className="mb-3">Need more help? Fill out the form below or chat with us.</p>
+      <p className="mb-3">
+        Need more help? Fill out the form below or start a live chat with us.
+      </p>
 
       {submitted ? (
         <div className="alert alert-success">
-          Your message has been sent! We’ll get back to you soon.
+          🎉 Your message has been sent! We’ll get back to you soon.
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} noValidate className="space-y-3">
           {error && <div className="alert alert-danger">{error}</div>}
 
           <div>
-            <label className="form-label">Name*</label>
+            <label htmlFor="name" className="form-label">
+              Name <span className="text-danger">*</span>
+            </label>
             <input
-              type="text"
+              id="name"
               name="name"
+              type="text"
               className="form-control"
               value={form.name}
               onChange={handleChange}
@@ -62,10 +76,13 @@ const ContactSupport = () => {
           </div>
 
           <div>
-            <label className="form-label">Email*</label>
+            <label htmlFor="email" className="form-label">
+              Email <span className="text-danger">*</span>
+            </label>
             <input
-              type="email"
+              id="email"
               name="email"
+              type="email"
               className="form-control"
               value={form.email}
               onChange={handleChange}
@@ -74,8 +91,11 @@ const ContactSupport = () => {
           </div>
 
           <div>
-            <label className="form-label">Category</label>
+            <label htmlFor="category" className="form-label">
+              Category (Optional)
+            </label>
             <select
+              id="category"
               name="category"
               className="form-select"
               value={form.category}
@@ -90,8 +110,11 @@ const ContactSupport = () => {
           </div>
 
           <div>
-            <label className="form-label">Message*</label>
+            <label htmlFor="message" className="form-label">
+              Message <span className="text-danger">*</span>
+            </label>
             <textarea
+              id="message"
               name="message"
               className="form-control"
               rows="4"
@@ -112,8 +135,6 @@ const ContactSupport = () => {
           ← Back to Help page
         </Link>
       </div>
-
-      <ChatWidget />
     </div>
   );
 };
