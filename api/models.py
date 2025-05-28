@@ -16,6 +16,11 @@ class CustomUser(AbstractUser):
     weight_kg = models.FloatField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True)
     points = models.PositiveIntegerField(default=0)
+    prefers_dark_mode = models.BooleanField(default=False)
+    unit_preferences = models.JSONField(
+        default=dict,
+        help_text="User's unit preferences for measurements."
+    )
 
     def __str__(self):
         return self.username

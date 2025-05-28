@@ -16,7 +16,7 @@ from .views import (
     DashboardView, upload_profile_image, PublicChallengeListView,
     ChallengeLeaderboardView, ActiveUserChallengesView, DeleteAccountView,
     UserActivityStreakView, ChangePasswordView, SleepScheduleView,
-    NotificationListView, MarkAllNotificationsRead
+    NotificationListView, MarkAllNotificationsRead, UserPreferenceView
 )
 
 #  Create a router and register viewset with it
@@ -223,5 +223,11 @@ urlpatterns = [
         'notifications/mark_read/',
         MarkAllNotificationsRead.as_view(),
         name='mark_all_notifications_read',
+    ),
+    # User Preferences
+    path(
+        'preferences/',
+        UserPreferenceView.as_view(),
+        name='user_preferences',
     ),
 ]
