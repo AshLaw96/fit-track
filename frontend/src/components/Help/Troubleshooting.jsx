@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Link } from "react-router-dom";
 import TroubleshootingItem from "./TroubleshootingItem";
@@ -38,46 +38,56 @@ const troubleshootingData = [
   },
   {
     issue: "Can't upload a profile picture",
-    Solution: "Ensure your file is under the allowed size (e.g., 2MB) and is a supported format (JPEG, PNG). Try another image if the issue persists."
+    solution: "Ensure your file is under the allowed size (e.g., 2MB) and is a supported format (JPEG, PNG). Try another image if the issue persists."
   }
 ];
 
 const Troubleshooting = () => {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const fuse = useMemo(() => {
-    return new Fuse(troubleshootingData, {
-      keys: ["issue", "solution"],
-      threshold: 0.35,
-    });
-  }, []);
+  const fuse = useMemo(() => new Fuse(troubleshootingData, {
+    keys: ["issue", "solution"],
+    threshold: 0.35,
+    includeMatches: true
+  }), []);
 
-  const filteredIssues = search
-    ? fuse.search(search).map((result) => result.item)
-    : troubleshootingData;
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  const filteredIssues = useMemo(() => {
+    if (!debouncedSearch) return troubleshootingData;
+    return fuse.search(debouncedSearch).map(res => ({
+      ...res.item,
+      matches: res.matches
+    }));
+  }, [debouncedSearch, fuse]);
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading">Troubleshooting & Technical Support</h3>
+      <h3 className="custom-heading mb-3">Troubleshooting & Technical Support</h3>
 
       <input
         type="text"
         placeholder="Search common problems..."
-        className="form-control mb-4"
+        className="form-control form-control-lg mb-4"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {filteredIssues.length > 0 ? (
-        filteredIssues.map((issue, index) => (
+        filteredIssues.map((item, index) => (
           <TroubleshootingItem
             key={index}
-            issue={issue.issue}
-            solution={issue.solution}
+            issue={item.issue}
+            solution={item.solution}
+            matches={item.matches}
           />
         ))
       ) : (
-        <div className="card text-center">
+        <div className="card p-3 text-center">
           <p className="mb-0">No matching issues found.</p>
         </div>
       )}
