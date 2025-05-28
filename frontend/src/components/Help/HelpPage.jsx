@@ -4,53 +4,53 @@ import { HelpIcons } from "../../utils/iconHelper";
 
 const helpSections = [
   {
-    title: "Frequently asked questions",
+    title: "Frequently Asked Questions",
     description:
-      "This section will contain a searchable list of common questions related to the app features, such as, how to set up an account, logging activities, tracking progress, setting goals, calculating calories, changing setting preferences.",
+      "Quick answers to common questions about using the app — from setting up your account and logging activities to tracking progress and customizing your preferences.",
     icon: <HelpIcons.Question className="text-xl" />,
-    // Link to the FAQ page
     link: "/help/faq",
   },
   {
-    title: "Troubleshooting & tech support",
+    title: "Troubleshooting & Tech Support",
     description:
-      "This section will contain how to solve technical issues, such as, resetting password, changing emails, recovering account, app crashing, troubleshooting connections with third party apps.",
+      "Step-by-step solutions for common technical problems, like resetting your password, recovering your account, fixing app crashes, and connecting with other apps.",
     icon: <HelpIcons.Tools className="text-xl" />,
-    // Link to troubleshooting page
     link: "/help/troubleshooting",
   },
   {
-    title: "Contact support",
+    title: "Contact Support",
     description:
-      "This section will contain a contact form for users to contact admin for any issues they need help with or if they want to ask another user for help from peer support.",
+      "Need personalized help? Reach out to our support team or connect with other users for peer assistance through our easy-to-use contact form.",
     icon: <HelpIcons.Headset className="text-xl" />,
-    // Link to contact support page
     link: "/help/contact",
   },
   {
-    title: "Tutorials & guides",
+    title: "Tutorials & Guides",
     description:
-      "This section will contain step-by-step guides and walk through on how to use the in app features like logging meals or setting fitness goals.",
+      "Learn how to get the most from our app with step-by-step guides and walkthroughs for key features, like logging meals, setting goals, and tracking your fitness journey.",
     icon: <HelpIcons.GraduationCap className="text-xl" />,
-    // Link to tutorial page
     link: "/help/tutorials",
   },
 ];
 
 const HelpPage = () => {
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
+    <div className="max-w-md mx-auto p-4 space-y-6">
+      <h1 className="text-2xl font-bold mb-6 page-title text-center">Help & Support</h1>
       {helpSections.map((section, idx) => (
         <div
           key={idx}
-          className="border rounded-lg p-4 shadow-sm text-left flex gap-5"
+          className="border border-gray-200 rounded-lg shadow-sm p-5 flex gap-4 items-start hover:shadow-md transition-shadow duration-300"
         >
-          <div className="mt-1 text-primary">{section.icon}</div>
-          <div>
-            <h2 className="font-semibold">{section.title}</h2>
-            <p className="text-sm text-gray-700">{section.description}</p>
-            <Link to={section.link} className="text-primary hover:text-secondary">
-              Learn more
+          <div className="text-primary mt-1">{section.icon}</div>
+          <div className="flex flex-col">
+            <h2 className="font-semibold text-lg">{section.title}</h2>
+            <p className="text-gray-700 text-sm mb-3">{section.description}</p>
+            <Link
+              to={section.link}
+              className="self-start text-primary hover:text-secondary font-medium"
+            >
+              Learn more →
             </Link>
           </div>
         </div>
