@@ -69,7 +69,7 @@ const SleepLogPage = ({ onDataChanged }) => {
         recentLogs.reduce((acc, log) => acc + parseFloat(log.duration_hours || 0), 0) /
         (recentLogs.length || 1);
 
-      onDataChanged({ averageSleepHours: parseFloat(avgDuration.toFixed(1)) });
+      onDataChanged({ avg_sleep_hours: parseFloat(avgDuration.toFixed(1)) });
     }
   }, [logs, onDataChanged]);
 
