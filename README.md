@@ -14,11 +14,6 @@ By addressing the need for a holistic approach to health tracking, this app serv
 
 **Site Mockups**
 _([amiresponsive](https://ui.dev/amiresponsive?url=https://fit-track-project-8ab24fa880fe.herokuapp.com), [techsini](https://techsini.com/multi-mockup), etc.)_
-Having issues generating site mockups? This is likely due to security policies with your deployed site.
-If you open up your DevTools, there may be an error referencing `X-Frame-Options`.
-For Chrome users, head over to http://bit.ly/3iRPn4u and install the extension within your browser. Once installed, navigate back to the mockup site of your choice. You should find your site rendering in the various devices now.
-
-🛑 --- END ---- 🛑
 
 ![screenshot](documentation/mockup.png)
 
@@ -339,9 +334,9 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 | Motivational challenges | Offers fitness challenges and goals to keep users engaged and motivated.                                                                                                         | ![screenshot](documentation/features)            |
 | Progress analytics      | Displays detailed charts and graphs showing trends in exercise, diet, and sleep patterns over time.                                                                              | ![screenshot](documentation/features)            |
 | Help & support          | Contains FAQs, troubleshooting guides, and contact support options for users needing assistance.                                                                                 | ![screenshot](documentation/features)            |
-| Heroku Deployment       | The site is deployed to Heroku, making it accessible online for users.                                                                                                           | ![screenshot](documentation/features/heroku.png) |
-| 404                     | The 404 error page will indicate when a user has navigated to a page that doesn't exist, replacing the default Heroku 404 page with one that ties into the site's look and feel. | ![screenshot](documentation/features/404.png)    |
-| 500                     | The 500 error page will indicate when a server error has occurred, replacing the default Heroku 500 page with one that ties into the site's look and feel.                       | ![screenshot](documentation/features)            |
+| Render Deployment       | The site is deployed to Render, making it accessible online for users.                                                                                                           | ![screenshot](documentation/features/render.png) |
+| 404                     | The 404 error page will indicate when a user has navigated to a page that doesn't exist, replacing the default Render 404 page with one that ties into the site's look and feel. | ![screenshot](documentation/features/404.png)    |
+| 500                     | The 500 error page will indicate when a server error has occurred, replacing the default Render 500 page with one that ties into the site's look and feel.                       | ![screenshot](documentation/features)            |
 
 ### Future Features
 
@@ -349,12 +344,7 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 - **Product Recommendations**: Implement a "Customers who bought this also bought" or "You might also like" feature to suggest related products.
 - **Live Chat Support**: Provide real-time customer support through an integrated live chat or chatbot.
 - **Loyalty Program**: Introduce a points-based loyalty system where customers earn points for app usage, which can be redeemed for discounts on the subscriptions.
-
-  ⚠️ POTENTIAL REMOVE IF ADD ⚠️
-
 - **Multi-Currency and Multi-Language Support**: Expand the application to support multiple currencies and languages to reach a global audience.
-  🛑 --- END --- 🛑
-
 - **Personalized AI Coach**: Implement AI-driven suggestions for workouts, meal plans, and sleep improvements based on user data.
 - **Voice Command Integration**: Allow users to log workouts, meals, or sleep data using voice commands.
 - **Wearable Device Sync**: Enable integration with fitness trackers and smartwatches (e.g., Fitbit, Apple Watch, Garmin) to automatically track exercise and sleep.
@@ -379,12 +369,11 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 | [![badge](https://img.shields.io/badge/CSS-grey?logo=css3&logoColor=1572B6)](https://en.wikipedia.org/wiki/CSS)          | Design and layout.                                                          |
 | [![badge](https://img.shields.io/badge/JavaScript-grey?logo=javascript&logoColor=F7DF1E)](https://www.javascript.com)    | User interaction on the site.                                               |
 | [![badge](https://img.shields.io/badge/Python-grey?logo=python&logoColor=3776AB)](https://www.python.org)                | Back-end programming language.                                              |
-| [![badge](https://img.shields.io/badge/Heroku-grey?logo=heroku&logoColor=430098)](https://www.heroku.com)                | Hosting the deployed back-end site.                                         |
 | [![badge](https://img.shields.io/badge/Bootstrap-grey?logo=bootstrap&logoColor=7952B3)](https://getbootstrap.com)        | Front-end CSS framework for modern responsiveness and pre-built components. |
 | [![badge](https://img.shields.io/badge/Django-grey?logo=django&logoColor=092E20)](https://www.djangoproject.com)         | Python framework for the site.                                              |
 | [![badge](https://img.shields.io/badge/PostgreSQL-grey?logo=postgresql&logoColor=4169E1)](https://www.postgresql.org)    | Relational database management.                                             |
 | [![badge](https://img.shields.io/badge/Cloudinary-grey?logo=cloudinary&logoColor=3448C5)](https://cloudinary.com)        | Online static file storage.                                                 |
-| [![badge](https://img.shields.io/badge/WhiteNoise-grey?logo=python&logoColor=FFFFFF)](https://whitenoise.readthedocs.io) | Serving static files with Heroku.                                           |
+| [![badge](https://img.shields.io/badge/WhiteNoise-grey?logo=python&logoColor=FFFFFF)](https://whitenoise.readthedocs.io) | Serving static files with Render.                                           |
 | [![badge](https://img.shields.io/badge/Gmail_API-grey?logo=gmail&logoColor=EA4335)](https://mail.google.com)             | Sending emails in my application.                                           |
 | [![badge](https://img.shields.io/badge/Font_Awesome-grey?logo=fontawesome&logoColor=528DD7)](https://fontawesome.com)    | Icons.                                                                      |
 | [![badge](https://img.shields.io/badge/ChatGPT-grey?logo=openai&logoColor=75A99C)](https://chat.openai.com)              | Help debug, troubleshoot, and explain things.                               |
@@ -550,11 +539,11 @@ I've decomposed my Epics into User Stories for prioritizing and implementing the
 
 ## Deployment
 
-The live deployed application can be found deployed on [Heroku](https://fit-track-project-8ab24fa880fe.herokuapp.com).
+The live deployed application can be found deployed on [Render](https://fit-track-front-end.onrender.com/).
 
-### Heroku Deployment
+### Render Deployment
 
-This project uses [Heroku](https://www.heroku.com), a platform as a service (PaaS) that enables developers to build, run, and operate applications entirely in the cloud.
+This project uses [Render](https://www.render.com), a platform as a service (PaaS) that enables developers to build, run, and operate applications entirely in the cloud.
 
 Deployment steps are as follows, after account setup:
 
@@ -614,7 +603,7 @@ The project should now be connected and deployed to Heroku!
 
 ### Cloudinary API
 
-This project uses the [Cloudinary API](https://cloudinary.com) to store media assets online, due to the fact that Heroku doesn't persist this type of data.
+This project uses the [Cloudinary API](https://cloudinary.com) to store media assets online, due to the fact that Render doesn't persist this type of data.
 
 To obtain your own Cloudinary API key, create an account and log in.
 
@@ -623,7 +612,7 @@ To obtain your own Cloudinary API key, create an account and log in.
 - On your Cloudinary Dashboard, you can copy your **API Environment Variable**.
 - Be sure to remove the leading `CLOUDINARY_URL=` as part of the API **value**; this is the **key**.
   - `cloudinary://123456789012345:AbCdEfGhIjKlMnOpQrStuVwXyZa@1a2b3c4d5)`
-- This will go into your own `env.py` file, and Heroku Config Vars, using the **key** of `CLOUDINARY_URL`.
+- This will go into your own `env.py` file, and Render Config Vars, using the **key** of `CLOUDINARY_URL`.
 
 ### PostgreSQL
 
@@ -642,7 +631,7 @@ To obtain my own Postgres Database from Code Institute, I followed these steps:
 - An email was sent to me with my new Postgres Database.
 - The Database connection string will resemble something like this:
   - `postgres://<db_username>:<db_password>@<db_host_url>/<db_name>`
-- You can use the above URL with Django; simply paste it into your `env.py` file and Heroku Config Vars as `DATABASE_URL`.
+- You can use the above URL with Django; simply paste it into your `env.py` file and Render Config Vars as `DATABASE_URL`.
 
 ### Gmail API
 
@@ -669,7 +658,7 @@ Once you've created a Gmail (Google) account and logged-in, follow these series 
 
 ### WhiteNoise
 
-This project uses the [WhiteNoise](https://whitenoise.readthedocs.io/en/latest/) to aid with static files temporarily hosted on the live Heroku site.
+This project uses the [WhiteNoise](https://whitenoise.readthedocs.io/en/latest/) to aid with static files temporarily hosted on the live Render site.
 
 To include WhiteNoise in your own projects:
 
@@ -766,29 +755,28 @@ For either method, you will need to install any applicable packages found within
 
 - `pip3 install -r requirements.txt`.
 
-You will need to create a new file called `env.py` at the root-level, and include the same environment variables listed above from the Heroku deployment steps.
+You will need to create a new file called `.env` at the root-level, and include the same environment variables listed above from the Heroku deployment steps.
 
 > [!IMPORTANT]
 > This is a sample only; you would replace the values with your own if cloning/forking my repository.
 
-Sample `env.py` file:
+Sample `.env` file:
 
 ```python
 import os
 
-os.environ.setdefault("AWS_ACCESS_KEY_ID", "user-inserts-own-aws-access-key-id")
-os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "user-inserts-own-aws-secret-access-key")
-os.environ.setdefault("DATABASE_URL", "user-inserts-own-postgres-database-url")
-os.environ.setdefault("EMAIL_HOST_PASS", "user-inserts-own-gmail-host-api-key")
-os.environ.setdefault("EMAIL_HOST_USER", "user-inserts-own-gmail-email-address")
-os.environ.setdefault("SECRET_KEY", "any-random-secret-key")
-os.environ.setdefault("STRIPE_PUBLIC_KEY", "user-inserts-own-stripe-public-key")
-os.environ.setdefault("STRIPE_SECRET_KEY", "user-inserts-own-stripe-secret-key")
-os.environ.setdefault("STRIPE_WH_SECRET", "user-inserts-own-stripe-webhook-secret")  # only if using Stripe Webhooks
+AWS_ACCESS_KEY_ID=user-inserts-own-aws-secret-access-key
+DATABASE_URL=user-inserts-own-postgres-database-url
+EMAIL_HOST_PASS=user-inserts-own-gmail-host-api-key
+EMAIL_HOST_USER=user-inserts-own-gmail-email-address
+SECRET_KEY=any-random-secret-key
+STRIPE_PUBLIC_KEY=user-inserts-own-stripe-public-key
+STRIPE_SECRET_KEY=user-inserts-own-stripe-secret-key
+STRIPE_WH_SECRET=user-inserts-own-stripe-webhook-secret  # only if using Stripe Webhooks
 
 # local environment only (do not include these in production/deployment!)
-os.environ.setdefault("DEBUG", "True")
-os.environ.setdefault("DEVELOPMENT", "True")
+DEBUG=True
+DEVELOPMENT=True
 ```
 
 Once the project is cloned or forked, in order to run it locally, you'll need to follow these steps:
@@ -842,16 +830,16 @@ There are no remaining major differences between the local version when compared
 
 ### Content
 
-| Source                                                      | Notes                                               |
-| ----------------------------------------------------------- | --------------------------------------------------- | --- |
-| [Markdown Builder](https://markdown.2bn.dev)                | Help generating Markdown files                      |
-| [Chris Beams](https://chris.beams.io/posts/git-commit)      | "How to Write a Git Commit Message"                 |
-| [Moments](https://codeinstitute.net)                        | Code Institute walkthrough project inspiration      |
-| [Bootstrap](https://getbootstrap.com)                       | Various components / responsive front-end framework |
-| [Cloudinary](https://cloudinary.com/)                       | Cloud storage for static/media files                |
-| [Whitenoise](https://whitenoise.readthedocs.io)             | Static file service                                 |     |
-| [Gmail API](https://developers.google.com/gmail/api/guides) | Sending payment confirmation emails                 |
-| [ChatGPT](https://chatgpt.com)                              | Help with code logic and explanations               |
+| Source                                                      | Notes                                                    |
+| ----------------------------------------------------------- | -------------------------------------------------------- | --- |
+| [Markdown Builder](https://markdown.2bn.dev)                | Help generating Markdown files                           |
+| [Chris Beams](https://chris.beams.io/posts/git-commit)      | "How to Write a Git Commit Message"                      |
+| [Moments](https://codeinstitute.net)                        | Code Institute walkthrough project inspiration           |
+| [Bootstrap](https://getbootstrap.com)                       | Various components / responsive front-end framework      |
+| [Cloudinary](https://cloudinary.com/)                       | Cloud storage for static/media files                     |
+| [Whitenoise](https://whitenoise.readthedocs.io)             | Static file service                                      |     |
+| [Gmail API](https://developers.google.com/gmail/api/guides) | Sending payment confirmation emails                      |
+| [ChatGPT](https://chatgpt.com)                              | Help with code logic and explanations and debugging help |
 
 ### Media
 
@@ -860,10 +848,9 @@ There are no remaining major differences between the local version when compared
 | [favicon.io](https://favicon.io)                                                    | Generating the favicon         |
 | [Font Awesome](https://fontawesome.com)                                             | Icons used throughout the site |
 | [Pixabay](https://cdn.pixabay.com/photo/2017/09/04/16/58/passport-2714675_1280.jpg) | Background wallpaper           |
-| [DALL-E 3](https://openai.com/index/dall-e-3)                                       | AI generated artwork           |
+| [DeepAI](https://deepai.org/machine-learning-model/text2img)                        | AI generated artwork           |
 | [TinyPNG](https://tinypng.com)                                                      | Compressing images < 5MB       |
 | [CompressPNG](https://compresspng.com)                                              | Compressing images > 5MB       |
-| [CloudConvert](https://cloudconvert.com/webp-converter)                             | Converting images to `.webp`   |
 
 ### Acknowledgements
 
