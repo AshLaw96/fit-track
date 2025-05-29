@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 // Create an Axios instance
 const api = axios.create({
   // Proxy to Django
-  baseURL: "/api",
+  baseURL: process.env.REACT_APP_API_URL + "/api",
   // Using JWTs only
   withCredentials: false,
 });
