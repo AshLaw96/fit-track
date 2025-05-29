@@ -29,7 +29,7 @@ const refreshAccessToken = async () => {
   if (!refreshToken) throw new Error("No refresh token available");
 
   try {
-    const response = await axios.post("/api/token/refresh/", {
+    const response = await axios.post("/token/refresh/", {
       refresh: refreshToken,
     });
 
