@@ -21,17 +21,19 @@ const RegisterForm = ({ onSwitchToLogin }) => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
     setFieldErrors({});
 
     if (password1 !== password2) {
-      return alert("Passwords do not match!");
+      return setError("Passwords do not match.");
     }
 
     if (!isValidPassword(password1)) {
-    return setError(
-      "Password must be at least 8 characters long and include an uppercase letter, lowercase letter, and a number."
-    );
-  }
+      return setError(
+        "Password must be at least 8 characters long and include an uppercase letter, lowercase letter, and a number."
+      );
+    }
 
     try {
       await api.post("/register/", {
@@ -40,32 +42,33 @@ const RegisterForm = ({ onSwitchToLogin }) => {
         password: password1,
         password2,
       });
-      setSuccess("Registration successful! Please log in.");
-      setError(null);
-      if (onSwitchToLogin) {
-        setTimeout(() => onSwitchToLogin(), 2000);
-      }
+
+      setSuccess("Registration successful! Redirecting to login...");
+      setUsername("");
+      setEmail("");
+      setPassword1("");
+      setPassword2("");
+      setTimeout(() => {
+        if (onSwitchToLogin) onSwitchToLogin();
+      }, 2000);
     } catch (err) {
-        const data = err.response?.data || {};
-        setFieldErrors(data);
+      const data = err.response?.data || {};
+      setFieldErrors(data);
 
-        // Show top-level error
-        if (data.non_field_errors) {
-          setError(data.non_field_errors[0]);
-        } else {
-          setError(null);
-        }
-
-        setSuccess(null);
+      if (data.non_field_errors) {
+        setError(data.non_field_errors[0]);
+      } else {
+        setError("Please correct the highlighted fields.");
       }
+    }
   };
 
   return (
     <form className="auth-form auth-card p-4 mx-auto" onSubmit={handleRegister}>
       <h3 className="auth-title mb-3 text-center">Sign Up</h3>
 
-      {error && <div className="alert alert-danger text-center" role="alert">{error}</div>}
-      {success && <div className="alert alert-success text-center" role="alert">{success}</div>}
+      {error && <div className="alert alert-danger text-center">{error}</div>}
+      {success && <div className="alert alert-success text-center">{success}</div>}
 
       <div className="form-group mb-3">
         <input

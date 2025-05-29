@@ -1,11 +1,10 @@
-import React, {  useState } from "react";
-import { startTokenRefreshTimer } from "../../utils/api";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNotifications } from "../../contexts/NotificationContext";
 import api from "../../utils/api";
 import "../../styles/auth.css";
-import { useAuth } from "../../contexts/AuthContext";
-import {  useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useNotifications } from "../../contexts/NotificationContext";
 
 const LoginForm = ({ onSuccess }) => {
   const [username, setUsername] = useState("");
@@ -14,35 +13,36 @@ const LoginForm = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const { login } = useAuth();
   const { fetchNotifications } = useNotifications();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loading) return;
+
     setError(null);
     setLoading(true);
-    try {
-      const res = await api.post("/token/", { 
-        username: username.trim(),
-        password 
-      });
-      const { access, refresh, user } = res.data;
-      login(access, refresh, user);
-      api.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
 
-      startTokenRefreshTimer();
+    try {
+      const res = await api.post("/token/", {
+        username: username.trim(),
+        password,
+      });
+
+      const { access, refresh } = res.data;
+
+      // handles decoding and refresh loop
+      login(access, refresh);
 
       await fetchNotifications();
 
       toast.success("Login successful!");
-
-      // Redirect to dashboard
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
       if (onSuccess) onSuccess();
     } catch (err) {
       const data = err.response?.data || {};
-      const errorMsg = data.non_field_errors?.[0] || "Login failed. Please check your credentials.";
+      const errorMsg =
+        data.non_field_errors?.[0] || "Login failed. Please check your credentials.";
       setError(errorMsg);
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ const LoginForm = ({ onSuccess }) => {
     <form className="auth-form auth-card p-4 mx-auto" onSubmit={handleLogin}>
       <h3 className="auth-title mb-3 text-center">Log In</h3>
 
-      {error && <div className="alert alert-danger text-center" role="alert">{error}</div>}
+      {error && <div className="alert alert-danger text-center">{error}</div>}
 
       <div className="form-group mb-3">
         <input
@@ -64,6 +64,7 @@ const LoginForm = ({ onSuccess }) => {
           required
         />
       </div>
+
       <div className="form-group mb-4">
         <input
           type="password"
@@ -74,15 +75,17 @@ const LoginForm = ({ onSuccess }) => {
           required
         />
       </div>
+
       <div className="text-end mb-3">
-      <button
-        type="button"
-        className="btn btn-link p-0"
-        onClick={() =>  navigate("/reset-password", { replace: true })}
-      >
-        Forgot password?
-      </button>
+        <button
+          type="button"
+          className="btn btn-link p-0"
+          onClick={() => navigate("/reset-password", { replace: true })}
+        >
+          Forgot password?
+        </button>
       </div>
+
       <button className="btn btn-primary w-100" disabled={loading}>
         {loading ? "Logging in..." : "Log In"}
       </button>

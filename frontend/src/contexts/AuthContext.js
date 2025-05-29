@@ -1,13 +1,7 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import React, { createContext, useContext, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import api from "../utils/api";
+import api, { startTokenRefreshTimer } from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -17,16 +11,29 @@ export const AuthProvider = ({ children }) => {
     return !!localStorage.getItem("access_token");
   });
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      try {
+        return jwtDecode(token);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
 
   const login = (access, refresh) => {
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
+    api.defaults.headers.common["Authorization"] = `Bearer ${access}`;
+
     setIsAuthenticated(true);
 
     const decoded = jwtDecode(access);
-    setUser({ ...decoded });
+    setUser(decoded);
 
+    startTokenRefreshTimer(); // Initiate refresh cycle
     navigate("/");
   };
 
@@ -35,52 +42,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("refresh_token");
     setIsAuthenticated(false);
     setUser(null);
-  }, []);
-
-  const refreshToken = useCallback(async () => {
-    try {
-      const res = await api.post("/token/refresh/", {
-        refresh: localStorage.getItem("refresh_token"),
-      });
-
-      const newAccess = res.data.access;
-      localStorage.setItem("access_token", newAccess);
-      setIsAuthenticated(true);
-    } catch (err) {
-      console.error("Refresh token expired or invalid", err);
-      logout();
-    }
-  }, [logout]);
-
-  useEffect(() => {
-    const startTokenRefreshTimer = () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) return;
-
-      try {
-        const decoded = jwtDecode(token);
-        const exp = decoded.exp * 1000;
-        const now = Date.now();
-        const refreshTime = exp - now - 60000;
-
-        if (refreshTime <= 0) {
-          refreshToken();
-        } else {
-          setTimeout(() => {
-            refreshToken();
-            startTokenRefreshTimer();
-          }, refreshTime);
-        }
-      } catch (e) {
-        console.error("Invalid token format", e);
-        logout();
-      }
-    };
-
-    if (isAuthenticated) {
-      startTokenRefreshTimer();
-    }
-  }, [isAuthenticated, refreshToken, logout]);
+    navigate("/auth");
+  }, [navigate]);
 
   return (
     <AuthContext.Provider
