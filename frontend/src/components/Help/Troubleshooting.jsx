@@ -67,7 +67,7 @@ const Troubleshooting = () => {
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading mb-3">Troubleshooting & Technical Support</h3>
+      <h3 className="custom-heading mb-3 page-title">Troubleshooting & Technical Support</h3>
 
       <input
         type="text"

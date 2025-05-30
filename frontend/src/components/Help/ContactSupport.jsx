@@ -47,7 +47,7 @@ const ContactSupport = () => {
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading">Contact Support</h3>
+      <h3 className="custom-heading page-title">Contact Support</h3>
       <p className="mb-3">
         Need more help? Fill out the form below or start a live chat with us.
       </p>

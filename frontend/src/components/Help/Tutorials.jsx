@@ -33,7 +33,7 @@ const Tutorials = () => {
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading mb-3">Tutorials & Guides</h3>
+      <h3 className="custom-heading mb-3 page-title">Tutorials & Guides</h3>
 
       <input
         type="text"

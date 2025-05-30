@@ -26,7 +26,7 @@ const SleepLogList = ({ logs, onEdit, onDelete }) => {
 
   return (
     <div className="custom-wrap mt-4">
-      <h5 className="custom-heading text-center mb-3">Your Sleep Logs</h5>
+      <h5 className="custom-heading text-center mb-3 page-title">Your Sleep Logs</h5>
       {logs.length === 0 ? (
         <p className="text-center text-muted">No logs found.</p>
       ) : (

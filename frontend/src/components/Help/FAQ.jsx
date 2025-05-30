@@ -75,7 +75,7 @@ const FAQ = () => {
 
   return (
     <div className="custom-wrap">
-      <h3 className="custom-heading mb-3">Frequently Asked Questions</h3>
+      <h3 className="custom-heading mb-3 page-title">Frequently Asked Questions</h3>
 
       <input
         type="text"
