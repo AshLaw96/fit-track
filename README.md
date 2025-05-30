@@ -13,11 +13,10 @@ This app is ideal for anyone looking to improve or maintain their health and fit
 By addressing the need for a holistic approach to health tracking, this app serves as a practical and motivational tool that empowers users to build better habits, stay consistent, and achieve their fitness goals. With an easy-to-use interface and personalized tracking features, it makes health management more accessible, engaging, and effective.
 
 **Site Mockups**
-_([amiresponsive](https://ui.dev/amiresponsive?url=https://fit-track-project-8ab24fa880fe.herokuapp.com), [techsini](https://techsini.com/multi-mockup), etc.)_
 
 ![screenshot](documentation/mockup.png)
 
-source: [fit-track amiresponsive](https://ui.dev/amiresponsive?url=https://fit-track-project-8ab24fa880fe.herokuapp.com)
+source: [fit-track amiresponsive](https://ui.dev/amiresponsive?url=https://fit-track-front-end.onrender.com/)
 
 ## UX
 
@@ -336,7 +335,7 @@ I've used [Moqups](https://app.moqups.com) to design my site wireframes.
 | Help & support          | Contains FAQs, troubleshooting guides, and contact support options for users needing assistance.                                                                                 | ![screenshot](documentation/features/help.png)         |
 | Render Deployment       | The site is deployed to Render, making it accessible online for users.                                                                                                           | ![screenshot](documentation/features/render.png)       |
 | 404                     | The 404 error page will indicate when a user has navigated to a page that doesn't exist, replacing the default Render 404 page with one that ties into the site's look and feel. | ![screenshot](documentation/features/404.png)          |
-| 500                     | The 500 error page will indicate when a server error has occurred, replacing the default Render 500 page with one that ties into the site's look and feel.                       | ![screenshot](documentation/features)                  |
+| 500                     | The 500 error page will indicate when a server error has occurred, replacing the default Render 500 page with one that ties into the site's look and feel.                       | ![screenshot](documentation/features/500.png)          |
 
 ### Future Features
 
@@ -473,12 +472,6 @@ erDiagram
 
 source: [Mermaid](https://mermaid.live/edit#pako:eNqlVV1v2jAU_SuWnykK7fho3hBLOzQoFbTVNiFZt_ElWCR2ZjvdKPDf5_BVAkGail8SH58bn-N7r7OgoeJIfYr6q4BIQzKWxI3nUTAky-XV1XJJHoeDu24vID6ZgjleXpB251s3eAn6wcPTyHEQtCxhBT-CYac7ClhvcO9YVkM4K6H1g3ZvS9EYKs1LOKNeEDxuSYmSwiptTlXfD9yXRs_9fnv48-yGS6f-qfsSsM7g-eHJoT6JVeRoG-LO-WIzzYeQlghOHr8XocygZg6_O8CN1UJG6yUJCZ4sYAIiPkFTrSYiRiYSiA5iOFgkXL1-IJNYgSVTFNHUHqN_jtA82ooESajRvXIG28XVzmohixf5Dd0GkdLzYoCxsMtSPl6VihEkCVWSxugUlWiFcCrwrUxsoZguEmvn6WliitnanCjPNFih5ClZWTQl6l0dRWXa9xV-ke4EIWb_LT6EWGlxKHNHztwzt8U4WleN5mJ7H835OX_bqlaZNszEmNqjMooRU_Y7g1jYOctTIqMyBhdGZ2nu7HJLhZvkc65y3DV2pNEYlqIOUdpCe5_tnb26LOXnOrdwg31eoNOAMGMc5qWnA8YyCK14Q5aD5yjOItoDhtNJKzTSglPf6gwrNEHtbj43pWutY2qn6GqW-u6Vg56N6ViuXEwK8pdSyS5MqyyaUn8CsXGzzXFs_1l7VKPkqDsqk5b69fUnqL-gf6nfbFXrjeu6V6t98W5q9UazQufUrzVvqjXvtnXttbz67W3Da64q9H29qVdtNevewait_gFmgCZA)
 
-⚠️ RECOMMENDED ⚠️
-
-Alternatively, or in addition to, a more comprehensive ERD can be auto-generated once you're at the end of your development stages, just before you submit. Follow the steps below to obtain a thorough ERD that you can include. Feel free to leave the steps below in the README for future use to yourself.
-
-⚠️ --- END --- ⚠️
-
 I have used `pygraphviz` and `django-extensions` to auto-generate an ERD.
 
 The steps taken were as follows:
@@ -502,7 +495,7 @@ INSTALLED_APPS = [
 - removed `'django_extensions',` from my `INSTALLED_APPS`
 - finally, in the terminal: `pip3 uninstall django-extensions pygraphviz -y`
 
-![screenshot](documentation/advanced-erd.png)
+![screenshot](documentation/advance-erd.png)
 
 source: [medium.com](https://medium.com/@yathomasi1/1-using-django-extensions-to-visualize-the-database-diagram-in-django-application-c5fa7e710e16)
 
@@ -547,9 +540,27 @@ This project uses [Render](https://www.render.com), a platform as a service (Paa
 
 Deployment steps are as follows, after account setup:
 
-- Select **New** in the top-right corner of your Heroku Dashboard, and select **Create new app** from the dropdown menu.
-- Your app name must be unique, and then choose a region closest to you (EU or USA), then finally, click **Create App**.
-- From the new app **Settings**, click **Reveal Config Vars**, and set your environment variables to match your private `env.py` file.
+1. Create a New Web Service:
+
+- Log in to your Render Dashboard.
+- Click the **New +** button, then select **Web Service**.
+- Connect your GitHub/GitLab repository and select the project you wish to deploy.
+
+2. Configure the Web Service:
+
+- Name your service.
+- Set the Environment to Python 3.
+- For the Build Command, use: `pip install -r requirements.txt`
+- For the Start Command, use: `gunicorn app_name.wsgi` (replace **app_name** with name of your Django app folder).
+- Choose a region (e.g., US or EU).
+- Select the appropriate branch from your repo to deploy from (usually main).
+- For runtime environment, choose Docker only if you’re using a Dockerfile (otherwise leave it as Native).
+
+3. Add Environment Variables:
+
+- Go to the Environment tab of your service.
+- Add your environment variables as key-value pairs.
+- These should match the values in your local env.py file (e.g., SECRET_KEY, DEBUG, DATABASE_URL, etc.).
 
 > [!IMPORTANT]
 > This is a sample only; you would replace the values with your own if cloning/forking my repository.
@@ -568,38 +579,101 @@ Deployment steps are as follows, after account setup:
 | `STRIPE_WH_SECRET`      | user-inserts-own-stripe-webhook-secret                               |
 | `USE_AWS`               | True                                                                 |
 
-Heroku needs some additional files in order to deploy properly.
+4. Required Project Files:
 
-- [requirements.txt](requirements.txt)
-- [Procfile](Procfile)
+Make sure your project includes the following files:
 
-You can install this project's **[requirements.txt](requirements.txt)** (_where applicable_) using:
+- **requirements.txt** – list of all dependencies.
+  - Generate using: `pip3 freeze > requirements.txt`
+- gunicorn must be listed in requirements.txt.
+- build.sh (optional for custom setup steps).
+- No Procfile is required for Render.
 
-- `pip3 install -r requirements.txt`
+5. Static Files Configuration (optional):
 
-If you have your own packages that have been installed, then the requirements file needs updated using:
+If you’re using Django static files, you’ll need to:
 
-- `pip3 freeze --local > requirements.txt`
+- Set **DEBUG = False** in your production environment.
+- Configure **WhiteNoise** or serve static files via a CDN or storage bucket (e.g., AWS S3).
+- Collect static files with: `python manage.py collectstatic`
 
-The **[Procfile](Procfile)** can be created with the following command:
+6. Push Code to GitHub:
 
-- `echo web: gunicorn app_name.wsgi > Procfile`
-- _replace `app_name` with the name of your primary Django app name; the folder where `settings.py` is located_
+- Commit and push your changes to your connected GitHub repository:
 
-For Heroku deployment, follow these steps to connect your own GitHub repository to the newly created app:
+```python
 
-Either (_recommended_):
+git add .
+git commit -m "Ready for Render deployment"
+git push origin main
 
-- Select **Automatic Deployment** from the Heroku app.
+```
 
-Or:
+7. Deploy:
 
-- In the Terminal/CLI, connect to Heroku using this command: `heroku login -i`
-- Set the remote for Heroku: `heroku git:remote -a app_name` (_replace `app_name` with your app name_)
-- After performing the standard Git `add`, `commit`, and `push` to GitHub, you can now type:
-  - `git push heroku main`
+- Render automatically builds and deploys your service when new commits are pushed to the selected branch.
+- Watch the build logs to verify successful deployment.
 
-The project should now be connected and deployed to Heroku!
+The back-end project should now be connected and deployed to Render!
+
+1. Prepare Your React App for Deployment
+
+Before deploying, make sure your app is production-ready:
+
+- In your React project directory, build the app using: `npm run build`
+
+This creates a build/ folder containing the optimized production version of your app.
+
+- Ensure you’ve added all dependencies: `npm install`
+
+- Commit and push all changes to GitHub:
+
+```python
+
+git add .
+git commit -m "Prepare for Render deployment"
+git push origin main
+
+```
+
+2. Create a New Static Site on Render
+
+- Go to your Render Dashboard.
+- Click the **New +** button and select **Static Site**.
+- Connect your GitHub repo if you haven’t already.
+- Select the React project repo you want to deploy.
+
+3. Configure the Static Site Settings
+
+In the setup form:
+
+- Name your site.
+- Choose the branch (usually main).
+- Set the Build Command to: `npm run build`
+- Set the Publish Directory to: `build`
+- Select a region (e.g., US or EU).
+- Click **Create Static Site**.
+
+4. Add Environment Variables (Optional)
+
+If your React app uses environment variables:
+
+- Go to the Environment tab of your static site.
+- Add variables using the REACT*APP* prefix, for example: `REACT_APP_API_URL=https://your-backend-api.com`
+- Re-deploy your site after updating environment variables.
+
+5. Auto Deploy on Git Push
+
+Render will automatically re-deploy your site every time you push to the selected branch on GitHub.
+
+6. Set Up a Custom Domain (Optional)
+
+- Go to your site’s **Settings > Custom Domains**.
+- Add your domain name.
+- Follow the provided DNS setup instructions.
+
+Your React App Is Now Live!
+Render hosts your front-end as a static site with global CDN, free SSL, and fast automatic deploys.
 
 ### Cloudinary API
 
@@ -830,27 +904,28 @@ There are no remaining major differences between the local version when compared
 
 ### Content
 
-| Source                                                      | Notes                                                    |
-| ----------------------------------------------------------- | -------------------------------------------------------- | --- |
-| [Markdown Builder](https://markdown.2bn.dev)                | Help generating Markdown files                           |
-| [Chris Beams](https://chris.beams.io/posts/git-commit)      | "How to Write a Git Commit Message"                      |
-| [Moments](https://codeinstitute.net)                        | Code Institute walkthrough project inspiration           |
-| [Bootstrap](https://getbootstrap.com)                       | Various components / responsive front-end framework      |
-| [Cloudinary](https://cloudinary.com/)                       | Cloud storage for static/media files                     |
-| [Whitenoise](https://whitenoise.readthedocs.io)             | Static file service                                      |     |
-| [Gmail API](https://developers.google.com/gmail/api/guides) | Sending payment confirmation emails                      |
-| [ChatGPT](https://chatgpt.com)                              | Help with code logic and explanations and debugging help |
+| Source                                                          | Notes                                                    |
+| --------------------------------------------------------------- | -------------------------------------------------------- | --- |
+| [Markdown Builder](https://markdown.2bn.dev)                    | Help generating Markdown files                           |
+| [Chris Beams](https://chris.beams.io/posts/git-commit)          | "How to Write a Git Commit Message"                      |
+| [Moments](https://codeinstitute.net)                            | Code Institute walkthrough project inspiration           |
+| [Bootstrap](https://getbootstrap.com)                           | Various components / responsive front-end framework      |
+| [Cloudinary](https://cloudinary.com/)                           | Cloud storage for static/media files                     |
+| [Whitenoise](https://whitenoise.readthedocs.io)                 | Static file service                                      |     |
+| [Gmail API](https://developers.google.com/gmail/api/guides)     | Sending payment confirmation emails                      |
+| [ChatGPT](https://chatgpt.com)                                  | Help with code logic and explanations and debugging help |
+| [Django Rest Framework](https://www.django-rest-framework.org/) | Help with any extra back-end setup                       |
+| [React](https://react.dev/learn)                                | Help with any extra front-end setup                      |
 
 ### Media
 
-| Source                                                                              | Notes                          |
-| ----------------------------------------------------------------------------------- | ------------------------------ |
-| [favicon.io](https://favicon.io)                                                    | Generating the favicon         |
-| [Font Awesome](https://fontawesome.com)                                             | Icons used throughout the site |
-| [Pixabay](https://cdn.pixabay.com/photo/2017/09/04/16/58/passport-2714675_1280.jpg) | Background wallpaper           |
-| [DeepAI](https://deepai.org/machine-learning-model/text2img)                        | AI generated artwork           |
-| [TinyPNG](https://tinypng.com)                                                      | Compressing images < 5MB       |
-| [CompressPNG](https://compresspng.com)                                              | Compressing images > 5MB       |
+| Source                                                       | Notes                          |
+| ------------------------------------------------------------ | ------------------------------ |
+| [favicon.io](https://favicon.io)                             | Generating the favicon         |
+| [Font Awesome](https://fontawesome.com)                      | Icons used throughout the site |
+| [DeepAI](https://deepai.org/machine-learning-model/text2img) | AI generated artwork           |
+| [TinyPNG](https://tinypng.com)                               | Compressing images < 5MB       |
+| [CompressPNG](https://compresspng.com)                       | Compressing images > 5MB       |
 
 ### Acknowledgements
 
