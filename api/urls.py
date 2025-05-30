@@ -16,7 +16,8 @@ from .views import (
     DashboardView, upload_profile_image, PublicChallengeListView,
     ChallengeLeaderboardView, ActiveUserChallengesView, DeleteAccountView,
     UserActivityStreakView, ChangePasswordView, SleepScheduleView,
-    NotificationListView, MarkAllNotificationsRead, UserPreferenceView
+    NotificationListView, MarkAllNotificationsRead, UserPreferenceView,
+    RepeatWorkoutPlanView
 )
 
 #  Create a router and register viewset with it
@@ -194,6 +195,11 @@ urlpatterns = [
         'workout_plans/<int:pk>/',
         WorkoutPlanDetailView.as_view(),
         name='workout_plan_detail',
+    ),
+    path(
+        'workout_plans/<int:pk>/repeat_next_week/',
+        RepeatWorkoutPlanView.as_view(),
+        name='repeat_workout_plan',
     ),
     # Dashboard
     path(

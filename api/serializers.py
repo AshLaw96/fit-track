@@ -526,10 +526,10 @@ class DailyWorkoutSerializer(serializers.ModelSerializer):
         model = DailyWorkout
         fields = ['id', 'date', 'time', 'activity', 'duration']
 
-        def validate_time(self, value):
-            if not value:
-                raise serializers.ValidationError("Time is required.")
-            return value
+    def validate_time(self, value):
+        if not value:
+            raise serializers.ValidationError("Time is required.")
+        return value
 
 
 class WorkoutPlanSerializer(serializers.ModelSerializer):
@@ -548,7 +548,8 @@ class WorkoutPlanSerializer(serializers.ModelSerializer):
             'title',
             'description',
             'date_created',
-            'daily_workouts'
+            'daily_workouts',
+            'auto_repeat',
         ]
         read_only_fields = ['user', 'date_created']
 

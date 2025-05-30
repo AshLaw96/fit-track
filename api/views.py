@@ -750,6 +750,39 @@ class WorkoutPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
         return WorkoutPlan.objects.filter(user=self.request.user)
 
 
+class RepeatWorkoutPlanView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        user = request.user
+        try:
+            plan = WorkoutPlan.objects.get(id=pk, user=user)
+        except WorkoutPlan.DoesNotExist:
+            return Response({"detail": "Workout plan not found."}, status=404)
+
+        # Duplicate the plan
+        new_plan = WorkoutPlan.objects.create(
+            user=user,
+            title=f"{plan.title} (Week of {now().date() + timedelta(days=7)})",
+            description=plan.description
+        )
+
+        # Duplicate daily workouts with shifted dates
+        for dw in plan.daily_workouts.all():
+            DailyWorkout.objects.create(
+                workout_plan=new_plan,
+                date=dw.date + timedelta(days=7),
+                time=dw.time,
+                activity=dw.activity,
+                duration=dw.duration
+            )
+
+        return Response({
+            "detail": "Workout plan repeated for next week.",
+            "new_plan_id": new_plan.id
+        }, status=status.HTTP_201_CREATED)
+
+
 # --- Custom dashboard view ---
 class DashboardView(APIView):
     """
@@ -886,8 +919,6 @@ class DashboardView(APIView):
 
         if latest_plan:
             workout_plan_data = WorkoutPlanSerializer(latest_plan).data
-            workout_plan_data["user_id"] = user.id
-            workout_plan_data["workout_plan_id"] = latest_plan.id
         else:
             workout_plan_data = {
                 "daily_workouts": [],

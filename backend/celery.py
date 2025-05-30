@@ -30,3 +30,11 @@ app.conf.beat_schedule.update({
         'schedule': crontab(hour=0, minute=5),
     }
 })
+
+app.conf.beat_schedule = {
+    "reset-workout-plans-weekly": {
+        "task": "workouts.tasks.reset_expired_workout_plans",
+        # Sunday at 11:59 PM
+        "schedule": crontab(hour=23, minute=59, day_of_week=6),
+    },
+}

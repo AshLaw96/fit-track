@@ -1,7 +1,8 @@
 from celery import shared_task
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import SleepSchedule, UserChallenge, Goal
+from django.utils.timezone import now
+from .models import SleepSchedule, UserChallenge, Goal, WorkoutPlan
 from .utils.notifications import send_notification
 
 
@@ -69,3 +70,20 @@ def expire_unachieved_goals():
     for goal in unachieved_goals:
         goal.status = 'failed'
         goal.save()
+
+
+@shared_task
+def reset_expired_workout_plans():
+    today = now().date()
+    last_sunday = today - timedelta(days=today.weekday() + 1)
+
+    expired_plans = WorkoutPlan.objects.filter(
+        date_created__lt=last_sunday
+    )
+
+    for plan in expired_plans:
+        # mark as expired instead of deleting
+        plan.is_active = False
+        plan.save()
+
+    return f"Processed {expired_plans.count()} expired workout plans."
