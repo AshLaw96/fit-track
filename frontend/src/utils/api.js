@@ -7,7 +7,6 @@ const api = axios.create({
   withCredentials: false,
 });
 
-// Attach access token to requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("access_token");
@@ -19,8 +18,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Refresh token logic
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem("refresh_token");
   if (!refreshToken) throw new Error("No refresh token available");
 
@@ -39,24 +37,20 @@ const refreshAccessToken = async () => {
     console.error("Token refresh failed", err);
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    // Redirect to login
     window.location.href = "/auth";
     throw err;
   }
 };
 
-// Handle expired access token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
     const isTokenUrl = originalRequest.url.includes("/token/");
     const isRetry = originalRequest._retry;
 
     if (error.response?.status === 401 && !isRetry && !isTokenUrl) {
       originalRequest._retry = true;
-
       try {
         const newToken = await refreshAccessToken();
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
@@ -70,7 +64,6 @@ api.interceptors.response.use(
   }
 );
 
-// Background token refresher
 export const startTokenRefreshTimer = () => {
   const refreshToken = localStorage.getItem("refresh_token");
   const accessToken = localStorage.getItem("access_token");
@@ -84,13 +77,11 @@ export const startTokenRefreshTimer = () => {
     const refreshTime = exp - now - 60000;
 
     if (refreshTime <= 0) {
-      // immediate retry
-      refreshAccessToken();
+      refreshAccessToken().then(() => startTokenRefreshTimer());
     } else {
       setTimeout(async () => {
         try {
           await refreshAccessToken();
-          // re-loop
           startTokenRefreshTimer();
         } catch (err) {
           console.error("Silent refresh failed");
@@ -104,7 +95,7 @@ export const startTokenRefreshTimer = () => {
 
 export default api;
 
-// --- SleepLog helpers (unchanged) ---
+// --- SleepLog helpers ---
 export const getSleepLogs = async () => {
   const response = await api.get("/sleep_logs/");
   return response;
