@@ -96,7 +96,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
   const handleJoin = async (challengeId) => {
     try {
-      const res = await api.post("/challenges/public/", { challenge_id: challengeId });
+      await api.post("/challenges/public/", { challenge_id: challengeId });
       toast.success("🎉 Joined challenge!");
       if (typeof refreshData === "function") refreshData();
       fetchChallengeData();

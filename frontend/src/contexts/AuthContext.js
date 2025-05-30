@@ -17,6 +17,14 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setUser(null);
+    setIsAuthenticated(false);
+    navigate("/login");
+  }, [navigate]);
+
   // Rehydrate token and user on page load
   useEffect(() => {
     const tryRefresh = async () => {
@@ -43,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     tryRefresh();
-  }, []);
+  }, [logout]);
 
   // Listen for storage updates in other tabs
   useEffect(() => {
@@ -76,14 +84,6 @@ export const AuthProvider = ({ children }) => {
     startTokenRefreshTimer();
     navigate("/");
   };
-
-  const logout = useCallback(() => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    setIsAuthenticated(false);
-    setUser(null);
-    navigate("/auth");
-  }, [navigate]);
 
   return (
     <AuthContext.Provider

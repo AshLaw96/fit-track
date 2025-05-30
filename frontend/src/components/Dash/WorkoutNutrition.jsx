@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
-import { format, startOfWeek, addDays, set } from "date-fns";
+import { format, startOfWeek, addDays } from "date-fns";
 import WorkoutPlanner from "./WorkoutModalPlanner";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
@@ -11,7 +11,7 @@ const getDateOfWeek = (i) =>
   format(addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), i), "yyyy-MM-dd");
 
 const WorkoutNutrition = ({ data }) => {
-  const { todays_macros = {}, workouts = [], workout_plan_id, user_id } = data || {};
+  const { todays_macros = {}, workout_plan_id, user_id } = data || {};
   const hasMacros = todays_macros?.protein || todays_macros?.carbs || todays_macros?.fats;
 
   const isEditing = !!workout_plan_id;
@@ -136,7 +136,7 @@ const WorkoutNutrition = ({ data }) => {
     };
 
     try {
-      const response = await api.post("/workout_plans/${workout_plan_id/repeat_next_week", payload);
+      await api.post(`/workout_plans/${workout_plan_id}/repeat_next_week`, payload);
       toast.success("Workout plan repeated for next week!");
       setIsRepeating(true);
     } catch (err) {
