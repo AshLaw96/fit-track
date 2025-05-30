@@ -548,12 +548,38 @@ class UserChallengeListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return UserChallenge.objects.filter(user=self.request.user)
+        user = self.request.user
+        print(
+            f"[DEBUG] Fetching all user challenges for user: {user} "
+            f"(ID: {user.id})"
+        )
+        try:
+            queryset = (
+                UserChallenge.objects
+                .filter(user=user)
+                .select_related("challenge", "user")
+            )
+            print(f"[DEBUG] Found {queryset.count()} user challenges")
+            return queryset
+        except Exception as e:
+            import traceback
+            print(
+                "[ERROR] Exception in get_queryset of "
+                "UserChallengeListView:", e
+            )
+            traceback.print_exc()
+            raise
 
     def perform_create(self, serializer):
         try:
-            serializer.save(user=self.request.user)
-        except IntegrityError:
+            instance = serializer.save(user=self.request.user)
+            print(
+                f"[DEBUG] Created UserChallenge for user: "
+                f"{self.request.user}, "
+                f"challenge: {instance.challenge}"
+            )
+        except IntegrityError as e:
+            print("[ERROR] IntegrityError when creating UserChallenge:", e)
             raise serializers.ValidationError(
                 "You have already joined this challenge."
             )
@@ -573,22 +599,26 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         instance = serializer.save()
 
-        # Award point if challenge is completed
         if instance.progress >= instance.target and not instance.completed:
             instance.completed = True
             instance.save(update_fields=["completed"])
 
-            # Add a point to the user's account
             User = get_user_model()
             User.objects.filter(id=instance.user.id).update(
                 points=F('points') + 1
             )
 
-        # After saving progress, check leaderboard rank
-        check_and_notify_leaderboard_change(
-            instance.challenge_id,
-            self.request.user
-        )
+        try:
+            check_and_notify_leaderboard_change(
+                instance.challenge_id,
+                self.request.user
+            )
+        except Exception as e:
+            # Log the error to help debug
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in leaderboard check: {e}", exc_info=True)
+            # Optionally, re-raise or ignore depending on your needs
 
 
 # --- Public Challenge List View ---
@@ -655,11 +685,20 @@ class ActiveUserChallengesView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         today = timezone.now().date()
-        return UserChallenge.objects.filter(
-            user=user,
-            challenge__start_date__lte=today,
-            challenge__end_date__gte=today
-        ).select_related('challenge')
+        print(f"[DEBUG] Fetching active challenges for user {user} on {today}")
+        try:
+            qs = UserChallenge.objects.filter(
+                user=user,
+                challenge__start_date__lte=today,
+                challenge__end_date__gte=today
+            ).select_related('challenge')
+            print(f"[DEBUG] Found {qs.count()} active challenges")
+            return qs
+        except Exception as e:
+            import traceback
+            print("[ERROR] Failed to fetch active challenges:", e)
+            traceback.print_exc()
+            raise
 
 
 # --- User Report Views ---

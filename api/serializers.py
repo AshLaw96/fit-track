@@ -472,9 +472,14 @@ class UserChallengeSerializer(serializers.ModelSerializer):
         model = UserChallenge
         fields = [
             'user', 'challenge', 'progress', 'completed',
-            'title', 'target', 'metric' 'user_points',
+            'title', 'target', 'metric', 'user_points',
         ]
         read_only_fields = ['user']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        print(f"[SERIALIZER DEBUG] {rep}")
+        return rep
 
 
 class UserReportSerializer(serializers.ModelSerializer):
