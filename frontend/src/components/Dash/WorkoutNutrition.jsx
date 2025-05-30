@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import "chart.js/auto";
-import { format, startOfWeek, addDays } from "date-fns";
+import { format, startOfWeek, addDays, set } from "date-fns";
 import WorkoutPlanner from "./WorkoutModalPlanner";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
@@ -25,6 +25,7 @@ const WorkoutNutrition = ({ data }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [activeDayIndex, setActiveDayIndex] = useState(null);
   const [modalSessions, setModalSessions] = useState([]);
+  const [isRepeating, setIsRepeating] = useState(false);
 
   const normalizeTime = (timeStr) => {
     const parts = timeStr.split(":");
@@ -38,12 +39,28 @@ const WorkoutNutrition = ({ data }) => {
     return timeStr;
   };
 
-  useEffect(() => {
-    console.log("WorkoutNutrition received data:", data);
-    if (Array.isArray(workouts) && workouts.length === 7) {
-      setWeeklyWorkouts(workouts);
-    }
-  }, [workouts, data]);
+  useEffect(() => {;
+    if (!Array.isArray(data?.daily_workouts)) return;
+
+    // Initialize default structure
+    const groupedByDay = days.map((_, i) => ({
+      date: getDateOfWeek(i),
+      sessions: [],
+    }));
+
+    data.daily_workouts.forEach((w) => {
+      const dayIndex = days.findIndex((_, i) => getDateOfWeek(i) === w.date);
+      if (dayIndex !== -1) {
+        groupedByDay[dayIndex].sessions.push({
+          time: w.time?.slice(0, 5) || "",
+          type: w.activity || "",
+          duration: w.duration || "",
+        });
+      }
+    });
+
+    setWeeklyWorkouts(groupedByDay);
+  }, [data]);
 
   const openModal = (index) => {
     setActiveDayIndex(index);
@@ -115,12 +132,13 @@ const WorkoutNutrition = ({ data }) => {
       title: "Repeated Weekly Workout Plan",
       description: "Auto-repeated for next week",
       daily_workouts: repeatedWorkouts,
+      auto_repeat: true,
     };
 
     try {
-      const response = await api.post("/workout_plans/", payload);
+      const response = await api.post("/workout_plans/${workout_plan_id/repeat_next_week", payload);
       toast.success("Workout plan repeated for next week!");
-      console.log("Repeated plan response:", response.data);
+      setIsRepeating(true);
     } catch (err) {
       console.error("Error repeating plan:", err.response?.data || err.message);
       toast.error("Failed to repeat workout plan.");
@@ -175,8 +193,8 @@ const WorkoutNutrition = ({ data }) => {
           <button className="btn btn-success" onClick={handleSaveWeek}>
             Save Plan
           </button>
-          <button className="btn btn-secondary" onClick={handleRepeatWeek}>
-            Repeat Next Week
+          <button className="btn btn-secondary" onClick={handleRepeatWeek} disabled={isRepeating}>
+            {isRepeating ? "Repeating Next Week" : "Repeat Next Week"}
           </button>
         </div>
       </div>
