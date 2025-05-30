@@ -5,24 +5,19 @@ import WorkoutNutrition from "./WorkoutNutrition";
 import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
-import { format, subDays, eachDayOfInterval } from "date-fns";
-import { estimateStepsFromExercise } from "../../utils/stepEstimator";
 
-const UserDash = ({ dashboardData, fetchAllData }) => {
-  const [exercises, setExercises] = useState([]);
+const UserDash = ({ dashboardData }) => {
   const [meals, setMeals] = useState([]);
   const [sleepLogs, setSleepLogs] = useState([]);
   const [profile, setProfile] = useState({ username: "User" });
 
   const fetchLogs = useCallback(async () => {
     try {
-      const [mealsRes, exercisesRes, sleepRes] = await Promise.all([
+      const [mealsRes, sleepRes] = await Promise.all([
         api.get("/meals/"),
-        api.get("/exercises/"),
         api.get("/sleep_logs/"),
       ]);
       setMeals(mealsRes.data?.results || []);
-      setExercises(exercisesRes.data?.results || []);
       setSleepLogs(Array.isArray(sleepRes.data) ? sleepRes.data : []);
     } catch (err) {
       console.error("Failed to fetch logs:", err);
@@ -43,15 +38,11 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
     fetchLogs();
   }, [fetchLogs]);
 
-  if (!dashboardData || !exercises || !meals || !sleepLogs) {
+  if (!dashboardData || !dashboardData.activity_summary || !dashboardData.analytics) {
     return <div className="text-center mt-5">Loading...</div>;
   }
 
-  const today = format(new Date(), "yyyy-MM-dd");
-
-  const todaysCaloriesBurned = exercises
-    .filter((ex) => ex.date === today)
-    .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0);
+  const today = new Date().toISOString().split("T")[0];
 
   const totalWater = meals
     .filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
@@ -64,35 +55,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
   const activitySummaryWithWater = {
     ...dashboardData.activity_summary,
     water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
-  };
-
-  const last7Days = eachDayOfInterval({
-    start: subDays(new Date(), 6),
-    end: new Date(),
-  }).map((d) => format(d, "yyyy-MM-dd"));
-
-  const weeklyTrends = {
-    dates: last7Days,
-    steps: last7Days.map((date) =>
-      exercises
-        .filter((ex) => ex.date === date)
-        .reduce((sum, ex) => sum + estimateStepsFromExercise(ex), 0)
-    ),
-    sleep_hours: last7Days.map((date) =>
-      sleepLogs
-        .filter((log) => log.date === date)
-        .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0)
-    ),
-    calories_burned: last7Days.map((date) =>
-      exercises
-        .filter((ex) => ex.date === date)
-        .reduce((sum, ex) => sum + parseFloat(ex.calories_burned || 0), 0)
-    ),
-    water_intake: last7Days.map((date) =>
-      meals
-        .filter((meal) => meal.date === date && meal.meal_type === "drink" && meal.water_amount)
-        .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0)
-    ),
+    sleep: todaySleep.toFixed(1),
   };
 
   return (
@@ -103,11 +66,7 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
       <div className="row g-4">
         <div className="col-md-6">
           <ActivitySummary
-            data={{
-              ...activitySummaryWithWater,
-              calories_burned: todaysCaloriesBurned,
-              sleep: todaySleep.toFixed(1),
-            }}
+            data={activitySummaryWithWater}
             profile={profile}
           />
         </div>
@@ -118,15 +77,10 @@ const UserDash = ({ dashboardData, fetchAllData }) => {
           <DailyGoals data={dashboardData.daily_goals} />
         </div>
         <div className="col-md-6">
-          <ProgressAnalytics
-            data={{
-              ...dashboardData.analytics,
-              weekly_trends: weeklyTrends,
-            }}
-          />
+          <ProgressAnalytics data={dashboardData.analytics} />
         </div>
         <div className="col-md-12">
-          <ChallengesMotivation />
+          <ChallengesMotivation challenges={dashboardData.challenges} />
         </div>
       </div>
     </div>

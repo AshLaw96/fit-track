@@ -40,6 +40,7 @@ from .utils.activity import calculate_user_streak
 from .utils.notifications import send_notification
 from .utils.leaderboard import check_and_notify_leaderboard_change
 from .utils.sleep import update_daily_sleep_log
+from .utils.fitness import estimate_steps_from_exercise
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -761,18 +762,6 @@ class DashboardView(APIView):
         today = now().date()
         week_ago = today - timedelta(days=6)
         dates = [today - timedelta(days=i) for i in range(6, -1, -1)]
-
-        def estimate_steps_from_exercise(ex):
-            if ex.type == "cardio":
-                return (ex.duration or 0) * 120
-            elif ex.type == "strength":
-                return (ex.duration or 0) * 60
-            elif ex.type == "flexibility":
-                return (ex.duration or 0) * 30
-            elif ex.type == "sports":
-                return (ex.duration or 0) * 100
-            else:
-                return (ex.duration or 0) * 80
 
         daily_logs = DailyLog.objects.filter(
             user=user,
