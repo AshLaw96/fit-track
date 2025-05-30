@@ -436,11 +436,19 @@ class ChallengeSerializer(serializers.ModelSerializer):
     """
     Serializer for the Challenge model.
     """
+    owner = serializers.SerializerMethodField()
+
+    def get_owner(self, obj):
+        if self.context.get('request').user == obj.owner:
+            return obj.owner.id
+        # or exclude field entirely
+        return None
+
     class Meta:
         model = Challenge
         fields = [
-            'id', 'owner', 'title', 'description', 'metric', 'target_value',
-            'start_date', 'end_date', 'is_public'
+            'id', 'owner', 'title', 'description', 'metric',
+            'target_value', 'start_date', 'end_date', 'is_public'
         ]
 
 
@@ -455,12 +463,16 @@ class UserChallengeSerializer(serializers.ModelSerializer):
         read_only=True
     )
     metric = serializers.CharField(source='challenge.metric', read_only=True)
+    user_points = serializers.IntegerField(
+        source='user.points',
+        read_only=True
+    )
 
     class Meta:
         model = UserChallenge
         fields = [
             'user', 'challenge', 'progress', 'completed',
-            'title', 'target', 'metric',
+            'title', 'target', 'metric' 'user_points',
         ]
         read_only_fields = ['user']
 

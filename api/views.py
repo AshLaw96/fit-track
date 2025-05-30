@@ -13,7 +13,7 @@ from django.utils.timezone import now
 from rest_framework import generics, permissions, viewsets, status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
@@ -24,7 +24,7 @@ import os
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
-    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification
+    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification, DailyWorkout
 )
 from .serializers import (
     UserSerializer, GoalSerializer, ExerciseSerializer, MealSerializer,
@@ -497,7 +497,8 @@ class NutritionLogDetailView(generics.RetrieveUpdateDestroyAPIView):
 # --- Challenge Views ---
 class ChallengeListView(generics.ListCreateAPIView):
     """
-    API view to list and create challenges.
+    API view to list and create challenges owned by the user.
+    Enforces only one active challenge at a time for the user when creating.
     """
     serializer_class = ChallengeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -507,22 +508,23 @@ class ChallengeListView(generics.ListCreateAPIView):
         return Challenge.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
-        challenge = serializer.save(owner=self.request.user)
-        print(
-            f"[DEBUG] Created challenge ID: {challenge.id}, "
-            f"is_public: {challenge.is_public}, "
-            f"owner: {self.request.user.id}"
-        )
+        user = self.request.user
+        today = timezone.now().date()
 
-        user_chal, created = UserChallenge.objects.get_or_create(
-            user=self.request.user,
-            challenge=challenge
-        )
-        print(
-            f"[DEBUG] UserChallenge "
-            f"{'created' if created else 'already existed'} "
-            f"for user {self.request.user.id} and challenge {challenge.id}"
-        )
+        # Check if user already has an active challenge
+        has_active = UserChallenge.objects.filter(
+            user=user,
+            challenge__start_date__lte=today,
+            challenge__end_date__gte=today
+        ).exists()
+
+        if has_active:
+            raise ValidationError("You already have an active challenge.")
+
+        challenge = serializer.save(owner=user)
+
+        # Automatically join the user to the created challenge
+        UserChallenge.objects.create(user=user, challenge=challenge)
 
 
 class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
