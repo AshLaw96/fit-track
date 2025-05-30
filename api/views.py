@@ -39,6 +39,7 @@ from .serializers import (
 from .utils.activity import calculate_user_streak
 from .utils.notifications import send_notification
 from .utils.leaderboard import check_and_notify_leaderboard_change
+from .utils.sleep import update_daily_sleep_log
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -263,7 +264,11 @@ class SleepLogListCreateView(generics.ListCreateAPIView):
         ).order_by('-date')
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        instance = serializer.save(user=self.request.user)
+        update_daily_sleep_log(
+            user=self.request.user,
+            date=instance.date
+        )
 
 
 class SleepLogDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -277,6 +282,16 @@ class SleepLogDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return SleepLog.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        instance = serializer.save(user=self.request.user)
+        update_daily_sleep_log(user=self.request.user, date=instance.date)
+
+    def perform_destroy(self, instance):
+        user = instance.user
+        date = instance.date
+        instance.delete()
+        update_daily_sleep_log(user=user, date=date)
 
 
 class SleepScheduleView(generics.RetrieveUpdateAPIView):
