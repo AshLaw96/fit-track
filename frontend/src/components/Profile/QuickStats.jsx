@@ -11,7 +11,7 @@ import {
   Legend,
 } from "recharts";
 import api from "../../utils/api";
-import AchievementStars from "./AchievementStars"; // 🔹 New component
+import AchievementStars from "./AchievementStars";
 
 const QuickStats = ({ achievements }) => {
   const [challengeProgress, setChallengeProgress] = useState([]);
@@ -24,8 +24,9 @@ const QuickStats = ({ achievements }) => {
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
-        const res = await api.get("/user_challenges/");
-        const formatted = res.data.results.map((uc) => {
+        const res = await api.get("/user_challenges/active/");
+        const raw = Array.isArray(res.data) ? res.data : [res.data];
+        const formatted = raw.map((uc) => {
           const percent =
             uc.target > 0 ? Math.min((uc.progress / uc.target) * 100, 100) : 0;
           return {

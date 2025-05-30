@@ -80,7 +80,7 @@ const UserDash = ({ dashboardData }) => {
           <ProgressAnalytics data={dashboardData.analytics} />
         </div>
         <div className="col-md-12">
-          <ChallengesMotivation challenges={dashboardData.challenges} />
+          <ChallengesMotivation data={dashboardData.challenges} />
         </div>
       </div>
     </div>

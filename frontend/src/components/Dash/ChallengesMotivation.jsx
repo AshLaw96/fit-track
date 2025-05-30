@@ -96,16 +96,17 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
   const handleJoin = async (challengeId) => {
     try {
-      await api.post("/user_challenges/", { challenge: challengeId });
-      alert("Joined challenge!");
+      const res = await api.post("/challenges/public/", { challenge_id: challengeId });
+      toast.success("🎉 Joined challenge!");
       if (typeof refreshData === "function") refreshData();
       fetchChallengeData();
     } catch (err) {
       console.error(err);
       const msg =
         err.response?.data?.non_field_errors?.[0] ||
-        "Already joined or unknown error.";
-      alert(msg);
+        err.response?.data?.detail ||
+        "Error joining challenge.";
+      toast.error(`❌ ${msg}`);
     }
   };
 
@@ -160,10 +161,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <ul className="mt-2">
                 {leaderboard.map((entry, i) => (
                   <li key={i}>
-                    {i + 1}. {entry.user} -
-                    {entry.points !== undefined
-                      ? ` ${entry.points} pts`
-                      : ` ${((entry.progress / entry.target) * 100).toFixed(1)}%`}
+                    {i + 1}. {entry.user} - {((entry.progress / entry.target) * 100).toFixed(1)}%
                   </li>
                 ))}
               </ul>
@@ -185,9 +183,13 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     <button
                       className="btn btn-sm btn-outline-primary ms-2"
                       onClick={() => handleJoin(c.id)}
-                      disabled={joinedChallengeIds.includes(c.id)}
+                      disabled={joinedChallengeIds.includes(c.id) || active.length > 0}
                     >
-                      {joinedChallengeIds.includes(c.id) ? "Already Joined" : "Join"}
+                      {joinedChallengeIds.includes(c.id)
+                        ? "Already Joined"
+                        : active.length > 0
+                          ? "Only 1 Active Allowed"
+                          : "Join"}
                     </button>
                   </li>
                 ))}
