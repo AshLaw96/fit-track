@@ -5,16 +5,15 @@ import { format, startOfWeek, addDays } from "date-fns";
 import WorkoutPlanner from "./WorkoutModalPlanner";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
+import "../../styles/Workout.css";
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const getDateOfWeek = (i) =>
   format(addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), i), "yyyy-MM-dd");
 
-const WorkoutNutrition = ({ data }) => {
+const WorkoutNutrition = ({ data, refreshDashboardData }) => {
   const { todays_macros = {}, workout_plan_id, user_id } = data || {};
   const hasMacros = todays_macros?.protein || todays_macros?.carbs || todays_macros?.fats;
-
-  const isEditing = !!workout_plan_id;
 
   const defaultWorkouts = days.map((_, i) => ({
     date: getDateOfWeek(i),
@@ -26,6 +25,10 @@ const WorkoutNutrition = ({ data }) => {
   const [activeDayIndex, setActiveDayIndex] = useState(null);
   const [modalSessions, setModalSessions] = useState([]);
   const [isRepeating, setIsRepeating] = useState(false);
+  const [planId, setPlanId] = useState(workout_plan_id); // ✅ Initialize from props
+
+  // ✅ Update isEditing dynamically
+  const isEditing = !!planId;
 
   const normalizeTime = (timeStr) => {
     const parts = timeStr.split(":");
@@ -39,10 +42,9 @@ const WorkoutNutrition = ({ data }) => {
     return timeStr;
   };
 
-  useEffect(() => {;
+  useEffect(() => {
     if (!Array.isArray(data?.daily_workouts)) return;
 
-    // Initialize default structure
     const groupedByDay = days.map((_, i) => ({
       date: getDateOfWeek(i),
       sessions: [],
@@ -60,7 +62,13 @@ const WorkoutNutrition = ({ data }) => {
     });
 
     setWeeklyWorkouts(groupedByDay);
+    setPlanId(data?.workout_plan_id || null); // ✅ Always sync plan ID with incoming data
   }, [data]);
+
+  // ✅ Debug log
+  useEffect(() => {
+    console.log("Workout Plan ID updated:", planId);
+  }, [planId]);
 
   const openModal = (index) => {
     setActiveDayIndex(index);
@@ -92,17 +100,19 @@ const WorkoutNutrition = ({ data }) => {
 
     const payload = {
       user: user_id,
-      title: "Weekly Workout Plan",
+      title: `Weekly Workout Plan (${format(new Date(), "yyyy-MM-dd")})`,
       description: "Created via dashboard",
       daily_workouts,
     };
 
     try {
       const response = isEditing
-        ? await api.put(`/workout_plans/${workout_plan_id}/`, payload)
+        ? await api.put(`/workout_plans/${planId}/`, payload)
         : await api.post("/workout_plans/", payload);
-      console.log("Workout plan saved:", response.data);
+
       toast.success("Workout plan saved successfully!");
+      setPlanId(response.data?.id); // ✅ Update local plan ID from response
+      await refreshDashboardData?.(); // ✅ Refresh parent dashboard
     } catch (err) {
       if (err.response) {
         console.error("Backend error details:", err.response.data);
@@ -115,35 +125,25 @@ const WorkoutNutrition = ({ data }) => {
   };
 
   const handleRepeatWeek = async () => {
-    const repeatedWorkouts = weeklyWorkouts.flatMap((day) => {
-      const nextWeekDate = format(addDays(new Date(day.date), 7), "yyyy-MM-dd");
-      return (day.sessions || [])
-        // skip invalids
-        .filter((session) => session.type && session.time && session.duration)
-        .map((session) => ({
-          date: nextWeekDate,
-          time: normalizeTime(session.time),
-          activity: session.type,
-          duration: session.duration,
-        }));
-    });
-
-    const payload = {
-      title: "Repeated Weekly Workout Plan",
-      description: "Auto-repeated for next week",
-      daily_workouts: repeatedWorkouts,
-      auto_repeat: true,
-    };
+    if (!planId) {
+      toast.error("No existing workout plan to repeat.");
+      return;
+    }
 
     try {
-      await api.post(`/workout_plans/${workout_plan_id}/repeat_next_week`, payload);
+      console.log("Repeating plan with ID:", planId);
+      await api.post(`/workout_plans/${planId}/repeat_next_week/`);
       toast.success("Workout plan repeated for next week!");
       setIsRepeating(true);
+      await refreshDashboardData?.();
     } catch (err) {
       console.error("Error repeating plan:", err.response?.data || err.message);
       toast.error("Failed to repeat workout plan.");
     }
   };
+
+  // Check if today is Sunday
+  const isSunday = new Date().getDay() === 0;
 
   return (
     <div className="card p-3 shadow-sm">
@@ -193,9 +193,16 @@ const WorkoutNutrition = ({ data }) => {
           <button className="btn btn-success" onClick={handleSaveWeek}>
             Save Plan
           </button>
-          <button className="btn btn-secondary" onClick={handleRepeatWeek} disabled={isRepeating}>
-            {isRepeating ? "Repeating Next Week" : "Repeat Next Week"}
-          </button>
+          <div className="tooltip-wrapper">
+            <button
+              className="btn btn-secondary"
+              onClick={handleRepeatWeek}
+              disabled={isRepeating || !isSunday}
+            >
+              {isRepeating ? "Repeating Next Week" : "Repeat Next Week"}
+            </button>
+            {!isSunday && <span className="tooltip-text">Only available on Sundays</span>}
+          </div>
         </div>
       </div>
 
