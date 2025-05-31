@@ -439,9 +439,9 @@ class ChallengeSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
 
     def get_owner(self, obj):
-        if self.context.get('request').user == obj.owner:
+        request = self.context.get('request')
+        if request and hasattr(request, 'user') and request.user == obj.owner:
             return obj.owner.id
-        # or exclude field entirely
         return None
 
     class Meta:

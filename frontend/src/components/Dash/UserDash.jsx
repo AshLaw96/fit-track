@@ -6,7 +6,8 @@ import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
 
-const UserDash = ({ dashboardData }) => {
+const UserDash = () => {
+  const [dashboardData, setDashboardData] = useState(null);
   const [meals, setMeals] = useState([]);
   const [sleepLogs, setSleepLogs] = useState([]);
   const [profile, setProfile] = useState({ username: "User" });
@@ -24,6 +25,15 @@ const UserDash = ({ dashboardData }) => {
     }
   }, []);
 
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const res = await api.get("/dashboard/");
+      setDashboardData(res.data);
+    } catch (err) {
+      console.error("Failed to fetch dashboard data:", err);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -36,16 +46,23 @@ const UserDash = ({ dashboardData }) => {
 
     fetchProfile();
     fetchLogs();
-  }, [fetchLogs]);
+    fetchDashboardData();
+  }, [fetchLogs, fetchDashboardData]);
 
-  if (!dashboardData || !dashboardData.activity_summary || !dashboardData.analytics) {
+  if (
+    !dashboardData ||
+    !dashboardData.activity_summary ||
+    !dashboardData.analytics
+  ) {
     return <div className="text-center mt-5">Loading...</div>;
   }
 
   const today = new Date().toISOString().split("T")[0];
 
   const totalWater = meals
-    .filter((meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount)
+    .filter(
+      (meal) => meal.date === today && meal.meal_type === "drink" && meal.water_amount
+    )
     .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0);
 
   const todaySleep = sleepLogs
@@ -71,7 +88,10 @@ const UserDash = ({ dashboardData }) => {
           />
         </div>
         <div className="col-md-6">
-          <WorkoutNutrition data={dashboardData.workout_nutrition} />
+          <WorkoutNutrition
+            data={dashboardData.workout_nutrition}
+            refreshDashboardData={fetchDashboardData}
+          />
         </div>
         <div className="col-md-6">
           <DailyGoals data={dashboardData.daily_goals} />

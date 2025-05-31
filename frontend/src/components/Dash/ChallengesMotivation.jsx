@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const ChallengesMotivation = ({ data, refreshData }) => {
   const [challengeData, setChallengeData] = useState({
-    active: null,
+    active: [],
     available: [],
     leaderboard: [],
   });
@@ -24,23 +24,36 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   const fetchChallengeData = async () => {
     try {
       setLoading(true);
+      setChallengeData({ active: [], available: [], leaderboard: [] });
+
       const [activeRes, availableRes, joinedRes] = await Promise.all([
         api.get("/user_challenges/active/"),
         api.get("/challenges/public/"),
         api.get("/user_challenges/"),
       ]);
 
-      const active = Array.isArray(activeRes.data) ? activeRes.data : [];
+      const active = activeRes.data.results.map((uc) => ({
+        id: uc.id,
+        challengeId: uc.challenge, // challenge is just the ID
+        title: uc.title || "Untitled",
+        target: uc.target_value || 1,
+        progress: uc.progress ?? 0,
+        completed: uc.completed || false,
+      }));
+
       const available = availableRes.data || [];
       const joined = Array.isArray(joinedRes.data) ? joinedRes.data : [];
       const joinedIds = joined.map((uc) => uc.challenge);
 
       let leaderboard = [];
-      if (active?.challenge) {
-        const res = await api.get(
-          `/user_challenges/leaderboard/${active.challenge}/`
-        );
-        leaderboard = res.data || [];
+      if (active.length > 0) {
+        const challengeId = active[0].challengeId;
+        try {
+          const res = await api.get(`/user_challenges/leaderboard/${challengeId}/`);
+          leaderboard = res.data || [];
+        } catch (err) {
+          console.warn("⚠️ Failed to fetch leaderboard:", err);
+        }
       }
 
       setChallengeData({ active, available, leaderboard });
@@ -62,7 +75,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
   const handleCreateChallenge = async (e) => {
     e.preventDefault();
-
     try {
       const challengePayload = {
         ...newChallenge,
@@ -110,9 +122,26 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     }
   };
 
-  const { active, available, leaderboard } = challengeData;
+  const handleAddProgress = async (c) => {
+    console.log("🔁 Add progress for challenge object:", c);
+    try {
+      const response = await api.post(`/user_challenges/${c.id}/increment_progress/`);
+      const { progress, completed } = response.data;
 
-  console.log("Available challenges:", available);
+      if (completed) {
+        toast.success("✅ Challenge completed! You earned a point.");
+      } else {
+        toast.success(`+ Progress added! (${progress})`);
+      }
+
+      fetchChallengeData();
+    } catch (err) {
+      toast.error("❌ Failed to add progress.");
+      console.error("Add progress error:", err);
+    }
+  };
+
+  const { active, available, leaderboard } = challengeData;
 
   return (
     <div className="card p-4 shadow">
@@ -130,19 +159,29 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <TrendingUp className="text-primary" size={18} /> Active Challenge:
             </strong>
             {active.length > 0 ? (
-              active.map((c, i) => (
-                <div key={i} className="mb-3">
-                  <p className="fw-semibold">{c.challenge?.title}</p>
+              active.map((c) => (
+                <div key={c.id} className="mb-3">
+                  <p className="fw-semibold">{c.title}</p>
                   <div className="progress">
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style={{ width: `${(c.progress / c.target) * 100}%` }}
+                      style={{ width: c.target ? `${(c.progress / c.target) * 100}%` : "0%" }}
                     >
-                      {((c.progress / c.target) * 100).toFixed(1)}%
+                      {c.target ? ((c.progress / c.target) * 100).toFixed(1) : "0"}%
                     </div>
                   </div>
-                  {c.progress >= c.target && (
+                  <p>{c.progress} / {c.target}</p>
+
+                  {!c.completed && (
+                    <button
+                      className="btn btn-sm btn-success mt-2"
+                      onClick={() => handleAddProgress(c)}
+                    >
+                      + Add Progress
+                    </button>
+                  )}
+                  {c.completed && (
                     <div className="text-success mt-2">✅ Challenge Completed! +1 point</div>
                   )}
                 </div>
@@ -160,7 +199,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {leaderboard.length > 0 ? (
               <ul className="mt-2">
                 {leaderboard.map((entry, i) => (
-                  <li key={i}>
+                  <li key={entry.user}>
                     {i + 1}. {entry.user} - {((entry.progress / entry.target) * 100).toFixed(1)}%
                   </li>
                 ))}
@@ -177,8 +216,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             </strong>
             {available.length > 0 ? (
               <ul className="mt-2">
-                {available.map((c, i) => (
-                  <li key={i} className="mb-1">
+                {available.map((c) => (
+                  <li key={c.id} className="mb-1">
                     {c.title}
                     <button
                       className="btn btn-sm btn-outline-primary ms-2"
@@ -188,8 +227,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                       {joinedChallengeIds.includes(c.id)
                         ? "Already Joined"
                         : active.length > 0
-                          ? "Only 1 Active Allowed"
-                          : "Join"}
+                        ? "Only 1 Active Allowed"
+                        : "Join"}
                     </button>
                   </li>
                 ))}
