@@ -539,6 +539,45 @@ class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Challenge.objects.filter(owner=self.request.user)
 
 
+# --- Public Challenge List View ---
+class PublicChallengeListView(generics.ListAPIView):
+    """
+    List all challenges not yet joined by the user (public feed).
+    """
+    serializer_class = ChallengeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        joined_ids = (
+            UserChallenge.objects
+            .filter(user=user)
+            .values_list('challenge_id', flat=True)
+        )
+        return (
+            Challenge.objects
+            .filter(is_public=True)
+            .exclude(id__in=joined_ids)
+            .exclude(owner=user)
+        )
+
+
+# --- Challenge Leaderboard View ---
+class ChallengeLeaderboardView(generics.ListAPIView):
+    serializer_class = UserChallengeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        challenge_id = self.kwargs["challenge_id"]
+        return (
+            UserChallenge.objects
+            .filter(challenge__id=challenge_id)
+            .select_related("user")
+            # rank by user points
+            .order_by("-user__points")
+        )
+
+
 # --- User Challenge Views ---
 class UserChallengeListView(generics.ListCreateAPIView):
     """
@@ -621,57 +660,37 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
             # Optionally, re-raise or ignore depending on your needs
 
 
-# --- Public Challenge List View ---
-class PublicChallengeListView(generics.ListAPIView):
+class IncrementProgressView(APIView):
     """
-    List all challenges not yet joined by the user (public feed).
+    Increment the progress of a user challenge.
+    If the progress meets or exceeds the target, mark it as completed.
     """
-    serializer_class = ChallengeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        joined_ids = (
-            UserChallenge.objects
-            .filter(user=user)
-            .values_list('challenge_id', flat=True)
+    def post(self, request, pk):
+        user_challenge = get_object_or_404(
+            UserChallenge,
+            pk=pk,
+            user=request.user
         )
-        qs = (
-            Challenge.objects
-            .filter(is_public=True)
-            .exclude(id__in=joined_ids)
-            .exclude(owner=user)
-        )
-        print(
-            f"[DEBUG] User {user.id} has joined challenges: {list(joined_ids)}"
-        )
-        try:
-            print(
-                f"[DEBUG] Public challenges count for user {user.id}: "
-                f"{qs.count()}"
-            )
-        except Exception as e:
-            print(
-                f"[ERROR] Failed to count queryset: {e} | "
-                f"qs type: {type(qs)}"
-            )
-        return qs
+        user_challenge.progress += 1
 
+        if (
+            user_challenge.progress >= user_challenge.target
+            and not user_challenge.completed
+        ):
+            user_challenge.completed = True
+            user_challenge.save(update_fields=['progress', 'completed'])
+            request.user.points = F('points') + 1
+            request.user.save(update_fields=['points'])
 
-# --- Challenge Leaderboard View ---
-class ChallengeLeaderboardView(generics.ListAPIView):
-    serializer_class = UserChallengeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        else:
+            user_challenge.save(update_fields=['progress'])
 
-    def get_queryset(self):
-        challenge_id = self.kwargs["challenge_id"]
-        return (
-            UserChallenge.objects
-            .filter(challenge__id=challenge_id)
-            .select_related("user")
-            # rank by user points
-            .order_by("-user__points")
-        )
+        return Response({
+            'progress': user_challenge.progress,
+            'completed': user_challenge.completed
+        })
 
 
 class ActiveUserChallengesView(generics.ListAPIView):
@@ -778,6 +797,16 @@ class WorkoutPlanListView(generics.ListCreateAPIView):
         # Filter workout plans for the requesting user
         return WorkoutPlan.objects.filter(user=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except IntegrityError:
+            raise ValidationError({
+                "detail": (
+                    "You already have a workout plan with this title."
+                )
+            })
+
 
 class WorkoutPlanDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
@@ -796,9 +825,11 @@ class RepeatWorkoutPlanView(APIView):
 
     def post(self, request, pk):
         user = request.user
+        print(f"[DEBUG] User {user.id} requested repeat workout plan id={pk}")
         try:
             plan = WorkoutPlan.objects.get(id=pk, user=user)
         except WorkoutPlan.DoesNotExist:
+            print("[DEBUG] Workout plan not found for user.")
             return Response({"detail": "Workout plan not found."}, status=404)
 
         # Duplicate the plan
@@ -878,10 +909,7 @@ class DashboardView(APIView):
             .select_related("challenge")
             .filter(user=user)
         )
-        print(
-            "[DEBUG] Dashboard: Found {} user challenges "
-            "for user {}".format(user_challenges.count(), user.id)
-        )
+
         goals = Goal.objects.filter(user=user).order_by("-created_at")
 
         avg_sleep = (
@@ -950,16 +978,29 @@ class DashboardView(APIView):
             for uc in user_challenges
         ]
 
-        latest_plan = (
+        all_plans = (
             WorkoutPlan.objects
             .filter(user=user)
-            .order_by("-date_created")
             .prefetch_related("daily_workouts")
-            .first()
+            .order_by("-date_created")
         )
 
-        if latest_plan:
-            workout_plan_data = WorkoutPlanSerializer(latest_plan).data
+        plans_data = []
+        for plan in all_plans:
+            # Find the earliest daily workout date as the week start (or None)
+            first_workout = plan.daily_workouts.order_by("date").first()
+            week_start = first_workout.date if first_workout else None
+
+            serialized_plan = WorkoutPlanSerializer(plan).data
+            serialized_plan["week_start"] = (
+                week_start.strftime("%Y-%m-%d") if week_start else None
+            )
+            plans_data.append(serialized_plan)
+
+        # Fallback for backwards compatibility,
+        # just pick the latest plan's data if exists
+        if plans_data:
+            workout_plan_data = plans_data[0]
         else:
             workout_plan_data = {
                 "daily_workouts": [],
@@ -987,6 +1028,7 @@ class DashboardView(APIView):
             },
             "workout_nutrition": {
                 **workout_plan_data,
+                "all_plans": plans_data,
                 "logs": NutritionLogSerializer(
                     nutrition_logs.order_by("-date")[:5],
                     many=True
@@ -1019,7 +1061,7 @@ class DashboardView(APIView):
             },
             "challenges": {
                 "created": ChallengeSerializer(
-                    active_challenges, many=True
+                    active_challenges, many=True, context={"request": request}
                 ).data,
                 "joined": challenges_joined,
             }

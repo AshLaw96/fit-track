@@ -69,7 +69,7 @@ const SleepFormModal = ({ data, setData }) => {
 
         <div className="col-md-6">
           <label htmlFor="quality_rating" className="form-label">
-            Quality Rating (1–4)
+            Quality Rating (1-4)
           </label>
           <select
             name="quality_rating"
