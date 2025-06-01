@@ -10,6 +10,7 @@ const Navbar = () => {
   const bsCollapseInstance = useRef(null); // store bootstrap collapse instance here
   const location = useLocation();
   const { isAuthenticated: isLoggedIn } = useAuth();
+  const isActive = (path) => location.pathname === path;
 
   useEffect(() => {
     // Initialize Bootstrap collapse instance once
@@ -47,7 +48,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar navbar-expand-md shadow-sm py-3 mb-4">
-        <div className="container px-3">
+        <div className="container-fluid px-md-4 px-3">
           <Link className="navbar-brand header-title" to="/">
             FitTrack
           </Link>
@@ -65,7 +66,7 @@ const Navbar = () => {
           </button>
 
           <div
-            className="collapse navbar-collapse"
+            className="collapse navbar-collapse justify-content-end"
             id="navbarLinks"
             ref={navbarCollapseRef}
           >
@@ -73,37 +74,45 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/">
+                    <Link className={`nav-link header-link ${isActive("/") ?
+                      "active-link" : ""}`} to="/">
                       Dashboard
                       <i className="fa-solid fa-chart-line header-icon"></i>
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/exercises">
+                    <Link
+                      className={`nav-link header-link ${isActive("/exercises") ? "active-link" : ""}`}
+                      to="/exercises"
+                    >
                       Exercise Log
                       <i className="fa-solid fa-dumbbell header-icon"></i>
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/meals">
+                    <Link className={`nav-link header-link ${isActive("/meals") ?
+                      "active-link" : ""}`} to="/meals">
                       Meal Log
                       <i className="fa-solid fa-utensils header-icon"></i>
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/sleep">
+                    <Link className={`nav-link header-link ${isActive("/sleep") ?
+                      "active-link" : ""}`} to="/sleep">
                       Sleep Log
                       <i className="fa-solid fa-bed header-icon"></i>
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/profile">
+                    <Link className={`nav-link header-link ${isActive("/profile") ?
+                      "active-link" : ""}`} to="/profile">
                       Profile
                       <i className="fa-solid fa-user header-icon"></i>
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link header-link" to="/settings">
+                    <Link className={`nav-link header-link ${isActive("/settings") ? 
+                      "active-link" : ""}`} to="/settings">
                       Settings
                       <i className="fa-solid fa-cog header-icon"></i>
                     </Link>
@@ -121,14 +130,16 @@ const Navbar = () => {
                 </>
               ) : (
                 <li className="nav-item">
-                  <Link className="nav-link header-link" to="/auth">
+                  <Link className={`nav-link header-link ${isActive("/auth") ?
+                    "active-link" : ""}`} to="/auth">
                     Login / Register
                     <i className="fa-solid fa-user-plus header-icon"></i>
                   </Link>
                 </li>
               )}
               <li className="nav-item">
-                <Link className="nav-link header-link" to="/help">
+                <Link className={`nav-link header-link ${isActive("/help") ?
+                  "active-link" : ""}`} to="/help">
                   Help
                   <i className="fa-solid fa-circle-question header-icon"></i>
                 </Link>

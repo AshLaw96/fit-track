@@ -25,6 +25,19 @@
 }
 
 /* Navigation section */
+.navbar {
+  flex-wrap: wrap !important;
+}
+
+.navbar-collapse {
+  flex-basis: 100%;
+  flex-grow: 1;
+}
+
+.navbar-nav {
+  flex-wrap: wrap;
+}
+
 .navbar-nav .nav-link {
   font-family: "Inter", sans-serif;
   color: var(--text-color);
@@ -34,6 +47,12 @@
 .navbar-nav .nav-link:hover {
   text-decoration: underline;
   color: var(--primary-color);
+}
+
+.active-link {
+  text-decoration: underline;
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 @media (min-width: 576px) {
