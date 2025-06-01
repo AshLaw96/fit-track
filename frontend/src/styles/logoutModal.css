@@ -16,10 +16,6 @@
 }
 
 /* Clean up modal container */
-.modal.d-block {
-  pointer-events: auto;
-}
-
 .modal-dialog {
   pointer-events: all;
 }
