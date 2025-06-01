@@ -17,47 +17,27 @@ I have used the recommended [HTML W3C Validator](https://validator.w3.org) to va
 
 I have used the recommended [CSS Jigsaw Validator](https://jigsaw.w3.org/css-validator) to validate all of my CSS files.
 
-| Directory      | File                                                                                                                                                                           | URL                  | Screenshot                                                     | Notes                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| frontend       | [index.css](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Ffit-track-front-end.onrender.com%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) | Link in file section | ![screenshot](documentation/validation/index-css.png)          | This showed a lot of warnings and some errors but majority was because of third-party usage |
-| Achievements   | [achievements.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                              | Link in file section | ![screenshot](documentation/validation/achieve.css.png)        | No warnings                                                                                 |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/auth.css.png)           | showed warnings but expected                                                                |
-| Auto scroll up | [autoScrollUp.css](https://jigsaw.w3.org/css-validator/validator#css)                                                                                                          | Link in file section | ![screenshot](documentation/validation/scroll.png)             | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
-| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/css-frontend-index.png) | showed warnings but expected                                                                |
+| Directory      | File                                                                                                                                                                           | URL                  | Screenshot                                               | Notes                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| main live site | [index.css](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Ffit-track-front-end.onrender.com%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) | Link in file section | ![screenshot](documentation/validation/index-css.png)    | This showed a lot of warnings and some errors but majority was because of third-party usage |
+| Achieve stars  | [AchievementStars.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                          | Link in file section | ![screenshot](documentation/validation/achieve.css.png)  | No warnings                                                                                 |
+| Auth           | [auth.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                             | Link in file section | ![screenshot](documentation/validation/auth.css.png)     | showed warnings but expected                                                                |
+| Auto scroll up | [autoScrollUp.css](https://jigsaw.w3.org/css-validator/validator#css)                                                                                                          | Link in file section | ![screenshot](documentation/validation/scroll.png)       | showed warnings but expected                                                                |
+| Chat           | [Chat.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                      | Link in file section | ![screenshot](documentation/validation/chat.png)         | showed no warnings                                                                          |
+| Dark theme     | [dark-theme.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                | Link in file section | ![screenshot](documentation/validation/dark-theme.png)   | showed warnings but expected                                                                |
+| Dash           | [dash.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                      | Link in file section | ![screenshot](documentation/validation/dash.png)         | showed no warnings                                                                          |
+| Delete account | [DeleteAccount.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                             | Link in file section | ![screenshot](documentation/validation/delete.png)       | showed no warnings                                                                          |
+| Logout         | [logoutModal.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                      | Link in file section | ![screenshot](documentation/validation/logout.png)       | showed warnings but expected                                                                |
+| Notification   | [NotificationModal.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                         | Link in file section | ![screenshot](documentation/validation/notification.png) | showed warnings but expected                                                                |
+| Profile image  | [ProfileImage.css](https://jigsaw.w3.org/css-validator/validator#warnings)                                                                                                     | Link in file section | ![screenshot](documentation/validation/profile.png)      | showed warnings but expected                                                                |
+| Setting item   | [SettingItem.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                               | Link in file section | ![screenshot](documentation/validation/setting-item.png) | showed warnings but expected                                                                |
+| Settings page  | [SettingsPage.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                              | Link in file section | ![screenshot](documentation/validation/setting-page.png) | showed warnings but expected                                                                |
+| Workout        | [Workout.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                   | Link in file section | ![screenshot](documentation/validation/workout.png)      | showed warnings but expected                                                                |
+| Error          | [ErrorPages.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                | Link in file section | ![screenshot](documentation/validation/error.png)        | showed warnings but expected                                                                |
+| Footer         | [footer.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                    | Link in file section | ![screenshot](documentation/validation/footer.png)       | showed warnings but expected                                                                |
+| Header         | [header.css](https://jigsaw.w3.org/css-validator/validator)                                                                                                                    | Link in file section | ![screenshot](documentation/validation/header.png)       | showed warnings but expected                                                                |
 
 ### JavaScript
-
-⚠️ INSTRUCTIONS ⚠️
-
-If using modern JavaScript (ES6) methods, then make sure to include the following line at the very top of every single JavaScript file in your project (this should remain in your files for submission as well):
-
-`/* jshint esversion: 11 */`
-
-If you are also including jQuery (`$`), then the updated format will be:
-
-`/* jshint esversion: 11, jquery: true */`
-
-This allows the JShint validator to recognize modern ES6 methods, such as: `let`, `const`, `template literals`, `arrow functions (=>)`, etc.
-
-**IMPORTANT**: External resources
-
-Sometimes we'll write JavaScript that imports variables from other files, such as "an array of questions" from `questions.js`, which are used within the main `script.js` file elsewhere. If that's the case, the JShint validation tool doesn't know how to recognize "unused variables" that would normally be imported locally when running your own project. These warnings are acceptable, so showcase on your screenshot(s).
-
-The same thing applies when using external libraries such as Stripe, Leaflet, Bootstrap, Materialize, etc. To instantiate these components, we need to use their respective declarator. Again, the JShint validation tool would flag these as "undefined/unused variables". These warnings are acceptable, so showcase on your screenshot(s).
-
-⚠️ --- END --- ⚠️
 
 I have used the recommended [JShint Validator](https://jshint.com) to validate all of my JS files.
 
@@ -71,68 +51,28 @@ I have used the recommended [JShint Validator](https://jshint.com) to validate a
 
 ### Python
 
-⚠️ INSTRUCTIONS ⚠️
-
-The [CI Python Linter](https://pep8ci.herokuapp.com) can be used two different ways.
-
-- Copy/Paste your Python code directly into the linter.
-- As an API, using the "raw" URL appended to the linter URL.
-  - To find the "raw" URL, navigate to your file directly on the GitHub repo.
-  - On that page, GitHub provides a button on the right called "Raw" that you can click.
-  - From that new page, copy the full URL, and paste it after the CI Python Linter URL (with a `/` separator).
-
-It's recommended to validate each file using the API URL. This will give you a custom URL which you can use on your testing documentation. It makes it easier to return back to a file for validating it again in the future. Use the steps above to generate your own custom URLs for each Python file.
-
-**IMPORTANT**: `E501 line too long` errors
-
-You must strive to fix all Python lines that are too long (>80 characters). In rare cases where you cannot break the lines [*without breaking the functionality*], adding "`  # noqa`" (_NO Quality Assurance_) to the end of those lines will ignore linting validation. Do not use "`  # noqa`" all over your project just to clear down validation errors! This can still cause a project to fail, for failing to fix actual PEP8 validation errors.
-
-Sometimes variables can get too long, or excessive `if/else` conditional statements. These are acceptable instances to use the "`  # noqa`" comment.
-
-When trying to fix "line too long" errors, try to avoid using `/` to split lines. A better approach would be to use any type of opening bracket, and hit `<Enter>` just after that. Any opening bracket type will work: `(`, `[`, `{`. By using an opening bracket, Python knows where to appropriately indent the next line of code, without having to _guess_ for yourself and attempt to "tab" to the correct indentation level.
-
-⚠️ --- END --- ⚠️
-
-🛑 IMPORTANT 🛑
-
-**IMPORTANT**: Django settings
-
-The Django `settings.py` file comes with 4 lines that are quite long, and will throw the `E501 line too long` error. This is default behavior, but can be fixed by adding the "`  # noqa`" comment at the end of those lines.
-
-```python
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",  # noqa
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",  # noqa
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",  # noqa
-    },
-]
-```
-
-**IMPORTANT**: _migration_ and _pycache_ files
-
-You do not have to validate files from the `migrations/` or `pycache/` folders! Ignore these `.py` files, and validate just the files that you've created or modified.
-
-🛑 --- END --- 🛑
-
 I have used the recommended [PEP8 CI Python Linter](https://pep8ci.herokuapp.com) to validate all of my Python files.
 
-| Directory | File                                                                               | URL                                                                                                                        | Screenshot                                                      | Notes                 |
-| --------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | --------------------- |
-| api       | [admin.py](https://github.com/AshLaw96/fit-track/blob/main/api/admin.py)           | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/api/admin.py)        | ![screenshot](documentation/validation/py-api-admin.png)        | Notes (if applicable) |
-| api       | [models.py](https://github.com/AshLaw96/fit-track/blob/main/api/models.py)         | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/api/models.py)       | ![screenshot](documentation/validation/py-api-models.png)       | Notes (if applicable) |
-| api       | [tests.py](https://github.com/AshLaw96/fit-track/blob/main/api/tests.py)           | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/api/tests.py)        | ![screenshot](documentation/validation/py-api-tests.png)        | Notes (if applicable) |
-| api       | [views.py](https://github.com/AshLaw96/fit-track/blob/main/api/views.py)           | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/api/views.py)        | ![screenshot](documentation/validation/py-api-views.png)        | Notes (if applicable) |
-| backend   | [settings.py](https://github.com/AshLaw96/fit-track/blob/main/backend/settings.py) | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/backend/settings.py) | ![screenshot](documentation/validation/py-backend-settings.png) | Notes (if applicable) |
-| backend   | [urls.py](https://github.com/AshLaw96/fit-track/blob/main/backend/urls.py)         | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/backend/urls.py)     | ![screenshot](documentation/validation/py-backend-urls.png)     | Notes (if applicable) |
-|           | [manage.py](https://github.com/AshLaw96/fit-track/blob/main/manage.py)             | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/main/manage.py)           | ![screenshot](documentation/validation/py--manage.png)          | Notes (if applicable) |
+| Directory                   | File                                                                                                   | URL                                                                                                                                              | Screenshot                                                   | Notes     |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------ | --------- |
+| api/tests/model-tests       | [models-tests.py](https://github.com/AshLaw96/fit-track/blob/main/api/tests/model-tests.py)            | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/tests/model-tests.py)       | ![screenshot](documentation/validation/model-tests.png)      | No errors |
+| api/tests/serializers-tests | [serializers-tests.py](https://github.com/AshLaw96/fit-track/blob/main/api/tests/serializers-tests.py) | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/tests/serializers-tests.py) | ![screenshot](documentation/validation/serializer-tests.png) | No errors |
+| api/tests/view-tests        | [view-tests.py](https://github.com/AshLaw96/fit-track/blob/main/api/tests/view-tests.py)               | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/tests/view-tests.py)        | ![screenshot](documentation/validation/view-test.png)        | No errors |
+| api/utils/activity          | [activity.py](https://github.com/AshLaw96/fit-track/blob/main/api/utils/activity.py)                   | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/utils/activity.py)          | ![screenshot](documentation/validation/activity.png)         | No errors |
+| api/utils/fitness           | [fitness.py](https://github.com/AshLaw96/fit-track/blob/main/api/utils/fitness.py)                     | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/utils/fitness.py)           | ![screenshot](documentation/validation/fitness.png)          | No errors |
+| api/utils/leaderboard       | [leaderboard.py](https://github.com/AshLaw96/fit-track/blob/main/api/utils/leaderboard.py)             | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/utils/leaderboard.py)       | ![screenshot](documentation/validation/leader.png)           | No errors |
+| api/utils/notifications     | [notifications.py](https://github.com/AshLaw96/fit-track/blob/main/api/utils/notifications.py)         | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/utils/notifications.py)     | ![screenshot](documentation/validation/notifs.png)           | No errors |
+| api/utils/sleep             | [sleep.py](https://github.com/AshLaw96/fit-track/blob/main/api/utils/sleep.py)                         | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/utils/sleep.py)             | ![screenshot](documentation/validation/sleep.png)            | No errors |
+| api/admin                   | [admin.py](https://github.com/AshLaw96/fit-track/blob/main/api/admin.py)                               | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/admin.py)                   | ![screenshot](documentation/validation/admin.png)            | No errors |
+| api/apps                    | [apps.py](https://github.com/AshLaw96/fit-track/blob/main/api/apps.py)                                 | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/apps.py)                    | ![screenshot](documentation/validation/apps.png)             | No errors |
+| api/models                  | [models.py](https://github.com/AshLaw96/fit-track/blob/main/api/models.py)                             | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/models.py)                  | ![screenshot](documentation/validation/model.png)            | No errors |
+| api/serializers             | [serializers.py](https://github.com/AshLaw96/fit-track/blob/main/api/serializers.py)                   | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/serializers.py)             | ![screenshot](documentation/validation/serializer.png)       | No errors |
+| api/utils/signals           | [signals.py](https://github.com/AshLaw96/fit-track/blob/main/api/signals.py)                           | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/signals.py)                 | ![screenshot](documentation/validation/signal.png)           | No errors |
+| api/tasks                   | [tasks.py](https://github.com/AshLaw96/fit-track/blob/main/api/tasks.py)                               | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/tasks.py)                   | ![screenshot](documentation/validation/task.png)             | No errors |
+| api/urls                    | [urls.py](https://github.com/AshLaw96/fit-track/blob/main/api/urls.py)                                 | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/urls.py)                    | ![screenshot](documentation/validation/urls.png)             | No errors |
+| api/views                   | [views.py](https://github.com/AshLaw96/fit-track/blob/main/api/views.py)                               | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/api/views.py)                   | ![screenshot](documentation/validation/view.png)             | No errors |
+| backend/celery              | [celery.py](https://github.com/AshLaw96/fit-track/blob/main/backend/celery.py)                         | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/backend/celery.py)              | ![screenshot](documentation/validation/celery.png)           | No errors |
+| backend/urls                | [urls.py](https://github.com/AshLaw96/fit-track/blob/main/backend/urls.py)                             | [PEP8 CI Link](https://pep8ci.herokuapp.com/https://raw.githubusercontent.com/AshLaw96/fit-track/refs/heads/main/backend/urls.py)                | ![screenshot](documentation/validation/back-urls.png)        | No errors |
 
 ## Responsiveness
 
