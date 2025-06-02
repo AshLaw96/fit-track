@@ -1,3 +1,4 @@
+/* eslint-env browser */
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -7,6 +8,9 @@ const ChatWidget = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Only run if window and document are available (browser environment)
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+
     const isContactPage = location.pathname === "/help/contact";
 
     if (isContactPage) {
@@ -23,8 +27,9 @@ const ChatWidget = () => {
     }
 
     return () => {
+      if (typeof window === "undefined" || typeof document === "undefined") return;
+
       if (!location.pathname.includes("/help/contact")) {
-        // Cleanup: remove crisp elements and script
         const script = document.getElementById("crisp-script");
         if (script) script.remove();
 

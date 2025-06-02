@@ -84,12 +84,12 @@ export const startTokenRefreshTimer = () => {
           await refreshAccessToken();
           startTokenRefreshTimer();
         } catch (err) {
-          console.error("Silent refresh failed");
+          console.error("Silent refresh failed", err);
         }
       }, refreshTime);
     }
   } catch (e) {
-    console.error("Invalid access token format");
+    console.error("Invalid access token format", e);
   }
 };
 
