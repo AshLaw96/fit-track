@@ -11,14 +11,17 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState("");
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
 
     if (newPassword !== confirmPassword) {
-      return toast.error("New passwords do not match.");
+      setFormError("New passwords do not match.");
+      return;
     }
 
     try {
@@ -37,9 +40,9 @@ const ChangePassword = () => {
       logout?.();
       navigate("/auth");
     } catch (err) {
-      toast.error(
-        err.response?.data?.detail || "Failed to change password. Please try again."
-      );
+      const errorMsg = err.response?.data?.detail || "Failed to change password. Please try again.";
+      setFormError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -49,53 +52,63 @@ const ChangePassword = () => {
     currentPassword && newPassword && confirmPassword && newPassword === confirmPassword;
 
   return (
-    <div className="setting-item" aria-expanded={open}>
-      <div
+    <div className="setting-item">
+      <button
         className="setting-label clickable"
-        onClick={() => setOpen(!open)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setOpen(!open)}
+        aria-expanded={open}
         aria-controls="change-password-form"
+        onClick={() => setOpen(!open)}
+        type="button"
       >
-        <span className="setting-icon">🔐</span>
+        <span className="setting-icon" aria-hidden="true">🔐</span>
         <span>Change Password</span>
-        <span className="toggle-arrow">{open ? "▲" : "▼"}</span>
-      </div>
+        <span className="toggle-arrow" aria-hidden="true">{open ? "▲" : "▼"}</span>
+      </button>
 
       {open && (
         <form
           id="change-password-form"
           className="password-form"
           onSubmit={handleSubmit}
+          aria-live="assertive"
+          aria-relevant="additions"
         >
-          <label>
-            Current Password
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            New Password
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Confirm New Password
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </label>
+          {formError && (
+            <div role="alert" className="alert alert-danger" style={{ marginBottom: "1rem" }}>
+              {formError}
+            </div>
+          )}
+
+          <label htmlFor="current-password">Current Password</label>
+          <input
+            id="current-password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+
+          <label htmlFor="new-password">New Password</label>
+          <input
+            id="new-password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+          />
+
+          <label htmlFor="confirm-password">Confirm New Password</label>
+          <input
+            id="confirm-password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+          />
+
           <button type="submit" disabled={loading || !isFormValid}>
             {loading ? "Updating..." : "Update Password"}
           </button>

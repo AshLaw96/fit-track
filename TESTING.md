@@ -183,22 +183,26 @@ I've tested my deployed project on multiple browsers to check for compatibility 
 
 I've tested my deployed project using the Lighthouse Audit tool to check for any major issues. Some warnings are outside of my control, and mobile results tend to be lower than desktop.
 
-| Page             | Mobile                                                              | Desktop                                                              |
-| ---------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Register         | ![screenshot](documentation/lighthouse/mobile-register.png)         | ![screenshot](documentation/lighthouse/desktop-register.png)         |
-| Login            | ![screenshot](documentation/lighthouse/mobile-login.png)            | ![screenshot](documentation/lighthouse/desktop-login.png)            |
-| Profile          | ![screenshot](documentation/lighthouse/mobile-profile.png)          | ![screenshot](documentation/lighthouse/desktop-profile.png)          |
-| Home             | ![screenshot](documentation/lighthouse/mobile-home.png)             | ![screenshot](documentation/lighthouse/desktop-home.png)             |
-| Products         | ![screenshot](documentation/lighthouse/mobile-products.png)         | ![screenshot](documentation/lighthouse/desktop-products.png)         |
-| Product Details  | ![screenshot](documentation/lighthouse/mobile-product-details.png)  | ![screenshot](documentation/lighthouse/desktop-product-details.png)  |
-| Bag              | ![screenshot](documentation/lighthouse/mobile-bag.png)              | ![screenshot](documentation/lighthouse/desktop-bag.png)              |
-| Checkout         | ![screenshot](documentation/lighthouse/mobile-checkout.png)         | ![screenshot](documentation/lighthouse/desktop-checkout.png)         |
-| Checkout Success | ![screenshot](documentation/lighthouse/mobile-checkout-success.png) | ![screenshot](documentation/lighthouse/desktop-checkout-success.png) |
-| Add Product      | ![screenshot](documentation/lighthouse/mobile-add-product.png)      | ![screenshot](documentation/lighthouse/desktop-add-product.png)      |
-| Edit Product     | ![screenshot](documentation/lighthouse/mobile-edit-product.png)     | ![screenshot](documentation/lighthouse/desktop-edit-product.png)     |
-| Newsletter       | ![screenshot](documentation/lighthouse/mobile-newsletter.png)       | ![screenshot](documentation/lighthouse/desktop-newsletter.png)       |
-| Contact          | ![screenshot](documentation/lighthouse/mobile-contact.png)          | ![screenshot](documentation/lighthouse/desktop-contact.png)          |
-| 404              | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
+| Page                   | Mobile                                                              | Desktop                                                              |
+| ---------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Register               | ![screenshot](documentation/lighthouse/mobile-register.png)         | ![screenshot](documentation/lighthouse/desktop-register.png)         |
+| Login                  | ![screenshot](documentation/lighthouse/mobile-login.png)            | ![screenshot](documentation/lighthouse/desktop-login.png)            |
+| Profile                | ![screenshot](documentation/lighthouse/mobile-profile.png)          | ![screenshot](documentation/lighthouse/desktop-profile.png)          |
+| Landing/GuestDash      | ![screenshot](documentation/lighthouse/mobile-home.png)             | ![screenshot](documentation/lighthouse/desktop-home.png)             |
+| Exercise               | ![screenshot](documentation/lighthouse/mobile-products.png)         | ![screenshot](documentation/lighthouse/desktop-products.png)         |
+| Meal                   | ![screenshot](documentation/lighthouse/mobile-product-details.png)  | ![screenshot](documentation/lighthouse/desktop-product-details.png)  |
+| Sleep                  | ![screenshot](documentation/lighthouse/mobile-bag.png)              | ![screenshot](documentation/lighthouse/desktop-bag.png)              |
+| Setting                | ![screenshot](documentation/lighthouse/mobile-checkout.png)         | ![screenshot](documentation/lighthouse/desktop-checkout.png)         |
+| Help                   | ![screenshot](documentation/lighthouse/mobile-checkout-success.png) | ![screenshot](documentation/lighthouse/desktop-checkout-success.png) |
+| Dashboard              | ![screenshot](documentation/lighthouse/mobile-add-product.png)      | ![screenshot](documentation/lighthouse/desktop-add-product.png)      |
+| FAQ                    | ![screenshot](documentation/lighthouse/mobile-edit-product.png)     | ![screenshot](documentation/lighthouse/desktop-edit-product.png)     |
+| Tech support           | ![screenshot](documentation/lighthouse/mobile-newsletter.png)       | ![screenshot](documentation/lighthouse/desktop-newsletter.png)       |
+| Contact support        | ![screenshot](documentation/lighthouse/mobile-contact.png)          | ![screenshot](documentation/lighthouse/desktop-contact.png)          |
+| Tutorial               | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
+| Password reset         | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
+| Password reset confirm | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
+| 404                    | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
+| 500                    | ![screenshot](documentation/lighthouse/mobile-404.png)              | ![screenshot](documentation/lighthouse/desktop-404.png)              |
 
 ## Defensive Programming
 
