@@ -133,43 +133,28 @@ I have used the recommended [PEP8 CI Python Linter](https://pep8ci.herokuapp.com
 
 ## Responsiveness
 
-| Page              | Mobile                                                                  | Tablet                                                                  | Desktop                                                                  | Notes             |
-| ----------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------- |
-| Register          | ![screenshot](documentation/responsiveness/mobile-register.png)         | ![screenshot](documentation/responsiveness/tablet-register.png)         | ![screenshot](documentation/responsiveness/register-pg.png)              | Works as expected |
-| Login             | ![screenshot](documentation/responsiveness/mobile-login.png)            | ![screenshot](documentation/responsiveness/tablet-login.png)            | ![screenshot](documentation/responsiveness/login-pg.png)                 | Works as expected |
-| Profile           | ![screenshot](documentation/responsiveness/mobile-profile.png)          | ![screenshot](documentation/responsiveness/tablet-profile.png)          | ![screenshot](documentation/responsiveness/profile-pg.png)               | Works as expected |
-| Landing/GuestDash | ![screenshot](documentation/responsiveness/mobile-home.png)             | ![screenshot](documentation/responsiveness/tablet-home.png)             | ![screenshot](documentation/responsiveness/guest-landing.png)            | Works as expected |
-| Exercise          | ![screenshot](documentation/responsiveness/mobile-products.png)         | ![screenshot](documentation/responsiveness/tablet-products.png)         | ![screenshot](documentation/responsiveness/exercise-pg.png)              | Works as expected |
-| Meal              | ![screenshot](documentation/responsiveness/mobile-product-details.png)  | ![screenshot](documentation/responsiveness/tablet-product-details.png)  | ![screenshot](documentation/responsiveness/meal-pg.png)                  | Works as expected |
-| Sleep             | ![screenshot](documentation/responsiveness/mobile-bag.png)              | ![screenshot](documentation/responsiveness/tablet-bag.png)              | ![screenshot](documentation/responsiveness/sleep-pg.png)                 | Works as expected |
-| Checkout          | ![screenshot](documentation/responsiveness/mobile-checkout.png)         | ![screenshot](documentation/responsiveness/tablet-checkout.png)         | ![screenshot](documentation/responsiveness/desktop-checkout.png)         | Works as expected |
-| Checkout Success  | ![screenshot](documentation/responsiveness/mobile-checkout-success.png) | ![screenshot](documentation/responsiveness/tablet-checkout-success.png) | ![screenshot](documentation/responsiveness/desktop-checkout-success.png) | Works as expected |
-| Add Product       | ![screenshot](documentation/responsiveness/mobile-add-product.png)      | ![screenshot](documentation/responsiveness/tablet-add-product.png)      | ![screenshot](documentation/responsiveness/desktop-add-product.png)      | Works as expected |
-| Edit Product      | ![screenshot](documentation/responsiveness/mobile-edit-product.png)     | ![screenshot](documentation/responsiveness/tablet-edit-product.png)     | ![screenshot](documentation/responsiveness/desktop-edit-product.png)     | Works as expected |
-| Newsletter        | ![screenshot](documentation/responsiveness/mobile-newsletter.png)       | ![screenshot](documentation/responsiveness/tablet-newsletter.png)       | ![screenshot](documentation/responsiveness/desktop-newsletter.png)       | Works as expected |
-| Contact           | ![screenshot](documentation/responsiveness/mobile-contact.png)          | ![screenshot](documentation/responsiveness/tablet-contact.png)          | ![screenshot](documentation/responsiveness/desktop-contact.png)          | Works as expected |
-| 404               | ![screenshot](documentation/responsiveness/mobile-404.png)              | ![screenshot](documentation/responsiveness/tablet-404.png)              | ![screenshot](documentation/responsiveness/desktop-404.png)              | Works as expected |
+| Page                   | Mobile                                                            | Tablet                                                            | Desktop                                                              | Notes             |
+| ---------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- | ----------------- |
+| Register               | ![screenshot](documentation/responsiveness/register-mob.jpg)      | ![screenshot](documentation/responsiveness/register-tab.jpg)      | ![screenshot](documentation/responsiveness/register-pg.png)          | Works as expected |
+| Login                  | ![screenshot](documentation/responsiveness/log-mob.jpg)           | ![screenshot](documentation/responsiveness/log-tab.jpg)           | ![screenshot](documentation/responsiveness/login-pg.png)             | Works as expected |
+| Profile                | ![screenshot](documentation/responsiveness/profile-mob.jpg)       | ![screenshot](documentation/responsiveness/profile-tab.jpg)       | ![screenshot](documentation/responsiveness/profile-pg.png)           | Works as expected |
+| Landing/GuestDash      | ![screenshot](documentation/responsiveness/guest-mob.jpg)         | ![screenshot](documentation/responsiveness/guest-tab.jpg)         | ![screenshot](documentation/responsiveness/guest-landing.png)        | Works as expected |
+| Exercise               | ![screenshot](documentation/responsiveness/exercise-mob.jpg)      | ![screenshot](documentation/responsiveness/exercise-tab.jpg)      | ![screenshot](documentation/responsiveness/exercise-pg.png)          | Works as expected |
+| Meal                   | ![screenshot](documentation/responsiveness/meal-mob.jpg)          | ![screenshot](documentation/responsiveness/meal-tab.jpg)          | ![screenshot](documentation/responsiveness/meal-pg.png)              | Works as expected |
+| Sleep                  | ![screenshot](documentation/responsiveness/sleep-mob.jpg)         | ![screenshot](documentation/responsiveness/sleep-tab.jpg)         | ![screenshot](documentation/responsiveness/sleep-pg.png)             | Works as expected |
+| Dashboard              | ![screenshot](documentation/responsiveness/user-dash-mob.jpg)     | ![screenshot](documentation/responsiveness/user-dash-tab.jpg)     | ![screenshot](documentation/responsiveness/user-dash-pg.png)         | Works as expected |
+| Settings               | ![screenshot](documentation/responsiveness/setting-mob.jpg)       | ![screenshot](documentation/responsiveness/setting-tab.jpg)       | ![screenshot](documentation/responsiveness/settings-pg.png)          | Works as expected |
+| Help                   | ![screenshot](documentation/responsiveness/help-mob.jpg)          | ![screenshot](documentation/responsiveness/help-tab.jpg)          | ![screenshot](documentation/responsiveness/help-support-pg.png)      | Works as expected |
+| FAQ                    | ![screenshot](documentation/responsiveness/faq-mob.jpg)           | ![screenshot](documentation/responsiveness/faq-tab.jpg)           | ![screenshot](documentation/responsiveness/faq-pg.png)               | Works as expected |
+| Contact Support        | ![screenshot](documentation/responsiveness/contact-mob.jpg)       | ![screenshot](documentation/responsiveness/contact-tab.jpg)       | ![screenshot](documentation/responsiveness/contact-support-pg.png)   | Works as expected |
+| Tech Support           | ![screenshot](documentation/responsiveness/tech-support-mob.jpg)  | ![screenshot](documentation/responsiveness/tech-tab.jpg)          | ![screenshot](documentation/responsiveness/troubleshoot-tech-pg.png) | Works as expected |
+| Tutorials              | ![screenshot](documentation/responsiveness/guide-mob.jpg)         | ![screenshot](documentation/responsiveness/guide-tab.jpg)         | ![screenshot](documentation/responsiveness/tutorial-guide-pg.png)    | Works as expected |
+| Password reset         | ![screenshot](documentation/responsiveness/reset-mob.jpg)         | ![screenshot](documentation/responsiveness/reset-tab.jpg)         | ![screenshot](documentation/responsiveness/reset-pg.png)             | Works as expected |
+| Password reset confirm | ![screenshot](documentation/responsiveness/reset-confirm-mob.jpg) | ![screenshot](documentation/responsiveness/reset-confirm-tab.jpg) | ![screenshot](documentation/responsiveness/reset-confirm-pg.png)     | Works as expected |
+| 404                    | ![screenshot](documentation/responsiveness/404-mob.jpg)           | ![screenshot](documentation/responsiveness/404-tab.jpg)           | ![screenshot](documentation/responsiveness/404-pg.png)               | Works as expected |
+| 500                    | ![screenshot](documentation/responsiveness/500-mob.jpg)           | ![screenshot](documentation/responsiveness/500-tab.jpg)           | ![screenshot](documentation/responsiveness/500-pg.png)               | Works as expected |
 
 ## Browser Compatibility
-
-⚠️ INSTRUCTIONS ⚠️
-
-Use this space to discuss testing the live/deployed site on various browsers. Consider testing at least 3 different browsers, if available on your system. You DO NOT need to use all of the browsers below, just pick any 3 (minimum).
-
-Recommended browsers to consider:
-
-- [Chrome](https://www.google.com/chrome)
-- [Firefox (Developer Edition)](https://www.mozilla.org/firefox/developer)
-- [Edge](https://www.microsoft.com/edge)
-- [Safari](https://support.apple.com/downloads/safari)
-- [Brave](https://brave.com/download)
-- [Opera](https://www.opera.com/download)
-
-**IMPORTANT**: You must provide screenshots of the browsers you've tested, to "prove" that you've actually tested them.
-
-Please note, there are services out there that can test multiple browser compatibilities at the same time. Some of these are paid services, but some are free. If you use these, you must provide a link to the source used for attribution, and multiple screenshots of the results.
-
-⚠️ --- END --- ⚠️
 
 I've tested my deployed project on multiple browsers to check for compatibility issues.
 
