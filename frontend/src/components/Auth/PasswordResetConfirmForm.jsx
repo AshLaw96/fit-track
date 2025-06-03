@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PasswordResetConfirmForm = () => {
   const { uid, token } = useParams();
@@ -10,9 +10,15 @@ const PasswordResetConfirmForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleConfirm = async (e) => {
     e.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+     setError("Passwords do not match.");
+   }
+
     try {
       await api.post("/password-reset-confirm/", {
         uid,
@@ -21,16 +27,12 @@ const PasswordResetConfirmForm = () => {
       });
       setConfirmed(true);
       toast.success("Password reset successful! You can now log in with your new password.");
-      Navigate("/auth", { replace: true });
+      navigate("/auth", { replace: true });
     } catch (err) {
       console.error("Reset failed:", err);
       setError("Error resetting password. Please try again.");
     }
   };
-
-   if (newPassword !== confirmPassword) {
-     setError("Passwords do not match.");
-   }
 
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center min-vh-100">

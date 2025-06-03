@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../../styles/dash.css";
-import heroImage from "../../assets/hero.jpeg";
+import heroImage from "../../assets/hero.png";
 
 const GuestDash = () => {
   const location = useLocation();

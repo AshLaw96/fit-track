@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
 from datetime import timedelta
-import logging
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -225,8 +224,5 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
-
-logger = logging.getLogger(__name__)
-logger.warning("DATABASE ENGINE: %s", DATABASES['default']['ENGINE'])
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
