@@ -3,6 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import F
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -1100,9 +1101,9 @@ def custom_404_view(request, exception):
     """
     Custom 404 error view.
     """
-    return Response(
+    return JsonResponse(
         {'error': 'Resource not found'},
-        status=status.HTTP_404_NOT_FOUND
+        status=404
     )
 
 
@@ -1110,9 +1111,9 @@ def custom_500_view(request):
     """
     Custom 500 error view.
     """
-    return Response(
+    return JsonResponse(
         {'error': 'Internal server error'},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        status=500
     )
 
 
