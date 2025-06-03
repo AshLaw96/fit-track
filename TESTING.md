@@ -173,34 +173,28 @@ Please note, there are services out there that can test multiple browser compati
 
 I've tested my deployed project on multiple browsers to check for compatibility issues.
 
-| Page             | Chrome                                                            | Firefox                                                            | Safari                                                            | Notes             |
-| ---------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------- | ----------------- |
-| Register         | ![screenshot](documentation/browsers/chrome-register.png)         | ![screenshot](documentation/browsers/firefox-register.png)         | ![screenshot](documentation/browsers/safari-register.png)         | Works as expected |
-| Login            | ![screenshot](documentation/browsers/chrome-login.png)            | ![screenshot](documentation/browsers/firefox-login.png)            | ![screenshot](documentation/browsers/safari-login.png)            | Works as expected |
-| Profile          | ![screenshot](documentation/browsers/chrome-profile.png)          | ![screenshot](documentation/browsers/firefox-profile.png)          | ![screenshot](documentation/browsers/safari-profile.png)          | Works as expected |
-| Home             | ![screenshot](documentation/browsers/chrome-home.png)             | ![screenshot](documentation/browsers/firefox-home.png)             | ![screenshot](documentation/browsers/safari-home.png)             | Works as expected |
-| Products         | ![screenshot](documentation/browsers/chrome-products.png)         | ![screenshot](documentation/browsers/firefox-products.png)         | ![screenshot](documentation/browsers/safari-products.png)         | Works as expected |
-| Product Details  | ![screenshot](documentation/browsers/chrome-product-details.png)  | ![screenshot](documentation/browsers/firefox-product-details.png)  | ![screenshot](documentation/browsers/safari-product-details.png)  | Works as expected |
-| Bag              | ![screenshot](documentation/browsers/chrome-bag.png)              | ![screenshot](documentation/browsers/firefox-bag.png)              | ![screenshot](documentation/browsers/safari-bag.png)              | Works as expected |
-| Checkout         | ![screenshot](documentation/browsers/chrome-checkout.png)         | ![screenshot](documentation/browsers/firefox-checkout.png)         | ![screenshot](documentation/browsers/safari-checkout.png)         | Works as expected |
-| Checkout Success | ![screenshot](documentation/browsers/chrome-checkout-success.png) | ![screenshot](documentation/browsers/firefox-checkout-success.png) | ![screenshot](documentation/browsers/safari-checkout-success.png) | Works as expected |
-| Add Product      | ![screenshot](documentation/browsers/chrome-add-product.png)      | ![screenshot](documentation/browsers/firefox-add-product.png)      | ![screenshot](documentation/browsers/safari-add-product.png)      | Works as expected |
-| Edit Product     | ![screenshot](documentation/browsers/chrome-edit-product.png)     | ![screenshot](documentation/browsers/firefox-edit-product.png)     | ![screenshot](documentation/browsers/safari-edit-product.png)     | Works as expected |
-| Newsletter       | ![screenshot](documentation/browsers/chrome-newsletter.png)       | ![screenshot](documentation/browsers/firefox-newsletter.png)       | ![screenshot](documentation/browsers/safari-newsletter.png)       | Works as expected |
-| Contact          | ![screenshot](documentation/browsers/chrome-contact.png)          | ![screenshot](documentation/browsers/firefox-contact.png)          | ![screenshot](documentation/browsers/safari-contact.png)          | Works as expected |
-| 404              | ![screenshot](documentation/browsers/chrome-404.png)              | ![screenshot](documentation/browsers/firefox-404.png)              | ![screenshot](documentation/browsers/safari-404.png)              | Works as expected |
+| Page                   | Chrome                                                               | Firefox                                                         | Silk                                                              | Notes             |
+| ---------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------- |
+| Register               | ![screenshot](documentation/responsiveness/register-pg.png)          | ![screenshot](documentation/browsers/register-firefox.png)      | ![screenshot](documentation/responsiveness/register-tab.jpg)      | Works as expected |
+| Login                  | ![screenshot](documentation/responsiveness/login-pg.png)             | ![screenshot](documentation/browsers/log-firefox.png)           | ![screenshot](documentation/responsiveness/log-tab.jpg)           | Works as expected |
+| Profile                | ![screenshot](documentation/responsiveness/profile-pg.png)           | ![screenshot](documentation/browsers/profile-firefox.png)       | ![screenshot](documentation/responsiveness/profile-tab.jpg)       | Works as expected |
+| Landing/GuestDash      | ![screenshot](documentation/responsiveness/guest-landing.png)        | ![screenshot](documentation/browsers/guest-firefox.png)         | ![screenshot](documentation/responsiveness/guest-tab.jpg)         | Works as expected |
+| Exercise               | ![screenshot](documentation/responsiveness/exercise-pg.png)          | ![screenshot](documentation/browsers/exercise-firefox.png)      | ![screenshot](documentation/responsiveness/exercise-tab.jpg)      | Works as expected |
+| Meal                   | ![screenshot](documentation/responsiveness/meal-pg.png)              | ![screenshot](documentation/browsers/meal-firefox.png)          | ![screenshot](documentation/responsiveness/meal-tab.jpg)          | Works as expected |
+| Sleep                  | ![screenshot](documentation/responsiveness/sleep-pg.png)             | ![screenshot](documentation/browsers/sleep-firefox.png)         | ![screenshot](documentation/responsiveness/sleep-tab.jpg)         | Works as expected |
+| Dashboard              | ![screenshot](documentation/responsiveness/user-dash-pg.png)         | ![screenshot](documentation/browsers/user-dash-firefox.png)     | ![screenshot](documentation/responsiveness/user-dash-tab.jpg)     | Works as expected |
+| Settings               | ![screenshot](documentation/responsiveness/settings-pg.png)          | ![screenshot](documentation/browsers/setting-firefox.png)       | ![screenshot](documentation/responsiveness/setting-tab.jpg)       | Works as expected |
+| Help                   | ![screenshot](documentation/responsiveness/help-support-pg.png)      | ![screenshot](documentation/browsers/help-firefox.png)          | ![screenshot](documentation/responsiveness/help-tab.jpg)          | Works as expected |
+| FAQ                    | ![screenshot](documentation/responsiveness/faq-pg.png)               | ![screenshot](documentation/browsers/faq-firefox.png)           | ![screenshot](documentation/responsiveness/faq-tab.jpg)           | Works as expected |
+| Contact support        | ![screenshot](documentation/responsiveness/contact-support-pg.png)   | ![screenshot](documentation/browsers/contact-firefox.png)       | ![screenshot](documentation/responsiveness/contact-tab.jpg)       | Works as expected |
+| Tech support           | ![screenshot](documentation/responsiveness/troubleshoot-tech-pg.png) | ![screenshot](documentation/browsers/tech-firefox.png)          | ![screenshot](documentation/responsiveness/tech-tab.jpg)          | Works as expected |
+| Tutorials              | ![screenshot](documentation/responsiveness/tutorial-guide-pg.png)    | ![screenshot](documentation/browsers/guide-firefox.png)         | ![screenshot](documentation/responsiveness/guide-tab.jpg)         | Works as expected |
+| Password reset         | ![screenshot](documentation/responsiveness/reset-pg.png)             | ![screenshot](documentation/browsers/reset-firefox.png)         | ![screenshot](documentation/responsiveness/reset-tab.jpg)         | Works as expected |
+| Password reset confirm | ![screenshot](documentation/responsiveness/reset-confirm-pg.png)     | ![screenshot](documentation/browsers/reset-confirm-firefox.png) | ![screenshot](documentation/responsiveness/reset-confirm-tab.jpg) | Works as expected |
+| 404                    | ![screenshot](documentation/responsiveness/404-pg.png)               | ![screenshot](documentation/browsers/404-firefox.png)           | ![screenshot](documentation/responsiveness/404-tab.jpg)           | Works as expected |
+| 500                    | ![screenshot](documentation/responsiveness/500-pg.png)               | ![screenshot](documentation/browsers/500-firefox.png)           | ![screenshot](documentation/responsiveness/500-tab.jpg)           | Works as expected |
 
 ## Lighthouse Audit
-
-⚠️ INSTRUCTIONS ⚠️
-
-Use this space to discuss testing the live/deployed site's Lighthouse Audit reports. Avoid testing the local version (Gitpod/VSCode/etc.), as this can have knock-on effects for performance. If you don't have "Lighthouse" in your Developer Tools, it can be added as an [extension](https://chrome.google.com/webstore/detail/lighthouse/blipmdconlkpinefehnmjammfjpmpbjk).
-
-Unless your project is a single-page application (SPA), you should test Lighthouse Audit results for all of your pages, for both _mobile_ and _desktop_.
-
-**IMPORTANT**: You must provide screenshots of the results, to "prove" that you've actually tested them.
-
-⚠️ --- END --- ⚠️
 
 I've tested my deployed project using the Lighthouse Audit tool to check for any major issues. Some warnings are outside of my control, and mobile results tend to be lower than desktop.
 
