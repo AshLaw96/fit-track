@@ -25,6 +25,7 @@ import Troubleshooting from "./components/Help/Troubleshooting";
 import ContactSupport from "./components/Help/ContactSupport";
 import Tutorials from "./components/Help/Tutorials";
 import ChatWidget from "./components/Help/ChatWidget";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const { isAuthenticated } = useAuth();
@@ -76,7 +77,11 @@ const App = () => {
           />
           <Route
             path="/settings"
-            element={<SettingsPage />}
+            element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>  
+              }
           />
           <Route
             path="/help"
