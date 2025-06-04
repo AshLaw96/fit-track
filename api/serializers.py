@@ -8,7 +8,7 @@ from datetime import date
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge,
-    UserChallenge, UserReport, Friend, WorkoutPlan, SleepSchedule,
+    UserChallenge, UserReport, WorkoutPlan, SleepSchedule,
     Notification, DailyWorkout
 )
 from .utils.notifications import send_notification
@@ -506,35 +506,6 @@ class UserReportSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "You can only create reports for yourself."
             )
-        return data
-
-
-class FriendSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Friend model.
-    """
-    class Meta:
-        model = Friend
-        fields = [
-            'id', 'user', 'friend_user', 'date_added'
-        ]
-        read_only_fields = ['user', 'date_added']
-
-    def validate(self, data):
-        request = self.context.get('request')
-        user = request.user if request else None
-        # Prevent adding a friend to oneself
-        if data['friend_user'] == user:
-            raise serializers.ValidationError("You cannot befriend yourself.")
-
-        # Check for duplicate friendship
-        if Friend.objects.filter(
-            user=user, friend_user=data['friend_user']
-        ).exists():
-            raise serializers.ValidationError(
-                "You are already friends with this user."
-            )
-
         return data
 
 

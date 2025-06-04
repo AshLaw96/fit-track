@@ -14,7 +14,7 @@ from django.utils.timezone import now
 from rest_framework import generics, permissions, viewsets, status, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
@@ -25,14 +25,14 @@ import os
 from .models import (
     CustomUser, Goal, Exercise, Meal, SleepLog, Achievement, UserActivity,
     GoalProgress, UserStreak, DailyLog, NutritionLog, Challenge, UserChallenge,
-    UserReport, Friend, WorkoutPlan, SleepSchedule, Notification, DailyWorkout
+    UserReport, WorkoutPlan, SleepSchedule, Notification, DailyWorkout
 )
 from .serializers import (
     UserSerializer, GoalSerializer, ExerciseSerializer, MealSerializer,
     SleepLogSerializer, AchievementSerializer, UserActivitySerializer,
     GoalProgressSerializer, UserStreakSerializer, DailyLogSerializer,
     NutritionLogSerializer, ChallengeSerializer, UserChallengeSerializer,
-    UserReportSerializer, FriendSerializer, WorkoutPlanSerializer,
+    UserReportSerializer, WorkoutPlanSerializer,
     RegisterSerializer, CustomTokenObtainPairSerializer,
     GoalWithProgressSerializer, SleepScheduleSerializer,
     NotificationSerializer, UserPreferenceSerializer
@@ -746,44 +746,6 @@ class UserReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         # Filter reports for the requesting user
         return UserReport.objects.filter(user=self.request.user)
-
-
-# --- Friend Views ---
-class FriendListView(generics.ListCreateAPIView):
-    """
-    API view to list and create friends.
-    """
-    serializer_class = FriendSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        # Only allow users to access their own friendships
-        return (
-            Friend.objects.filter(user=self.request.user) |
-            Friend.objects.filter(friend_user=self.request.user)
-        )
-
-    def perform_create(self, serializer):
-        # Set the user to the currently authenticated user
-        serializer.save(user=self.request.user)
-
-
-class FriendDetailView(generics.RetrieveDestroyAPIView):
-    """
-    API view to retrieve or delete a friend.
-    """
-    serializer_class = FriendSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        # Ensure the user can only delete friendships they created
-        return Friend.objects.filter(user=self.request.user)
-
-    def perform_destroy(self, instance):
-        # Ensure the user is the owner of the friendship
-        if instance.user != self.request.user:
-            raise PermissionDenied("You can only delete your own friendships.")
-        instance.delete()
 
 
 # --- Workout Plan Views ---

@@ -10,14 +10,14 @@ from .views import (
     DailyLogListView, NutritionLogListView, NutritionLogDetailView,
     ChallengeListView, ChallengeDetailView, UserChallengeListView,
     UserChallengeDetailView, UserReportListView, UserReportDetailView,
-    FriendListView, FriendDetailView, WorkoutPlanListView,
-    WorkoutPlanDetailView, RegisterView, CustomPasswordResetView,
-    CustomPasswordResetConfirmView, CustomTokenObtainPairView,
-    DashboardView, upload_profile_image, PublicChallengeListView,
-    ChallengeLeaderboardView, ActiveUserChallengesView, DeleteAccountView,
-    UserActivityStreakView, ChangePasswordView, SleepScheduleView,
-    NotificationListView, MarkAllNotificationsRead, UserPreferenceView,
-    RepeatWorkoutPlanView, IncrementProgressView
+    WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
+    CustomPasswordResetView, CustomPasswordResetConfirmView,
+    CustomTokenObtainPairView, DashboardView, upload_profile_image,
+    PublicChallengeListView, ChallengeLeaderboardView,
+    ActiveUserChallengesView, DeleteAccountView, UserActivityStreakView,
+    ChangePasswordView, SleepScheduleView, NotificationListView,
+    MarkAllNotificationsRead, UserPreferenceView, RepeatWorkoutPlanView,
+    IncrementProgressView
 )
 
 # Create a router and register viewset with it
@@ -182,13 +182,6 @@ urlpatterns = [
         'user_reports/<int:pk>/',
         UserReportDetailView.as_view(),
         name='user_report_detail',
-    ),
-    # Friends
-    path('friends/', FriendListView.as_view(), name='friend_list'),
-    path(
-        'friends/<int:pk>/',
-        FriendDetailView.as_view(),
-        name='friend_detail',
     ),
     # Workout Plans
     path(

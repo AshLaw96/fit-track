@@ -464,35 +464,6 @@ class DailyWorkout(models.Model):
         return f"{self.date} - {self.time} - {self.activity}"
 
 
-# Friendship model
-class Friend(models.Model):
-    user = models.ForeignKey(
-        CustomUser,
-        related_name='friends',
-        on_delete=models.CASCADE
-    )
-    friend_user = models.ForeignKey(
-        CustomUser,
-        related_name='friend_of',
-        on_delete=models.CASCADE
-    )
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'friend_user')
-
-    def clean(self):
-        if self.user == self.friend_user:
-            raise ValidationError("You cannot be friends with yourself.")
-        if Friend.objects.filter(
-            user=self.friend_user, friend_user=self.user
-        ).exists():
-            raise ValidationError("Friendship already exists.")
-
-    def __str__(self):
-        return f"{self.user.username} & {self.friend_user.username} Friends"
-
-
 # Notification model
 class Notification(models.Model):
     user = models.ForeignKey(
