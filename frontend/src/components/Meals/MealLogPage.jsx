@@ -4,6 +4,7 @@ import MealFormModal from "./MealFormModal";
 import { format, parseISO } from "date-fns";
 import { getMealIcon } from "../../utils/iconHelper";
 import Swal from "sweetalert2";
+import NutritionTips from "./NutritionTips";
 
 const MealLogPage = ({ onDataChanged }) => {
   const [meals, setMeals] = useState([]);
@@ -177,6 +178,8 @@ const MealLogPage = ({ onDataChanged }) => {
         onSave={handleSave}
         meal={selectedMeal}
       />
+
+      <NutritionTips />
     </div>
   );
 };
