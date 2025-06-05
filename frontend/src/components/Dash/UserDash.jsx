@@ -76,35 +76,35 @@ const UserDash = () => {
   };
 
   return (
-    <div className="container py-4 custom-wrap">
-      <h2 className="mb-4 text-center custom-heading page-title">
-        Welcome back, {profile.username || "User"}!
-      </h2>
-      <div className="row g-4">
-        <div className="col-md-6">
-          <ActivitySummary
-            data={activitySummaryWithWater}
-            profile={profile}
-          />
-        </div>
-        <div className="col-md-6">
-          <WorkoutNutrition
-            data={dashboardData.workout_nutrition}
-            refreshDashboardData={fetchDashboardData}
-          />
-        </div>
-        <div className="col-md-6">
-          <DailyGoals data={dashboardData.daily_goals} />
-        </div>
-        <div className="col-md-6">
-          <ProgressAnalytics data={dashboardData.analytics} />
-        </div>
-        <div className="col-md-12">
-          <ChallengesMotivation data={dashboardData.challenges} />
-        </div>
+  <div className="container py-4 custom-wrap">
+    <h2 className="mb-4 text-center custom-heading page-title">
+      Welcome back, {profile.username || "User"}!
+    </h2>
+    <div className="row g-4">
+      <div className="col-12 col-lg-6">
+        <ActivitySummary
+          data={activitySummaryWithWater}
+          profile={profile}
+        />
+      </div>
+      <div className="col-12 col-lg-6">
+        <WorkoutNutrition
+          data={dashboardData.workout_nutrition}
+          refreshDashboardData={fetchDashboardData}
+        />
+      </div>
+      <div className="col-12 col-lg-6">
+        <DailyGoals data={dashboardData.daily_goals} />
+      </div>
+      <div className="col-12 col-lg-6">
+        <ProgressAnalytics data={dashboardData.analytics} />
+      </div>
+      <div className="col-12">
+        <ChallengesMotivation data={dashboardData.challenges} />
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default UserDash;
