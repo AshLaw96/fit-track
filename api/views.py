@@ -233,7 +233,19 @@ class MealListCreateView(generics.ListCreateAPIView):
         return Meal.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        meal = serializer.save(user=self.request.user)
+
+        # --- Automatically update DailyLog water intake if it's a drink ---
+        if meal.meal_type == "drink" and getattr(meal, "water_amount", 0):
+            from datetime import date
+            daily_log, _ = DailyLog.objects.get_or_create(
+                user=self.request.user,
+                date=meal.date or date.today()
+            )
+            daily_log.water_intake_l = (
+                (daily_log.water_intake_l or 0) + meal.water_amount
+            )
+            daily_log.save()
 
 
 class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -897,7 +909,21 @@ class DashboardView(APIView):
         for log in daily_logs:
             steps_by_day[log.date] = log.steps or 0
             sleep_by_day[log.date] = log.sleep_hours or 0
-            water_by_day[log.date] = log.water_intake_l or 0
+            # Note: no longer set water here; we'll add it below
+
+        # Add water from DailyLogs
+        for log in daily_logs:
+            water_by_day[log.date] += log.water_intake_l or 0
+
+        # Add water from drink-type meals
+        drink_meals = Meal.objects.filter(
+            user=user,
+            date__range=[week_ago, today],
+            meal_type="drink"
+        )
+        for meal in drink_meals:
+            if meal.water_amount:
+                water_by_day[meal.date] += float(meal.water_amount)
 
         # Add nutrition calories
         for log in nutrition_logs:
