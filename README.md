@@ -280,22 +280,28 @@ I used [coolors.co](https://coolors.co/1e3a8a-2dd4bf-facc15-fafafa-2e2e2e) to ge
 
 ## User Stories
 
-| Target               | Expectation                                                   | Outcome                                                                  |
-| -------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| As a user            | I can set sleep goals                                         | so that I can aim for an optimal amount of sleep each night.             |
-| As a user            | I can view my sleep history                                   | so that I can analyse my sleeping patterns over time.                    |
-| As a user            | I can log my sleep duration                                   | so that I can keep track of how many hours I sleep each night.           |
-| As a user            | I can receive personalised nutrition recommendations          | so that I can update my dietary preferences and goals.                   |
-| As a user            | I can track my progress towards meeting my fitness goals      | so that I can adjust my actions accordingly.                             |
-| As a user            | I can set fitness goals                                       | so that I can clear targets to aim for in my fitness journey.            |
-| As a user            | I can view my meal logging history and overall calorie intake | so that I can maintain or adjust my diet as necessary.                   |
-| As a user            | I can view my workout history                                 | so that I can see my activity levels over time.                          |
-| As a user            | I can reset my password if I forget it                        | so that I can regain access to my account.                               |
-| As a user            | I can log my workouts                                         | so that I can track the types of exercises I perform and their duration. |
-| As a user            | I can log my meals                                            | so that I can monitor my nutritional information.                        |
-| As a new user        | I can register an account                                     | so that I can log in to the system.                                      |
-| As a registered user | I can log in to my account                                    | so that I can access my fitness data.                                    |
-| As a logged-in user  | I can manage my profile                                       | so that I can update my personal information.                            |
+| Target               | Expectation                                                          | Outcome                                                                  |
+| -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| As a user            | I can set sleep goals                                                | so that I can aim for an optimal amount of sleep each night.             |
+| As a user            | I can view my sleep history                                          | so that I can analyse my sleeping patterns over time.                    |
+| As a user            | I can log my sleep duration                                          | so that I can keep track of how many hours I sleep each night.           |
+| As a user            | I can receive personalised nutrition recommendations                 | so that I can update my dietary preferences and goals.                   |
+| As a user            | I can track my progress towards meeting my fitness goals             | so that I can adjust my actions accordingly.                             |
+| As a user            | I can set fitness goals                                              | so that I can clear targets to aim for in my fitness journey.            |
+| As a user            | I can view my meal logging history and overall calorie intake        | so that I can maintain or adjust my diet as necessary.                   |
+| As a user            | I can view my workout history                                        | so that I can see my activity levels over time.                          |
+| As a user            | I can reset my password if I forget it                               | so that I can regain access to my account.                               |
+| As a user            | I can log my workouts                                                | so that I can track the types of exercises I perform and their duration. |
+| As a user            | I can log my meals                                                   | so that I can monitor my nutritional information.                        |
+| As a new user        | I can register an account                                            | so that I can log in to the system.                                      |
+| As a registered user | I can log in to my account                                           | so that I can access my fitness data.                                    |
+| As a logged-in user  | I can manage my profile                                              | so that I can update my personal information.                            |
+| As a user            | I can analyse my workout history and meal data                       | so that I can identify trends in my fitness activities.                  |
+| As a user            | I can use the app on my mobile device                                | so that I can track my fitness progress on the go.                       |
+| As a user            | I can create my own fitness challenges                               | so that I can engage friends or other users.                             |
+| As an admin          | I can analyse user activity trends                                   | so that I can understand community engagement and areas for improvement. |
+| As an admin          | I can have the ability to review and moderate user-generated content | so that I can ensure community guidelines are met.                       |
+| As a user            | I can join fitness challenges                                        | so that I can compete with others and reach my goals more effectively.   |
 
 ## Wireframes
 
@@ -925,7 +931,6 @@ There are no remaining major differences between the local version when compared
 | [Font Awesome](https://fontawesome.com)                      | Icons used throughout the site |
 | [DeepAI](https://deepai.org/machine-learning-model/text2img) | AI generated artwork           |
 | [TinyPNG](https://tinypng.com)                               | Compressing images < 5MB       |
-| [CompressPNG](https://compresspng.com)                       | Compressing images > 5MB       |
 
 ### Acknowledgements
 
