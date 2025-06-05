@@ -364,95 +364,7 @@ I have conducted a series of automated tests on my application.
 > [!NOTE]
 > I fully acknowledge and understand that, in a real-world scenario, an extensive set of additional tests would be more comprehensive.
 
-### JavaScript (Jest Testing)
-
-⚠️ INSTRUCTIONS ⚠️
-
-Adjust the code below (file names, function names, etc.) to match your own project files/folders. Use these notes loosely when documenting your own Jest procedures, and remove/adjust where applicable.
-
-⚠️ SAMPLE ⚠️
-
-I have used the [Jest](https://jestjs.io) JavaScript testing framework to test the application functionality. In order to work with Jest, I first had to initialize NPM.
-
-- `npm init`
-- Hit `<enter>` for all options, except for **test command:**, just type `jest`.
-
-Add Jest to a list called **Dev Dependencies** in a dev environment:
-
-- `npm install --save-dev jest`
-
-**IMPORTANT**: Initial configurations
-
-When creating test files, the name of the file needs to be `file-name.test.js` in order for Jest to properly work. Without the following, Jest won't properly run the tests:
-
-- `npm install -D jest-environment-jsdom`
-
-Due to a change in Jest's default configuration, you'll need to add the following code to the top of the `.test.js` file:
-
-```js
-/**
- * @jest-environment jsdom
- */
-
-const { test, expect } = require("@jest/globals");
-const { function1, function2, function3, etc. } = require("../script-name");
-
-beforeAll(() => {
-    let fs = require("fs");
-    let fileContents = fs.readFileSync("index.html", "utf-8");
-    document.open();
-    document.write(fileContents);
-    document.close();
-});
-```
-
-Remember to adjust the `fs.readFileSync()` to the specific file you'd like you test. The example above is testing the `index.html` file.
-
-Finally, at the bottom of the script file where your primary scripts are written, include the following at the very bottom of the file. Make sure to include the name of all of your functions that are being tested in the `.test.js` file.
-
-```js
-if (typeof module !== "undefined") module.exports = {
-    function1, function2, function3, etc.
-};
-```
-
-Now that these steps have been undertaken, further tests can be written, and be expected to fail initially. Write JS code that can get the tests to pass as part of the Red-Green refactor process. Once ready, to run the tests, use this command:
-
-- `npm test`
-
-**NOTE**: To obtain a coverage report, use the following command:
-
-- `npm test --coverage`
-
-Below are the results from the tests that I've written for this application:
-
-| Test Suites | Tests     | Screenshot                                                |
-| ----------- | --------- | --------------------------------------------------------- |
-| 1 passed    | 16 passed | ![screenshot](documentation/automation/jest-coverage.png) |
-
-#### Jest Test Issues
-
-⚠️ INSTRUCTIONS ⚠️
-
-Use this section to list any known issues you ran into while writing your Jest tests. Remember to include screenshots (where possible), and a solution to the issue (if known). This can be used for both "fixed" and "unresolved" issues. Remove this sub-section entirely if you somehow didn't run into any issues while working with Jest.
-
-⚠️ --- END --- ⚠️
-
 ## Bugs
-
-⚠️ INSTRUCTIONS ⚠️
-
-Nobody likes bugs,... except the assessors! Projects seem more suspicious if a student doesn't properly track their bugs. If you're about to submit your project without any bugs listed below, you should ask yourself why you're doing this course in the first place, if you're able to build this entire application without running into any bugs. The best thing you can do for any project is to document your bugs! Not only does it show the true stages of development, but think of it as breadcrumbs for yourself in the future, should you encounter the same/similar bug again, it acts as a gentle reminder on what you did to fix the bug.
-
-If/when you encounter bugs during the development stages of your project, you should document them here, ideally with a screenshot explaining what the issue was, and what you did to fix the bug.
-
-Alternatively, an improved way to manage bugs is to use the built-in **[Issues](https://www.github.com/AshLaw96/fit-track/issues)** tracker on your GitHub repository. This can be found at the top of your repository, the tab called "Issues".
-
-If using the Issues tracker for bug management, you can simplify the documentation process for testing. Issues allow you to directly paste screenshots into the issue page without having to first save the screenshot locally. You can add labels to your issues (e.g. `bug`), assign yourself as the owner, and add comments/updates as you progress with fixing the issue(s). Once you've solved the issue/bug, you should then "Close" it.
-
-When showcasing your bug tracking for assessment, you can use the following examples below.
-
-⚠️ --- END --- ⚠️
 
 ### Fixed Bugs
 
@@ -462,34 +374,17 @@ I've used [GitHub Issues](https://www.github.com/AshLaw96/fit-track/issues) to t
 
 All previously closed/fixed bugs can be tracked [here](https://www.github.com/AshLaw96/fit-track/issues?q=is%3Aissue+is%3Aclosed+label%3Abug).
 
-![screenshot](documentation/bugs/gh-issues-closed.png)
+![screenshot](documentation/closed.png)
 
 ### Unfixed Bugs
-
-⚠️ INSTRUCTIONS ⚠️
-
-You will need to mention any unfixed bugs and why they are not fixed upon submission of your project. This section should include shortcomings of the frameworks or technologies used. Although time can be a big variable to consider, paucity of time and difficulty understanding implementation is not a valid reason to leave bugs unfixed. Where possible, you must fix all outstanding bugs, unless outside of your control.
-
-If you've identified any unfixed bugs, no matter how small, be sure to list them here! It's better to be honest and list them, because if it's not documented and an assessor finds the issue, they need to know whether or not you're aware of them as well, and why you've not corrected/fixed them.
-
-⚠️ --- END --- ⚠️
 
 [![GitHub issues](https://img.shields.io/github/issues/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/issues)
 
 Any remaining open issues can be tracked [here](https://www.github.com/AshLaw96/fit-track/issues).
 
-![screenshot](documentation/bugs/gh-issues-open.png)
+![screenshot](documentation/open.png)
 
 ### Known Issues
-
-| Issue                                                                                                                             | Screenshot                                               |
-| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| On devices smaller than 375px, the page starts to have horizontal `overflow-x` scrolling.                                         | ![screenshot](documentation/issues/overflow.png)         |
-| When validating HTML with a semantic `<section>` element, the validator warns about lacking a header `h2-h6`. This is acceptable. | ![screenshot](documentation/issues/section-header.png)   |
-| Validation errors on "signup.html" coming from the Django Allauth package.                                                        | ![screenshot](documentation/issues/allauth.png)          |
-| With a known order-number, users can brute-force "checkout_success.html" and see potentially sensitive information.               | ![screenshot](documentation/issues/checkout-success.png) |
-| If a product is in your bag/cart, but then gets deleted from the database, it throws errors from the session storage memory.      | ![screenshot](documentation/issues/session-storage.png)  |
-| The `-`/`+` quantity buttons work well on "product_details.html", but not on "bag.html".                                          | ![screenshot](documentation/issues/quantity-buttons.png) |
 
 > [!IMPORTANT]
 > There are no remaining bugs that I am aware of, though, even after thorough testing, I cannot rule out the possibility.
