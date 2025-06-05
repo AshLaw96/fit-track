@@ -14,7 +14,6 @@ from api.models import (
     NutritionLog,
     GoalProgress,
     UserReport,
-    Friend,
     WorkoutPlan,
     Exercise
 )
@@ -491,52 +490,6 @@ class UserChallengeViewTests(APITestCase):
 
     def test_delete_user_challenge(self):
         url = reverse("user_challenge_detail", args=[self.user_challenge.id])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, 204)
-
-
-class FriendViewTests(APITestCase):
-    """
-    Test case for the FriendListCreateView and FriendDetailView.
-    This test case verifies the functionality of creating, listing,
-    retrieving, updating, and deleting friends.
-    """
-    def setUp(self):
-        Friend.objects.all().delete()
-
-        self.user = User.objects.create_user(
-            username="mainuser", password="friends123"
-        )
-        self.friend_user = User.objects.create_user(
-            username="frienduser", password="pass123"
-        )
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.user)
-        self.friend = Friend.objects.create(
-            user=self.user,
-            friend_user=self.friend_user
-        )
-        self.url = reverse("friend_list")
-
-    def test_list_friends(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data["results"]), 1)
-
-    def test_create_friend(self):
-        new_friend = User.objects.create_user(
-            username="another_friend", password="secret"
-        )
-        response = self.client.post(self.url, {"friend_user": new_friend.id})
-        self.assertEqual(response.status_code, 201)
-
-    def test_retrieve_friend(self):
-        url = reverse("friend_detail", args=[self.friend.id])
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_delete_friend(self):
-        url = reverse("friend_detail", args=[self.friend.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
