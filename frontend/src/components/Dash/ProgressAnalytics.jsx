@@ -28,6 +28,16 @@ const ProgressAnalytics = ({ data }) => {
     water_intake = [],
   } = weekly_trends;
 
+  // 🔍 DEBUG: Log data passed into charts
+  console.log("Weekly Trends Data:", {
+    dates,
+    steps,
+    sleep_hours,
+    calories_burned,
+    water_intake,
+  });
+  console.log("Water Intake Array:", water_intake);
+
   const chartData = (label, values, color) => ({
     labels: dates,
     datasets: [
@@ -50,28 +60,37 @@ const ProgressAnalytics = ({ data }) => {
         Total Nutrition Logs: <strong>{total_nutrition_logs}</strong>
       </div>
 
-      {steps?.some(v => v > 0) && (
+      {Array.isArray(steps) && steps.some(v => v > 0) && (
         <div className="mb-4">
           <Bar data={chartData("Steps", steps, "#4caf50")} />
         </div>
       )}
-      {sleep_hours?.some(v => v > 0) && (
+
+      {Array.isArray(sleep_hours) && sleep_hours.some(v => v > 0) && (
         <div className="mb-4">
           <Bar data={chartData("Sleep (hrs)", sleep_hours, "#3f51b5")} />
         </div>
       )}
-      {calories_burned?.some(v => v > 0) && (
+
+      {Array.isArray(calories_burned) && calories_burned.some(v => v > 0) && (
         <div className="mb-4">
           <Bar data={chartData("Calories Burned", calories_burned, "#ff9800")} />
         </div>
       )}
-      {water_intake?.some(v => v > 0) && (
+
+      {Array.isArray(water_intake) && water_intake.some(v => v > 0) && (
         <div className="mb-4">
           <Bar data={chartData("Water Intake (L)", water_intake, "#00bcd4")} />
         </div>
       )}
 
-      {![...steps, ...sleep_hours, ...calories_burned, ...water_intake].some(v => v > 0) && (
+      {/* Show empty message only if all arrays are empty or invalid */}
+      {![
+        ...(Array.isArray(steps) ? steps : []),
+        ...(Array.isArray(sleep_hours) ? sleep_hours : []),
+        ...(Array.isArray(calories_burned) ? calories_burned : []),
+        ...(Array.isArray(water_intake) ? water_intake : []),
+      ].some(v => v > 0) && (
         <div className="text-center text-muted my-5">
           No progress data available yet. Start logging your activity to see trends here!
         </div>
