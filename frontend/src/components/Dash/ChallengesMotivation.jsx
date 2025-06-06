@@ -34,9 +34,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
       const active = activeRes.data.results.map((uc) => ({
         id: uc.id,
-        challengeId: uc.challenge, // challenge is just the ID
+        challengeId: uc.challenge_id || uc.challenge,
         title: uc.title || "Untitled",
-        target: uc.target_value || 1,
+        target: uc.target || 1,
         progress: uc.progress ?? 0,
         completed: uc.completed || false,
       }));
@@ -78,7 +78,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     try {
       const challengePayload = {
         ...newChallenge,
-        target_value: parseFloat(newChallenge.target_value),
+        target: parseFloat(newChallenge.target),
       };
 
       await api.post("/challenges/", challengePayload);
@@ -88,7 +88,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         title: "",
         description: "",
         metric: "steps",
-        target_value: "",
+        target: "",
         start_date: "",
         end_date: "",
         is_public: false,
@@ -122,22 +122,20 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     }
   };
 
-  const handleAddProgress = async (c) => {
-    console.log("🔁 Add progress for challenge object:", c);
+  const handleAddProgress = async (challenge) => {
+    if (!challenge?.id) {
+      console.warn("Challenge id is undefined, cannot add progress.", challenge);
+      return;
+    }
+
     try {
-      const response = await api.post(`/user_challenges/${c.id}/increment_progress/`);
-      const { progress, completed } = response.data;
-
-      if (completed) {
-        toast.success("✅ Challenge completed! You earned a point.");
-      } else {
-        toast.success(`+ Progress added! (${progress})`);
-      }
-
+      await api.post(`/user_challenges/${challenge.id}/increment_progress/`);
+      toast.success(`Progress added to "${challenge.title}"!`);
+      // refetch after update
       fetchChallengeData();
-    } catch (err) {
-      toast.error("❌ Failed to add progress.");
-      console.error("Add progress error:", err);
+    } catch (error) {
+      console.error("❌ Error adding progress:", error);
+      toast.error("Failed to add progress");
     }
   };
 
@@ -160,7 +158,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             </strong>
             {active.length > 0 ? (
               active.map((c) => (
-                <div key={c.id} className="mb-3">
+                <div key={c.id || `active-challenge-${c.title}-${Math.random()}`} className="mb-3">
                   <p className="fw-semibold">{c.title}</p>
                   <div className="progress">
                     <div
@@ -171,7 +169,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                       {c.target ? ((c.progress / c.target) * 100).toFixed(1) : "0"}%
                     </div>
                   </div>
-                  <p>{c.progress} / {c.target}</p>
+                  <p>
+                    {c.progress} / {c.target}
+                  </p>
 
                   {!c.completed && (
                     <button
@@ -199,8 +199,12 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {leaderboard.length > 0 ? (
               <ul className="mt-2">
                 {leaderboard.map((entry, i) => (
-                  <li key={entry.user}>
-                    {i + 1}. {entry.user} - {((entry.progress / entry.target) * 100).toFixed(1)}%
+                  <li key={entry.user || i}>
+                    {i + 1}. {entry.user} -{" "}
+                    {entry.target
+                      ? ((entry.progress / entry.target) * 100).toFixed(1)
+                      : "0"}
+                    %
                   </li>
                 ))}
               </ul>
@@ -217,7 +221,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {available.length > 0 ? (
               <ul className="mt-2">
                 {available.map((c) => (
-                  <li key={c.id} className="mb-1">
+                  <li key={c.id || `available-challenge-${c.title}-${Math.random()}`} className="mb-1">
                     {c.title}
                     <button
                       className="btn btn-sm btn-outline-primary ms-2"
@@ -272,10 +276,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               />
               <input
                 type="number"
-                name="target_value"
-                value={newChallenge.target_value}
+                name="target"
+                value={newChallenge.target}
                 onChange={handleChange}
-                placeholder="Target Value"
+                placeholder="Target"
                 className="form-control mb-2"
                 required
               />
@@ -295,22 +299,19 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                 className="form-control mb-2"
                 required
               />
-              <div className="form-check mb-2">
+              <div className="form-check mb-3">
                 <input
-                  type="checkbox"
                   className="form-check-input"
+                  type="checkbox"
                   name="is_public"
                   checked={newChallenge.is_public}
                   onChange={(e) =>
-                    setNewChallenge({
-                      ...newChallenge,
-                      is_public: e.target.checked,
-                    })
+                    setNewChallenge({ ...newChallenge, is_public: e.target.checked })
                   }
-                  id="publicChallenge"
+                  id="isPublicCheck"
                 />
-                <label className="form-check-label" htmlFor="publicChallenge">
-                  Make challenge available to others
+                <label className="form-check-label" htmlFor="isPublicCheck">
+                  Public Challenge
                 </label>
               </div>
               <button type="submit" className="btn btn-primary">

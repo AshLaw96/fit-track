@@ -455,23 +455,26 @@ class ChallengeSerializer(serializers.ModelSerializer):
 class UserChallengeSerializer(serializers.ModelSerializer):
     """
     Serializer for the UserChallenge model.
-    Includes challenge title and target value for frontend visualization.
+    Includes challenge metadata and challenge ID for frontend use.
     """
     title = serializers.CharField(source='challenge.title', read_only=True)
     target = serializers.FloatField(
-        source='challenge.target_value',
-        read_only=True
+        source='challenge.target_value', read_only=True
     )
     metric = serializers.CharField(source='challenge.metric', read_only=True)
     user_points = serializers.IntegerField(
         source='user.points',
         read_only=True
     )
+    challenge_id = serializers.IntegerField(
+        source='challenge.id', read_only=True
+    )
+    id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = UserChallenge
         fields = [
-            'user', 'challenge', 'progress', 'completed',
+            'id', 'user', 'challenge', 'challenge_id', 'progress', 'completed',
             'title', 'target', 'metric', 'user_points',
         ]
         read_only_fields = ['user']
