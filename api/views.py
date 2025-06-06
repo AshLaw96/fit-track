@@ -876,7 +876,6 @@ class RepeatWorkoutPlanView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
-# --- Custom dashboard view ---
 class DashboardView(APIView):
     """
     Custom dashboard view to provide a summary of user activity.
@@ -900,17 +899,19 @@ class DashboardView(APIView):
         todays_meals = Meal.objects.filter(user=user, date=today)
 
         todays_macros = {
-            "protein": sum(m.protein or 0 for m in todays_meals),
-            "carbs": sum(m.carbs or 0 for m in todays_meals),
-            "fats": sum(m.fats or 0 for m in todays_meals),
+            "protein": sum(float(m.protein or 0) for m in todays_meals),
+            "carbs": sum(float(m.carbs or 0) for m in todays_meals),
+            "fats": sum(float(m.fats or 0) for m in todays_meals),
         }
 
         exercise_logs = Exercise.objects.filter(
             user=user,
             date__range=[week_ago, today]
         )
-        total_exercise_calories = sum(
-            ex.calories_burned or 0 for ex in exercise_logs
+        today_calories_burned = sum(
+            float(ex.calories_burned or 0)
+            for ex in exercise_logs
+            if ex.date == today
         )
 
         today_log = daily_logs.filter(date=today).first()
@@ -918,7 +919,8 @@ class DashboardView(APIView):
 
         today_exercise_logs = [ex for ex in exercise_logs if ex.date == today]
         today_estimated_steps = sum(
-            estimate_steps_from_exercise(ex) for ex in today_exercise_logs
+            estimate_steps_from_exercise(ex)
+            for ex in today_exercise_logs
         )
 
         active_challenges = Challenge.objects.filter(
@@ -933,35 +935,27 @@ class DashboardView(APIView):
 
         goals = Goal.objects.filter(user=user).order_by("-created_at")
 
-        avg_sleep = (
-            sum(log.sleep_hours or 0 for log in daily_logs)
-            / max(len(daily_logs), 1)
-        )
         avg_water = (
-            sum(log.water_intake_l or 0 for log in daily_logs)
-            / max(len(daily_logs), 1)
+            sum(float(log.water_intake_l or 0) for log in daily_logs) /
+            max(len(daily_logs), 1)
         )
         avg_calories = (
-            sum(log.calories for log in nutrition_logs) /
+            sum(float(log.calories or 0) for log in nutrition_logs) /
             max(len(nutrition_logs), 1)
         )
 
-        # --- Weekly Trends ---
         steps_by_day = defaultdict(int)
         sleep_by_day = defaultdict(float)
-        calories_by_day = defaultdict(int)
+        calories_by_day = defaultdict(float)
         water_by_day = defaultdict(float)
 
         for log in daily_logs:
             steps_by_day[log.date] = log.steps or 0
-            sleep_by_day[log.date] = log.sleep_hours or 0
-            # Note: no longer set water here; we'll add it below
+            sleep_by_day[log.date] = float(log.sleep_hours or 0)
 
-        # Add water from DailyLogs
         for log in daily_logs:
-            water_by_day[log.date] += log.water_intake_l or 0
+            water_by_day[log.date] += float(log.water_intake_l or 0)
 
-        # Add water from drink-type meals
         drink_meals = Meal.objects.filter(
             user=user,
             date__range=[week_ago, today],
@@ -971,15 +965,12 @@ class DashboardView(APIView):
             if meal.water_amount:
                 water_by_day[meal.date] += float(meal.water_amount)
 
-        # Add nutrition calories
         for log in nutrition_logs:
-            calories_by_day[log.date] += log.calories or 0
+            calories_by_day[log.date] += float(log.calories or 0)
 
-        # Add exercise calories
         for ex in exercise_logs:
-            calories_by_day[ex.date] += ex.calories_burned or 0
+            calories_by_day[ex.date] += float(ex.calories_burned or 0)
 
-        # Add estimated steps from exercises
         exercises_by_day = defaultdict(list)
         for ex in exercise_logs:
             exercises_by_day[ex.date].append(ex)
@@ -1003,10 +994,16 @@ class DashboardView(APIView):
             {
                 "id": uc.id,
                 "title": uc.challenge.title,
-                "progress": uc.progress,
-                "target_value": uc.challenge.target_value,
+                "progress": float(uc.progress),
+                "target_value": float(uc.challenge.target_value),
                 "completion_percent": (
-                    round((uc.progress / uc.challenge.target_value) * 100, 2)
+                    round(
+                        (
+                            float(uc.progress) /
+                            float(uc.challenge.target_value)
+                        ) * 100,
+                        2
+                    )
                     if uc.challenge.target_value else 0.0
                 )
             }
@@ -1022,7 +1019,6 @@ class DashboardView(APIView):
 
         plans_data = []
         for plan in all_plans:
-            # Find the earliest daily workout date as the week start (or None)
             first_workout = plan.daily_workouts.order_by("date").first()
             week_start = first_workout.date if first_workout else None
 
@@ -1032,16 +1028,11 @@ class DashboardView(APIView):
             )
             plans_data.append(serialized_plan)
 
-        # Fallback for backwards compatibility,
-        # just pick the latest plan's data if exists
-        if plans_data:
-            workout_plan_data = plans_data[0]
-        else:
-            workout_plan_data = {
-                "daily_workouts": [],
-                "user_id": user.id,
-                "workout_plan_id": None,
-            }
+        workout_plan_data = plans_data[0] if plans_data else {
+            "daily_workouts": [],
+            "user_id": user.id,
+            "workout_plan_id": None,
+        }
 
         return Response({
             "user": {
@@ -1052,14 +1043,21 @@ class DashboardView(APIView):
                     daily_logs.order_by("-date")[:5],
                     many=True
                 ).data,
-                "avg_sleep_hours": round(avg_sleep, 2),
+                "sleep_hours_today": sum(
+                    float(s.duration_hours or 0)
+                    for s in SleepLog.objects.filter(user=user, date=today)
+                ),
                 "avg_water_l": round(avg_water, 2),
                 "weight": (
-                    daily_logs.latest("date").weight_kg
-                    if daily_logs.exists() else None
+                    float(daily_logs.latest("date").weight_kg)
+                    if (
+                        daily_logs.exists()
+                        and daily_logs.latest("date").weight_kg
+                    )
+                    else None
                 ),
                 "steps": today_steps + today_estimated_steps,
-                "calories_burned": total_exercise_calories
+                "calories_burned_today": today_calories_burned,
             },
             "workout_nutrition": {
                 **workout_plan_data,
@@ -1075,15 +1073,17 @@ class DashboardView(APIView):
                 "daily": {
                     "steps": {
                         "goal": 10000,
-                        "current": (today_log.steps if today_log else 0)
+                        "current": today_log.steps if today_log else 0
                     },
                     "water": {
                         "goal": 2.5,
-                        "current": (
-                            (
+                        "current": float(
+                            daily_logs.latest("date").water_intake_l
+                            if (
+                                daily_logs.exists() and
                                 daily_logs.latest("date").water_intake_l
-                                if daily_logs.exists() else 0
                             )
+                            else 0
                         )
                     }
                 },

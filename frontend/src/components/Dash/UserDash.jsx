@@ -9,17 +9,12 @@ import ChallengesMotivation from "./ChallengesMotivation";
 const UserDash = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [meals, setMeals] = useState([]);
-  const [sleepLogs, setSleepLogs] = useState([]);
   const [profile, setProfile] = useState({ username: "User" });
 
   const fetchLogs = useCallback(async () => {
     try {
-      const [mealsRes, sleepRes] = await Promise.all([
-        api.get("/meals/"),
-        api.get("/sleep_logs/"),
-      ]);
+      const mealsRes = await api.get("/meals/");
       setMeals(mealsRes.data?.results || []);
-      setSleepLogs(Array.isArray(sleepRes.data) ? sleepRes.data : []);
     } catch (err) {
       console.error("Failed to fetch logs:", err);
     }
@@ -65,14 +60,11 @@ const UserDash = () => {
     )
     .reduce((sum, meal) => sum + parseFloat(meal.water_amount || 0), 0);
 
-  const todaySleep = sleepLogs
-    .filter((log) => log.date === today)
-    .reduce((sum, log) => sum + parseFloat(log.duration_hours || 0), 0);
-
   const activitySummaryWithWater = {
     ...dashboardData.activity_summary,
     water_intake: totalWater ?? dashboardData.activity_summary?.water_intake,
-    sleep: todaySleep.toFixed(1),
+    sleep: dashboardData.activity_summary.sleep_hours_today,
+    calories_burned: dashboardData.activity_summary.calories_burned_today,
   };
 
   return (

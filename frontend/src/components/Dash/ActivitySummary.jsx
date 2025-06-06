@@ -4,8 +4,8 @@ import { useUnits } from "../../contexts/UnitsContext";
 
 const ActivitySummary = ({ data, profile }) => {
   const { units } = useUnits();
-  const { avg_sleep_hours, steps, calories_burned, water_intake } = data || {};
-  const sleep = avg_sleep_hours;
+  const { avg_sleep_hours, sleep, steps, calories_burned, water_intake } = data || {};
+  const effectiveSleep = Number(sleep ?? avg_sleep_hours ?? 0);
   const weightKg = profile?.weight_kg ?? 0;
 
   // Convert weight
@@ -60,13 +60,9 @@ const ActivitySummary = ({ data, profile }) => {
 
       <div>
         🛌 Sleep:{" "}
-        {sleep != null ? (
           <Link to="/sleep" className="text-decoration-underline">
-            {sleep.toFixed(1)} hrs
+            {effectiveSleep.toFixed(1)} hrs
           </Link>
-        ) : (
-          "0 hrs"
-        )}
       </div>
 
       <div>
