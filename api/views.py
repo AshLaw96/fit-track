@@ -235,7 +235,13 @@ class MealListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         meal = serializer.save(user=self.request.user)
 
-        # --- Automatically update DailyLog water intake if it's a drink ---
+        print(
+            f"[DEBUG] Meal Created: {meal}, "
+            f"Type: {meal.meal_type}, "
+            f"Water: {meal.water_amount}"
+        )
+
+        # Automatically update DailyLog water intake if it's a drink
         if meal.meal_type == "drink" and getattr(meal, "water_amount", 0):
             from datetime import date
             daily_log, _ = DailyLog.objects.get_or_create(
@@ -247,10 +253,16 @@ class MealListCreateView(generics.ListCreateAPIView):
             )
             daily_log.save()
 
+            print(
+                f"[DEBUG] Updated DailyLog water_intake_l to "
+                f"{daily_log.water_intake_l}"
+            )
+
 
 class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     API view to retrieve, update, or delete a meal.
+    Automatically adjusts DailyLog water intake for drinks.
     """
     serializer_class = MealSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -259,6 +271,48 @@ class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Meal.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        old_meal = self.get_object()
+        old_water = (
+            old_meal.water_amount if old_meal.meal_type == "drink" else 0
+        )
+
+        updated_meal = serializer.save()
+
+        new_water = (
+            updated_meal.water_amount
+            if updated_meal.meal_type == "drink"
+            else 0
+        )
+        delta = new_water - old_water
+
+        if delta != 0:
+            from datetime import date
+            daily_log, _ = DailyLog.objects.get_or_create(
+                user=self.request.user,
+                date=updated_meal.date or date.today()
+            )
+            daily_log.water_intake_l = (daily_log.water_intake_l or 0) + delta
+            daily_log.save()
+
+    def perform_destroy(self, instance):
+        if instance.meal_type == "drink" and instance.water_amount:
+            try:
+                daily_log = DailyLog.objects.get(
+                    user=self.request.user,
+                    date=instance.date
+                )
+                daily_log.water_intake_l = max(
+                    (daily_log.water_intake_l or 0) - instance.water_amount,
+                    0
+                )
+                daily_log.save()
+            except DailyLog.DoesNotExist:
+                # Nothing to update
+                pass
+
+        instance.delete()
 
 
 # --- SleepLog Views ---

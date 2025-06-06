@@ -16,7 +16,6 @@ const DailyGoals = () => {
   const fetchGoals = async () => {
     try {
       const res = await api.get("/goals/");
-      console.log("Fetched goals:", res.data);
 
       const goalData = Array.isArray(res.data.results)
         ? res.data.results

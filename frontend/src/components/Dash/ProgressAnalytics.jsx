@@ -16,27 +16,17 @@ const ProgressAnalytics = ({ data }) => {
 
   const {
     total_daily_logs = 0,
-    total_nutrition_logs = 0,
-    weekly_trends = {},
-  } = data;
-
-  const {
+    weekly_trends: {
     dates = [],
     steps = [],
     sleep_hours = [],
     calories_burned = [],
     water_intake = [],
-  } = weekly_trends;
+  } = {},
+  } = data;
 
   // 🔍 DEBUG: Log data passed into charts
-  console.log("Weekly Trends Data:", {
-    dates,
-    steps,
-    sleep_hours,
-    calories_burned,
-    water_intake,
-  });
-  console.log("Water Intake Array:", water_intake);
+  console.log("Full analytics data:", data);
 
   const chartData = (label, values, color) => ({
     labels: dates,
@@ -55,9 +45,6 @@ const ProgressAnalytics = ({ data }) => {
 
       <div className="mb-2 text-muted">
         Total Daily Logs: <strong>{total_daily_logs}</strong>
-      </div>
-      <div className="mb-4 text-muted">
-        Total Nutrition Logs: <strong>{total_nutrition_logs}</strong>
       </div>
 
       {Array.isArray(steps) && steps.some(v => v > 0) && (

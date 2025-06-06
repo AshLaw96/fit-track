@@ -169,7 +169,7 @@ class MealSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Fats must be non-negative.")
         return value
 
-    def validate_liters(self, data):
+    def validate(self, data):
         if data.get("meal_type") == "drink" and not data.get("water_amount"):
             raise serializers.ValidationError({
                 "water_amount": "This field is required for drink entries."
