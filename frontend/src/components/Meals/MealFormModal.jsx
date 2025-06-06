@@ -28,6 +28,8 @@ const MealFormModal = ({ show, handleClose, onSave, meal }) => {
   const { units } = useUnits();
   const [form, setForm] = useState(defaultForm);
 
+  const isImperial = units.volume === "gallons";
+
   useEffect(() => {
     setForm(meal ? { ...defaultForm, ...meal } : defaultForm);
   }, [meal]);
@@ -42,10 +44,15 @@ const MealFormModal = ({ show, handleClose, onSave, meal }) => {
     onSave(form);
   };
 
-  const convertWater = (value, to) =>
-    to === "imperial"
-      ? (value * 33.814).toFixed(1)
-      : (value / 33.814).toFixed(2);
+  const convertWater = (value, to) => {
+    if (!value) return "";
+    const numeric = parseFloat(value);
+    if (isNaN(numeric)) return "";
+
+    return to === "imperial"
+      ? (numeric * 33.814).toFixed(1)
+      : (numeric / 33.814).toFixed(2);
+  };
 
   return (
     <Modal show={show} onHide={handleClose} centered>
@@ -90,23 +97,24 @@ const MealFormModal = ({ show, handleClose, onSave, meal }) => {
 
           {form.meal_type === "drink" && (
             <Form.Group className="mb-3">
-              <Form.Label>Water Amount ({units === "metric" ? "liters" : "oz"})</Form.Label>
+              <Form.Label>
+                Water Amount ({isImperial ? "oz" : "liters"})
+              </Form.Label>
               <Form.Control
                 type="number"
                 step="0.1"
                 name="water_amount"
                 value={
-                  units === "metric"
-                    ? form.water_amount
-                    : convertWater(form.water_amount, "imperial")
+                  isImperial
+                    ? convertWater(form.water_amount, "imperial")
+                    : form.water_amount
                 }
                 onChange={(e) =>
                   setForm((prev) => ({
                     ...prev,
-                    water_amount:
-                      units === "imperial"
-                        ? convertWater(e.target.value, "metric")
-                        : e.target.value,
+                    water_amount: isImperial
+                      ? convertWater(e.target.value, "metric")
+                      : e.target.value,
                   }))
                 }
                 required
