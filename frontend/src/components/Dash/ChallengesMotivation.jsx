@@ -39,7 +39,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         title: uc.title || "Untitled",
         description: uc.description || "",
         metric: uc.metric || "",
-        target: uc.target || 1,
+        target_value: uc.target_value || 1,
         progress: uc.progress ?? 0,
         start_date: uc.start_date || "",
         end_date: uc.end_date || "",
@@ -75,7 +75,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   }, []);
 
   const handleChange = (e) => {
-    setNewChallenge({ ...newChallenge, [e.target.name]: e.target.value });
+    setNewChallenge({ ...newChallenge, [e.target_value.name]: e.target_value.value });
   };
 
   const handleCreateChallenge = async (e) => {
@@ -83,7 +83,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     try {
       const challengePayload = {
         ...newChallenge,
-        target: parseFloat(newChallenge.target),
+        target_value: parseFloat(newChallenge.target_value),
       };
 
       await api.post("/challenges/", challengePayload);
@@ -93,7 +93,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         title: "",
         description: "",
         metric: "steps",
-        target: "",
+        target_value: "",
         start_date: "",
         end_date: "",
         is_public: false,
@@ -183,7 +183,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     <div className="bg-light p-2 rounded border mb-2">
                       <p><strong>Description:</strong> {c.description || "No description provided."}</p>
                       <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
-                      <p><strong>Target:</strong> {c.target}</p>
+                      <p><strong>Target:</strong> {c.target_value}</p>
                       <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
                       <p><strong>End:</strong> {c.end_date || "N/A"}</p>
                     </div>
@@ -194,13 +194,13 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style={{ width: c.target ? `${(c.progress / c.target) * 100}%` : "0%" }}
+                      style={{ width: c.target_value ? `${(c.progress / c.target_value) * 100}%` : "0%" }}
                     >
-                      {c.target ? ((c.progress / c.target) * 100).toFixed(1) : "0"}%
+                      {c.target_value ? ((c.progress / c.target_value) * 100).toFixed(1) : "0"}%
                     </div>
                   </div>
                   <p>
-                    {c.progress} / {c.target}
+                    {c.progress} / {c.target_value}
                   </p>
 
                   {/* Add progress button or completion message */}
@@ -232,8 +232,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                 {leaderboard.map((entry, i) => (
                   <li key={entry.user || i}>
                     {i + 1}. {entry.user} -{" "}
-                    {entry.target
-                      ? ((entry.progress / entry.target) * 100).toFixed(1)
+                    {entry.target_value
+                      ? ((entry.progress / entry.target_value) * 100).toFixed(1)
                       : "0"}
                     %
                   </li>
@@ -271,7 +271,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                       <div className="mb-2">
                         <p><strong>Description:</strong> {c.description || "No description provided."}</p>
                         <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
-                        <p><strong>Target:</strong> {c.target || "N/A"}</p>
+                        <p><strong>Target:</strong> {c.target_value || "N/A"}</p>
                         <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
                         <p><strong>End:</strong> {c.end_date || "N/A"}</p>
                       </div>
@@ -332,7 +332,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <input
                 type="number"
                 name="target"
-                value={newChallenge.target}
+                value={newChallenge.target_value}
                 onChange={handleChange}
                 placeholder="Target"
                 className="form-control mb-2"
@@ -361,7 +361,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   name="is_public"
                   checked={newChallenge.is_public}
                   onChange={(e) =>
-                    setNewChallenge({ ...newChallenge, is_public: e.target.checked })
+                    setNewChallenge({ ...newChallenge, is_public: e.target_value.checked })
                   }
                   id="isPublicCheck"
                 />
