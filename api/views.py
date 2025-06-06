@@ -741,19 +741,10 @@ class IncrementProgressView(APIView):
             pk=pk,
             user=request.user
         )
-        user_challenge.progress += 1
 
-        if (
-            user_challenge.progress >= user_challenge.challenge.target_value
-            and not user_challenge.completed
-        ):
-            user_challenge.completed = True
-            user_challenge.save(update_fields=['progress', 'completed'])
-            request.user.points = F('points') + 1
-            request.user.save(update_fields=['points'])
-
-        else:
-            user_challenge.save(update_fields=['progress'])
+        # Default increment amount = 1, or get from request
+        amount = request.data.get("amount", 1)
+        user_challenge.increment_progress(float(amount))
 
         return Response({
             'progress': user_challenge.progress,

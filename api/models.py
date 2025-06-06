@@ -407,6 +407,14 @@ class UserChallenge(models.Model):
             )
         ]
 
+    def increment_progress(self, amount=1):
+        self.progress += amount
+        if self.progress >= self.challenge.target_value and not self.completed:
+            self.completed = True
+            self.user.points += 1
+            self.user.save(update_fields=["points"])
+        self.save(update_fields=["progress", "completed"])
+
 
 class UserReport(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
