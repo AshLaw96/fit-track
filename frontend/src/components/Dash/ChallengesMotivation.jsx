@@ -80,12 +80,19 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
   const handleCreateChallenge = async (e) => {
     e.preventDefault();
-    try {
-      const challengePayload = {
-        ...newChallenge,
-        target_value: parseFloat(newChallenge.target_value),
-      };
 
+    if (!newChallenge.target_value || isNaN(parseFloat(newChallenge.target_value))) {
+      toast.error("Target value must be a valid number.");
+      return;
+    }
+
+    const challengePayload = {
+      ...newChallenge,
+      target_value: parseFloat(newChallenge.target_value),
+    };
+
+    try {
+      console.log("🔍 challengePayload:", challengePayload);
       await api.post("/challenges/", challengePayload);
 
       toast.success("🎉 Challenge created and joined!");
