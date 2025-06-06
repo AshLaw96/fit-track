@@ -743,7 +743,7 @@ class IncrementProgressView(APIView):
         user_challenge.progress += 1
 
         if (
-            user_challenge.progress >= user_challenge.target
+            user_challenge.progress >= user_challenge.challenge.target
             and not user_challenge.completed
         ):
             user_challenge.completed = True
