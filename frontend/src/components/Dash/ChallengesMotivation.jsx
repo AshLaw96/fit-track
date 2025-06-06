@@ -11,6 +11,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   });
   const [joinedChallengeIds, setJoinedChallengeIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [expandedChallengeId, setExpandedChallengeId] = useState(null);
   const [newChallenge, setNewChallenge] = useState({
     title: "",
     description: "",
@@ -36,8 +37,12 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         id: uc.id,
         challengeId: uc.challenge_id || uc.challenge,
         title: uc.title || "Untitled",
+        description: uc.description || "",
+        metric: uc.metric || "",
         target: uc.target || 1,
         progress: uc.progress ?? 0,
+        start_date: uc.start_date || "",
+        end_date: uc.end_date || "",
         completed: uc.completed || false,
       }));
 
@@ -139,6 +144,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     }
   };
 
+  const toggleExpand = (id) => {
+    setExpandedChallengeId((prevId) => (prevId === id ? null : id));
+  };
+
   const { active, available, leaderboard } = challengeData;
 
   return (
@@ -159,7 +168,28 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {active.length > 0 ? (
               active.map((c) => (
                 <div key={c.id || `active-challenge-${c.title}-${Math.random()}`} className="mb-3">
-                  <p className="fw-semibold">{c.title}</p>
+                  {/* Clickable title to toggle details */}
+                  <p
+                    className="fw-semibold cursor-pointer"
+                    onClick={() => toggleExpand(c.id)}
+                    style={{ userSelect: "none" }}
+                    title="Click to view details"
+                  >
+                    {c.title}
+                  </p>
+
+                  {/* Expanded details shown only if this challenge is expanded */}
+                  {expandedChallengeId === c.id && (
+                    <div className="bg-light p-2 rounded border mb-2">
+                      <p><strong>Description:</strong> {c.description || "No description provided."}</p>
+                      <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
+                      <p><strong>Target:</strong> {c.target}</p>
+                      <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
+                      <p><strong>End:</strong> {c.end_date || "N/A"}</p>
+                    </div>
+                  )}
+
+                  {/* Progress bar */}
                   <div className="progress">
                     <div
                       className="progress-bar"
@@ -173,6 +203,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     {c.progress} / {c.target}
                   </p>
 
+                  {/* Add progress button or completion message */}
                   {!c.completed && (
                     <button
                       className="btn btn-sm btn-success mt-2"
@@ -219,12 +250,36 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <Flame className="text-danger" size={18} /> Available Challenges:
             </strong>
             {available.length > 0 ? (
-              <ul className="mt-2">
+              <ul className="mt-2 list-unstyled">
                 {available.map((c) => (
-                  <li key={c.id || `available-challenge-${c.title}-${Math.random()}`} className="mb-1">
-                    {c.title}
+                  <li
+                    key={c.id || `available-challenge-${c.title}-${Math.random()}`}
+                    className="mb-3 border rounded p-2 bg-light"
+                  >
+                    {/* Title toggle */}
+                    <p
+                      className="fw-semibold cursor-pointer mb-1"
+                      onClick={() => toggleExpand(c.id)}
+                      style={{ userSelect: "none" }}
+                      title="Click to view details"
+                    >
+                      {c.title}
+                    </p>
+
+                    {/* Expanded view */}
+                    {expandedChallengeId === c.id && (
+                      <div className="mb-2">
+                        <p><strong>Description:</strong> {c.description || "No description provided."}</p>
+                        <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
+                        <p><strong>Target:</strong> {c.target || "N/A"}</p>
+                        <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
+                        <p><strong>End:</strong> {c.end_date || "N/A"}</p>
+                      </div>
+                    )}
+
+                    {/* Join button */}
                     <button
-                      className="btn btn-sm btn-outline-primary ms-2"
+                      className="btn btn-sm btn-outline-primary"
                       onClick={() => handleJoin(c.id)}
                       disabled={joinedChallengeIds.includes(c.id) || active.length > 0}
                     >
