@@ -33,18 +33,30 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         api.get("/user_challenges/"),
       ]);
 
-      const active = activeRes.data.results.map((uc) => ({
-        id: uc.id,
-        challengeId: uc.challenge_id || uc.challenge,
-        title: uc.title || "Untitled",
-        description: uc.description || "",
-        metric: uc.metric || "",
-        target_value: uc.target_value || 1,
-        progress: uc.progress ?? 0,
-        start_date: uc.start_date || "",
-        end_date: uc.end_date || "",
-        completed: uc.completed || false,
-      }));
+      const today = new Date();
+      const active = activeRes.data.results
+        .map((uc) => {
+          const endDate = uc.end_date ? new Date(uc.end_date) : null;
+          const completed = uc.completed || uc.progress >= (uc.target_value || 1);
+          const failed =
+            !completed && endDate && today > endDate;
+
+          return {
+            id: uc.id,
+            challengeId: uc.challenge_id || uc.challenge,
+            title: uc.title || "Untitled",
+            description: uc.description || "",
+            metric: uc.metric || "",
+            target_value: uc.target_value || 1,
+            progress: uc.progress ?? 0,
+            start_date: uc.start_date || "",
+            end_date: uc.end_date || "",
+            completed,
+            failed,
+          };
+        })
+        // Hide completed or failed
+        .filter((c) => !c.completed && !c.failed);
 
       const available = availableRes.data || [];
       const joined = Array.isArray(joinedRes.data) ? joinedRes.data : [];
@@ -221,6 +233,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   )}
                   {c.completed && (
                     <div className="text-success mt-2">✅ Challenge Completed! +1 point</div>
+                  )}
+                  {c.failed && (
+                    <div className="text-danger mt-2">❌ Challenge Failed (End Date Passed)</div>
                   )}
                 </div>
               ))
