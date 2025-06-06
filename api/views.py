@@ -664,6 +664,7 @@ class UserChallengeListView(generics.ListCreateAPIView):
                 UserChallenge.objects
                 .filter(user=user)
                 .select_related("challenge", "user")
+                .order_by("id")
             )
             print(f"[DEBUG] Found {queryset.count()} user challenges")
             return queryset

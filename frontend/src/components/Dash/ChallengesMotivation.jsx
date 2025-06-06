@@ -75,7 +75,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   }, []);
 
   const handleChange = (e) => {
-    setNewChallenge({ ...newChallenge, [e.target_value.name]: e.target_value.value });
+    setNewChallenge({ ...newChallenge, [e.target.name]: e.target.value });
   };
 
   const handleCreateChallenge = async (e) => {
@@ -331,7 +331,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               />
               <input
                 type="number"
-                name="target"
+                name="target_value"
                 value={newChallenge.target_value}
                 onChange={handleChange}
                 placeholder="Target"
@@ -361,7 +361,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   name="is_public"
                   checked={newChallenge.is_public}
                   onChange={(e) =>
-                    setNewChallenge({ ...newChallenge, is_public: e.target_value.checked })
+                    setNewChallenge({ ...newChallenge, is_public: e.target.checked })
                   }
                   id="isPublicCheck"
                 />
