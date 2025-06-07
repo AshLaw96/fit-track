@@ -473,7 +473,7 @@ class ChallengeSerializer(serializers.ModelSerializer):
 class UserChallengeSerializer(serializers.ModelSerializer):
     """
     Serializer for the UserChallenge model.
-    Includes challenge metadata and challenge ID for frontend use.
+    Includes challenge metadata, user's progress, and computed fields.
     """
     title = serializers.CharField(source='challenge.title', read_only=True)
     target = serializers.FloatField(
@@ -481,25 +481,50 @@ class UserChallengeSerializer(serializers.ModelSerializer):
     )
     metric = serializers.CharField(source='challenge.metric', read_only=True)
     user_points = serializers.IntegerField(
-        source='user.points',
-        read_only=True
+        source='user.points', read_only=True
     )
     challenge_id = serializers.IntegerField(
-        source='challenge.id', read_only=True
+        source='challenge.id',
+        read_only=True
     )
-    id = serializers.IntegerField(read_only=True)
+    start_date = serializers.DateField(
+        source='challenge.start_date',
+        read_only=True
+    )
+    end_date = serializers.DateField(
+        source='challenge.end_date',
+        read_only=True
+    )
+    is_active = serializers.SerializerMethodField()
+    joined_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = UserChallenge
         fields = [
-            'id', 'user', 'challenge', 'challenge_id', 'progress', 'completed',
-            'title', 'target', 'metric', 'user_points',
+            'id',
+            'user',
+            'challenge',
+            'challenge_id',
+            'progress',
+            'completed',
+            'joined_at',
+            'title',
+            'target',
+            'metric',
+            'start_date',
+            'end_date',
+            'is_active',
+            'user_points',
         ]
         read_only_fields = ['user']
 
+    def get_is_active(self, obj):
+        today = timezone.now().date()
+        return obj.challenge.start_date <= today <= obj.challenge.end_date
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        print(f"[SERIALIZER DEBUG] {rep}")
+        (f"[SERIALIZER DEBUG] {rep}")
         return rep
 
 

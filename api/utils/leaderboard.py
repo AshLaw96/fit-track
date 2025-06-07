@@ -35,7 +35,8 @@ def check_and_notify_leaderboard_change(challenge_id, user):
                 user,
                 title="Leaderboard Rank Changed 🏆",
                 message=f"You've moved {direction} to #{new_rank}!",
-                type="leaderboard"
+                type="leaderboard",
+                link="/#leaderboard"
             )
 
         user_challenge.last_known_rank = new_rank

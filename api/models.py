@@ -385,6 +385,14 @@ class Challenge(models.Model):
         if self.start_date > self.end_date:
             raise ValidationError("Start date must be before end date.")
 
+    @property
+    def can_be_joined(self):
+        from django.utils.timezone import now
+        return (
+            self.is_public
+            and self.start_date <= now().date() <= self.end_date
+        )
+
     def __str__(self):
         return f"{self.title}"
 
@@ -398,6 +406,7 @@ class UserChallenge(models.Model):
     progress = models.FloatField(default=0.0)
     completed = models.BooleanField(default=False)
     last_known_rank = models.IntegerField(null=True, blank=True)
+    joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [

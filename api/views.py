@@ -649,11 +649,24 @@ class UserChallengeListView(generics.ListCreateAPIView):
             raise
 
     def perform_create(self, serializer):
+        user = self.request.user
+        today = timezone.now().date()
+
+        has_active = UserChallenge.objects.filter(
+            user=user,
+            challenge__start_date__lte=today,
+            challenge__end_date__gte=today
+        ).exists()
+
+        if has_active:
+            raise serializers.ValidationError(
+                "You already have an active challenge."
+            )
+
         try:
-            instance = serializer.save(user=self.request.user)
+            instance = serializer.save(user=user)
             print(
-                f"[DEBUG] Created UserChallenge for user: "
-                f"{self.request.user}, "
+                f"[DEBUG] Created UserChallenge for user: {user}, "
                 f"challenge: {instance.challenge}"
             )
         except IntegrityError as e:
@@ -974,7 +987,8 @@ class DashboardView(APIView):
                         2
                     )
                     if uc.challenge.target_value else 0.0
-                )
+                ),
+                "motivation": uc.motivation,
             }
             for uc in user_challenges
         ]
