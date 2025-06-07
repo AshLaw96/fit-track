@@ -40,8 +40,6 @@ const ContactSupport = () => {
     setSubmitted(true);
 
     setTimeout(() => {
-      console.log("Message submitted:", form);
-      // Optionally reset form or send to backend here
     }, 500);
   };
 

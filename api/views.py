@@ -234,12 +234,6 @@ class MealListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         meal = serializer.save(user=self.request.user)
 
-        print(
-            f"[DEBUG] Meal Created: {meal}, "
-            f"Type: {meal.meal_type}, "
-            f"Water: {meal.water_amount}"
-        )
-
         # Automatically update DailyLog water intake if it's a drink
         if meal.meal_type == "drink" and getattr(meal, "water_amount", 0):
             from datetime import date
@@ -251,11 +245,6 @@ class MealListCreateView(generics.ListCreateAPIView):
                 (daily_log.water_intake_l or 0) + meal.water_amount
             )
             daily_log.save()
-
-            print(
-                f"[DEBUG] Updated DailyLog water_intake_l to "
-                f"{daily_log.water_intake_l}"
-            )
 
 
 class MealDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -828,11 +817,9 @@ class RepeatWorkoutPlanView(APIView):
 
     def post(self, request, pk):
         user = request.user
-        print(f"[DEBUG] User {user.id} requested repeat workout plan id={pk}")
         try:
             plan = WorkoutPlan.objects.get(id=pk, user=user)
         except WorkoutPlan.DoesNotExist:
-            print("[DEBUG] Workout plan not found for user.")
             return Response({"detail": "Workout plan not found."}, status=404)
 
         # Duplicate the plan

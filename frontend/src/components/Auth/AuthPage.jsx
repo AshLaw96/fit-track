@@ -20,7 +20,7 @@ const AuthPage = () => {
        
         {isLogin ? (
           <>
-            <LoginForm onSuccess={() => console.log("Logged in")} />
+            <LoginForm />
             <p className="mt-3 text-center">
               Don't have an account?{" "}
               <button className="btn btn-link p-0 fw-bold" onClick={() => setIsLogin(false)}>

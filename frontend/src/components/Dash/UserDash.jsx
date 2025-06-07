@@ -6,7 +6,6 @@ import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
 import { useLocation } from "react-router-dom";
-import NotificationTester from "../NotifcationTester";
 
 const UserDash = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -111,10 +110,6 @@ const UserDash = () => {
       <div className="col-12">
         <ChallengesMotivation data={dashboardData.challenges} />
       </div>
-    </div>
-    <div className="mt-5">
-      <h3 className="text-center mb-4">Notification Tester</h3>
-      <NotificationTester />
     </div>
   </div>
 );
