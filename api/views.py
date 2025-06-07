@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import F
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
@@ -694,14 +693,13 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_update(self, serializer):
         instance = serializer.save()
 
-        if instance.progress >= instance.target and not instance.completed:
+        if (
+            instance.progress >= instance.target_value
+            and not instance.completed
+        ):
             instance.completed = True
-            instance.save(update_fields=["completed"])
-
-            User = get_user_model()
-            User.objects.filter(id=instance.user.id).update(
-                points=F('points') + 1
-            )
+            instance.points = instance.target_value
+            instance.save(update_fields=["completed", "points"])
 
         try:
             check_and_notify_leaderboard_change(
@@ -709,11 +707,9 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
                 self.request.user
             )
         except Exception as e:
-            # Log the error to help debug
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Error in leaderboard check: {e}", exc_info=True)
-            # Optionally, re-raise or ignore depending on your needs
 
 
 class IncrementProgressView(APIView):

@@ -59,7 +59,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
       const available = availableRes.data || [];
       const joined = Array.isArray(joinedRes.data) ? joinedRes.data : [];
-      const joinedIds = joined.map((uc) => uc.challenge);
+      const joinedIds = joined.map((uc) => uc.challenge_id || uc.challenge);
 
       let leaderboard = [];
       if (active.length > 0) {
@@ -73,6 +73,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       }
 
       setChallengeData({ active, available, leaderboard });
+      console.log(availableRes.data)
       setJoinedChallengeIds(joinedIds);
     } catch (err) {
       console.error("Error fetching challenges:", err);
@@ -234,7 +235,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <ul className="mt-2">
                 {leaderboard.map((entry, i) => (
                   <li key={i}>
-                    {i + 1}. {entry.user} - {(entry.progress / entry.target_value * 100).toFixed(1)}%
+                    {i + 1}. {entry.user} - {entry.points} points
                   </li>
                 ))}
               </ul>

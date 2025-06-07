@@ -7,7 +7,7 @@ def check_and_notify_leaderboard_change(challenge_id, user):
     leaderboard = list(
         UserChallenge.objects
         .filter(challenge__id=challenge_id)
-        .order_by("-progress")
+        .order_by("-points")
         .values_list("user_id", flat=True)
     )
 

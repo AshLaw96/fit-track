@@ -497,6 +497,9 @@ class UserChallengeSerializer(serializers.ModelSerializer):
     )
     is_active = serializers.SerializerMethodField()
     joined_at = serializers.DateTimeField(read_only=True)
+    challenge = serializers.PrimaryKeyRelatedField(
+        queryset=Challenge.objects.all(), write_only=True
+    )
 
     class Meta:
         model = UserChallenge
@@ -526,6 +529,11 @@ class UserChallengeSerializer(serializers.ModelSerializer):
         rep = super().to_representation(instance)
         (f"[SERIALIZER DEBUG] {rep}")
         return rep
+
+
+class LeaderboardEntrySerializer(serializers.Serializer):
+    user = serializers.CharField(source='user.username')
+    points = serializers.IntegerField(source='user.points')
 
 
 class UserReportSerializer(serializers.ModelSerializer):
