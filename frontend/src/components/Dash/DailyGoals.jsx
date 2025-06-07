@@ -3,6 +3,12 @@ import api from "../../utils/api";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const goalTypes = [
+  "sleep", "sleep_quality", "diet", "diet_variety", "calories", "protein",
+  "carbs", "fats", "fitness", "distance", "workouts", "meditation",
+  "hydration", "heart_rate", "mood", "screen_time", "reading"
+];
+
 const DailyGoals = () => {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState({ goal_type: "", target_value: "" });
@@ -16,11 +22,7 @@ const DailyGoals = () => {
   const fetchGoals = async () => {
     try {
       const res = await api.get("/goals/");
-
-      const goalData = Array.isArray(res.data.results)
-        ? res.data.results
-        : [];
-
+      const goalData = Array.isArray(res.data.results) ? res.data.results : [];
       setGoals(goalData);
     } catch (err) {
       console.error("Failed to fetch goals:", err);
@@ -30,48 +32,27 @@ const DailyGoals = () => {
   };
 
   const getUnit = (type) => {
-  switch (type) {
-    case "sleep":
-      return "hrs slept";
-    case "sleep_quality":
-      // e.g., out of 100
-      return "sleep score";
-    case "diet":
-      return "cups water";
-    case "diet_variety":
-      // tracking 3 main meals
-      return "meals logged";
-    case "calories":
-      return "kcal";
-    case "protein":
-      return "grams protein";
-    case "carbs":
-      return "grams carbs";
-    case "fats":
-      return "grams fat";
-    case "fitness":
-      return "steps";
-    case "distance":
-      return "km run";
-    case "workouts":
-      return "sessions";
-    case "meditation":
-      return "mins meditated";
-    case "hydration":
-      return "litres";
-    case "heart_rate":
-      return "bpm avg";
-    case "mood":
-      // e.g., out of 10
-      return "mood rating";
-    case "screen_time":
-      return "hrs";
-    case "reading":
-      return "pages read";
-    default:
-      return "units";
-  }
-};
+    switch (type) {
+      case "sleep": return "hrs slept";
+      case "sleep_quality": return "sleep score";
+      case "diet": return "cups water";
+      case "diet_variety": return "meals logged";
+      case "calories": return "kcal";
+      case "protein": return "grams protein";
+      case "carbs": return "grams carbs";
+      case "fats": return "grams fat";
+      case "fitness": return "steps";
+      case "distance": return "km run";
+      case "workouts": return "sessions";
+      case "meditation": return "mins meditated";
+      case "hydration": return "litres";
+      case "heart_rate": return "bpm avg";
+      case "mood": return "mood rating";
+      case "screen_time": return "hrs";
+      case "reading": return "pages read";
+      default: return "units";
+    }
+  };
 
   const handleAddGoal = async (e) => {
     e.preventDefault();
@@ -83,7 +64,7 @@ const DailyGoals = () => {
       toast.success("Goal added!");
       setNewGoal({ goal_type: "", target_value: "" });
       fetchGoals();
-    } catch (err) {
+    } catch {
       toast.error("Error adding goal.");
     }
   };
@@ -130,17 +111,16 @@ const DailyGoals = () => {
   };
 
   return (
-  <div className="container mt-4">
-    <div className="card shadow-sm">
-      <div className="card-body">
-        <h4 className="card-title mb-3">Daily Goals</h4>
+    <div className="container mt-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h4 className="card-title mb-3">Daily Goals</h4>
 
-        {Array.isArray(goals) && goals.length === 0 && (
-          <p>No goals yet. Add one below.</p>
-        )}
+          {Array.isArray(goals) && goals.length === 0 && (
+            <p>No goals yet. Add one below.</p>
+          )}
 
-        {Array.isArray(goals) &&
-          goals.filter((goal) => goal.status !== "achieved").map((goal) => {
+          {goals.filter((goal) => goal.status !== "achieved").map((goal) => {
             const percent = Math.min(
               (goal.current_value / goal.target_value) * 100,
               100
@@ -166,11 +146,15 @@ const DailyGoals = () => {
                         }
                       >
                         <option value="">Choose goal type</option>
-                        {/* ...options here... */}
+                        {goalTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type.replace("_", " ").toUpperCase()}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div className="col-12 col-md-4">
-                      <div className="input-group flex-wrap">
+                      <div className="input-group">
                         <input
                           type="number"
                           min="1"
@@ -244,26 +228,31 @@ const DailyGoals = () => {
                       </div>
                     </div>
 
-                    <div className="input-group input-group-sm flex-column flex-md-row">
-                      <input
-                        type="number"
-                        min="1"
-                        className="form-control"
-                        value={progressUpdates[goal.id] || ""}
-                        placeholder={`Add progress (${getUnit(goal.goal_type)})`}
-                        onChange={(e) =>
-                          setProgressUpdates({
-                            ...progressUpdates,
-                            [goal.id]: e.target.value,
-                          })
-                        }
-                      />
-                      <button
-                        className="btn btn-outline-success mt-2 mt-md-0"
-                        onClick={() => handleProgressSubmit(goal.id)}
-                      >
-                        Add
-                      </button>
+                    {/* FIXED INPUT AREA FOR MOBILE */}
+                    <div className="row g-2 align-items-center mt-2">
+                      <div className="col-12 col-md-8">
+                        <input
+                          type="number"
+                          min="1"
+                          className="form-control"
+                          value={progressUpdates[goal.id] || ""}
+                          placeholder={`Add progress (${getUnit(goal.goal_type)})`}
+                          onChange={(e) =>
+                            setProgressUpdates({
+                              ...progressUpdates,
+                              [goal.id]: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="col-12 col-md-4">
+                        <button
+                          className="btn btn-outline-success w-100"
+                          onClick={() => handleProgressSubmit(goal.id)}
+                        >
+                          Add
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}
@@ -271,55 +260,58 @@ const DailyGoals = () => {
             );
           })}
 
-        {/* Add New Goal Form */}
-        <form onSubmit={handleAddGoal} className="mt-4 pt-3 border-top">
-          <h5>Add New Goal</h5>
-          <div className="row g-2 align-items-center">
-            <div className="col-12 col-md-5">
-              <select
-                required
-                className="form-select"
-                value={newGoal.goal_type}
-                onChange={(e) =>
-                  setNewGoal({ ...newGoal, goal_type: e.target.value })
-                }
-              >
-                <option value="">Choose goal type</option>
-                {/* ...options here... */}
-              </select>
-            </div>
-
-            <div className="col-12 col-md-5">
-              <div className="input-group flex-wrap">
-                <input
+          {/* Add New Goal Form */}
+          <form onSubmit={handleAddGoal} className="mt-4 pt-3 border-top">
+            <h5>Add New Goal</h5>
+            <div className="row g-2 align-items-center">
+              <div className="col-12 col-md-5">
+                <select
                   required
-                  type="number"
-                  className="form-control"
-                  min="1"
-                  placeholder={`Target (${getUnit(newGoal.goal_type)})`}
-                  value={newGoal.target_value}
+                  className="form-select"
+                  value={newGoal.goal_type}
                   onChange={(e) =>
-                    setNewGoal({ ...newGoal, target_value: e.target.value })
+                    setNewGoal({ ...newGoal, goal_type: e.target.value })
                   }
-                />
-                <span className="input-group-text">
-                  {getUnit(newGoal.goal_type)}
-                </span>
+                >
+                  <option value="">Choose goal type</option>
+                  {goalTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type.replace("_", " ").toUpperCase()}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-12 col-md-5">
+                <div className="input-group">
+                  <input
+                    required
+                    type="number"
+                    className="form-control"
+                    min="1"
+                    placeholder={`Target (${getUnit(newGoal.goal_type)})`}
+                    value={newGoal.target_value}
+                    onChange={(e) =>
+                      setNewGoal({ ...newGoal, target_value: e.target.value })
+                    }
+                  />
+                  <span className="input-group-text">
+                    {getUnit(newGoal.goal_type)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="col-12 col-md-2">
+                <button type="submit" className="btn btn-primary w-100">
+                  Add Goal
+                </button>
               </div>
             </div>
-
-            <div className="col-12 col-md-2">
-              <button type="submit" className="btn btn-primary w-100">
-                Add Goal
-              </button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-);
-
-}
+  );
+};
 
 export default DailyGoals;
