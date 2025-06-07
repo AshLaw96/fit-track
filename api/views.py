@@ -38,7 +38,6 @@ from .serializers import (
     NotificationSerializer, UserPreferenceSerializer
 )
 from .utils.activity import calculate_user_streak
-from .utils.notifications import send_notification
 from .utils.leaderboard import check_and_notify_leaderboard_change
 from .utils.sleep import update_daily_sleep_log
 from .utils.fitness import estimate_steps_from_exercise
@@ -404,7 +403,11 @@ class AchievementDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Achievement.objects.none()
 
     def get_queryset(self):
-        return Achievement.objects.filter(user=self.request.user)
+        return (
+            Achievement.objects
+            .filter(user=self.request.user)
+            .order_by('-date_earned')
+        )
 
 
 # --- User activity streak View ---
@@ -440,29 +443,7 @@ class GoalProgressListCreateView(generics.ListCreateAPIView):
         return GoalProgress.objects.filter(goal__user=self.request.user)
 
     def perform_create(self, serializer):
-        progress = serializer.save()
-        goal = progress.goal
-
-        # Recalculate total progress
-        total_progress = sum(
-            entry.progress_value for entry in goal.progress_entries.all()
-        )
-        goal.current_value = total_progress
-
-        # If not already achieved and now meets/exceeds target
-        if goal.status != 'achieved' and total_progress >= goal.target_value:
-            goal.status = 'achieved'
-            goal.save()
-
-            send_notification(
-                user=goal.user,
-                title="Daily Goal Achieved 🎯",
-                message="You've completed today's goal!",
-                type="goal",
-                link="profile/#achievements"
-            )
-        else:
-            goal.save()
+        serializer.save()
 
 
 # Retrieve, update or delete a specific progress entry

@@ -276,19 +276,37 @@ class GoalProgressSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        # Remove goal_id from validated_data
         validated_data.pop('goal_id', None)
         instance = super().create(validated_data)
 
-        # Re-check and save goal status
         goal = instance.goal
-        goal.current_value += instance.progress_value
-        goal.save()
+        user = goal.user
 
-        if goal.status == "achieved":
-            check_and_award_achievement(
-                goal.user, goal
+        # Recalculate total progress
+        total_progress = sum(
+            entry.progress_value
+            for entry in goal.progress_entries.all()
+        )
+        goal.current_value = total_progress
+
+        # Check if goal is achieved
+        if goal.status != "achieved" and total_progress >= goal.target_value:
+            goal.status = "achieved"
+            goal.save()
+
+            # Send notification
+            send_notification(
+                user=user,
+                title="Daily Goal Achieved 🎯",
+                message="You've completed today's goal!",
+                type="goal",
+                link="/profile/#achievements"
             )
+
+            # Award achievement
+            check_and_award_achievement(user, goal)
+        else:
+            goal.save()
 
         return instance
 

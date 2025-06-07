@@ -2,7 +2,7 @@ from ..models import Notification
 from django.utils import timezone
 
 
-def send_notification(user, title, message, type="general"):
+def send_notification(user, title, message, type="general", link=None):
     """
     Creates and optionally dispatches a notification to a user.
 
@@ -18,7 +18,7 @@ def send_notification(user, title, message, type="general"):
         title=title,
         message=message,
         type=type,
-        link=None,
+        link=link,
         read=False,
         timestamp=timezone.now()
     )
