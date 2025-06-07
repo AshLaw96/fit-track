@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import api from "../utils/api";
+import { useAuth } from "./AuthContext";
 
 const NotificationContext = createContext();
 
@@ -8,6 +9,7 @@ export const useNotifications = () => useContext(NotificationContext);
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [showBell, setShowBell] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   // Track allowNotifications preference (default true)
   const [allowNotifications, setAllowNotificationsState] = useState(() => {
@@ -51,7 +53,7 @@ export const NotificationProvider = ({ children }) => {
 
   // Fetch notifications from API
   const fetchNotifications = useCallback(async () => {
-    if (!allowNotifications) return; // Skip fetching if not allowed
+    if (!allowNotifications || !isAuthenticated) return; // Skip fetching if not allowed
 
     try {
       const response = await api.get("/notifications/");
@@ -67,16 +69,16 @@ export const NotificationProvider = ({ children }) => {
     } catch (err) {
       console.error("[fetchNotifications] Error fetching notifications", err);
     }
-  }, [addNotification, allowNotifications]);
+  }, [addNotification, allowNotifications, isAuthenticated]);
 
   // Auto-fetch notifications if allowed on mount & every 60 seconds
   useEffect(() => {
-    if (!allowNotifications) return;
+    if (!allowNotifications || !isAuthenticated) return;
 
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
-  }, [fetchNotifications, allowNotifications]);
+  }, [fetchNotifications, allowNotifications, isAuthenticated]);
 
   return (
     <NotificationContext.Provider
