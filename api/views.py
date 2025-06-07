@@ -992,7 +992,6 @@ class DashboardView(APIView):
                     )
                     if uc.challenge.target_value else 0.0
                 ),
-                "motivation": uc.motivation,
             }
             for uc in user_challenges
         ]
