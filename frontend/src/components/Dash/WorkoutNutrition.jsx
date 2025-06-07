@@ -65,11 +65,6 @@ const WorkoutNutrition = ({ data, refreshDashboardData }) => {
     setPlanId(data?.workout_plan_id || null); // ✅ Always sync plan ID with incoming data
   }, [data]);
 
-  // ✅ Debug log
-  useEffect(() => {
-    console.log("Workout Plan ID updated:", planId);
-  }, [planId]);
-
   const openModal = (index) => {
     setActiveDayIndex(index);
     setModalSessions(weeklyWorkouts[index]?.sessions || []);
@@ -131,7 +126,6 @@ const WorkoutNutrition = ({ data, refreshDashboardData }) => {
     }
 
     try {
-      console.log("Repeating plan with ID:", planId);
       await api.post(`/workout_plans/${planId}/repeat_next_week/`);
       toast.success("Workout plan repeated for next week!");
       setIsRepeating(true);

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNotifications } from "../contexts/NotificationContext";
-import { triggerNotification } from "../utils/triggerNotification";
+import { triggerNotification } from "../utils/NotificationTriggers";
 
 const NotificationTester = () => {
   const { addNotification } = useNotifications();

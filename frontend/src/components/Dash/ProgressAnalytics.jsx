@@ -25,9 +25,6 @@ const ProgressAnalytics = ({ data }) => {
   } = {},
   } = data;
 
-  // 🔍 DEBUG: Log data passed into charts
-  console.log("Full analytics data:", data);
-
   const chartData = (label, values, color) => ({
     labels: dates,
     datasets: [

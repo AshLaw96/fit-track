@@ -1,4 +1,5 @@
 export const triggerNotification = (addNotification, type, data = {}) => {
+  console.log("Trigger fired:", type);
   const generateId = () =>
     `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
