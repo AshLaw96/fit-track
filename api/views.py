@@ -564,6 +564,10 @@ class ChallengeListView(generics.ListCreateAPIView):
         # Automatically join the user to the created challenge
         UserChallenge.objects.create(user=user, challenge=challenge)
 
+    def post(self, request, *args, **kwargs):
+        print("DEBUG - Challenge POST data:", request.data)
+        return super().post(request, *args, **kwargs)
+
 
 class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
     """

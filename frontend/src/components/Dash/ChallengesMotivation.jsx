@@ -353,9 +353,15 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   Public Challenge
                 </label>
               </div>
-              <button type="submit" className="btn btn-primary">
-                Create Challenge
-              </button>
+              {active.length > 0 ? (
+                <div className="alert alert-warning">
+                  You already have an active challenge. Complete it before creating a new one.
+                </div>
+              ) : (
+                <button type="submit" className="btn btn-primary">
+                  Create Challenge
+                </button>
+              )}
             </form>
           </div>
         </>
