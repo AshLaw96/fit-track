@@ -35,7 +35,8 @@ def send_daily_motivation(sender, user, request, **kwargs):
         user=user,
         title="New Day, New Energy 💪",
         message="Make today count. You're stronger than you think.",
-        type="reminder"
+        type="reminder",
+        link="/"
     )
 
 

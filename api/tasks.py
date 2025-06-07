@@ -2,8 +2,11 @@ from celery import shared_task
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.utils.timezone import now
+import logging
 from .models import SleepSchedule, UserChallenge, Goal, WorkoutPlan
 from .utils.notifications import send_notification
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -22,11 +25,16 @@ def check_and_send_sleep_alarms():
             schedule.target_bedtime and
             now <= schedule.target_bedtime <= upcoming_window
         ):
+            logger.info(
+                f"Sending sleep reminder to {schedule.user.username} "
+                f"for bedtime at {schedule.target_bedtime}"
+            )
             send_notification(
                 user=schedule.user,
                 title="Bedtime Soon",
                 message="Your scheduled bedtime is coming up in 30 minutes.",
-                type="sleep_reminder"
+                type="sleep_reminder",
+                link="/sleep/#alarm-setting"
             )
 
 
@@ -55,7 +63,13 @@ def check_and_send_challenge_deadlines():
         else:
             continue
 
-        send_notification(uc.user, title, msg, type="challenge_deadline")
+        send_notification(
+            uc.user,
+            title,
+            msg,
+            type="challenge_deadline",
+            link="/#challenges"
+        )
 
 
 @shared_task

@@ -11,12 +11,14 @@ def send_notification(user, title, message, type="general"):
         title (str): Notification title.
         message (str): Notification body content.
         type (str): Optional tag/type, e.g. 'sleep_reminder', 'goal_achieved'.
+        link: e.g. '/profile/#achievements'.
     """
     notification = Notification.objects.create(
         user=user,
         title=title,
         message=message,
         type=type,
+        link=None,
         read=False,
         timestamp=timezone.now()
     )

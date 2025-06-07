@@ -483,9 +483,11 @@ class Notification(models.Model):
     message = models.TextField()
     type = models.CharField(max_length=50, default="general")
     read = models.BooleanField(default=False)
-    link = models.URLField(
-        null=True, blank=True,
-        help_text="Optional link for more details."
+    link = models.CharField(
+        max_length=300,
+        null=True,
+        blank=True,
+        help_text="Optional internal link or anchor path."
     )
     timestamp = models.DateTimeField(auto_now_add=True)
 

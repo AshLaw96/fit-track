@@ -458,7 +458,8 @@ class GoalProgressListCreateView(generics.ListCreateAPIView):
                 user=goal.user,
                 title="Daily Goal Achieved 🎯",
                 message="You've completed today's goal!",
-                type="goal"
+                type="goal",
+                link="profile/#achievements"
             )
         else:
             goal.save()
