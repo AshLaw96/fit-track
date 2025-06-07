@@ -38,8 +38,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         .map((uc) => {
           const endDate = uc.end_date ? new Date(uc.end_date) : null;
           const completed = uc.completed || uc.progress >= (uc.target_value || 1);
-          const failed =
-            !completed && endDate && today > endDate;
+          const failed = !completed && endDate && today > endDate;
 
           return {
             id: uc.id,
@@ -55,7 +54,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             failed,
           };
         })
-        // Hide completed or failed
         .filter((c) => !c.completed && !c.failed);
 
       const available = availableRes.data || [];
@@ -104,7 +102,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     };
 
     try {
-      console.log("🔍 challengePayload:", challengePayload);
       await api.post("/challenges/", challengePayload);
 
       toast.success("🎉 Challenge created and joined!");
@@ -122,7 +119,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       fetchChallengeData();
     } catch (error) {
       toast.error("❌ Failed to create challenge.");
-      console.error("Challenge creation error:", error.response?.data || error.message);
       const errMsg =
         error.response?.data?.[Object.keys(error.response.data)[0]]?.[0] ||
         "Failed to create challenge. Check your inputs.";
@@ -137,7 +133,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       if (typeof refreshData === "function") refreshData();
       fetchChallengeData();
     } catch (err) {
-      console.error(err);
       const msg =
         err.response?.data?.non_field_errors?.[0] ||
         err.response?.data?.detail ||
@@ -155,10 +150,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     try {
       await api.post(`/user_challenges/${challenge.id}/increment_progress/`);
       toast.success(`Progress added to "${challenge.title}"!`);
-      // refetch after update
       fetchChallengeData();
     } catch (error) {
-      console.error("❌ Error adding progress:", error);
       toast.error("Failed to add progress");
     }
   };
@@ -186,57 +179,39 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             </strong>
             {active.length > 0 ? (
               active.map((c) => (
-                <div key={c.id || `active-challenge-${c.title}-${Math.random()}`} className="mb-3">
-                  {/* Clickable title to toggle details */}
+                <div key={c.id} className="mb-3">
                   <p
                     className="fw-semibold cursor-pointer"
                     onClick={() => toggleExpand(c.id)}
                     style={{ userSelect: "none" }}
-                    title="Click to view details"
                   >
                     {c.title}
                   </p>
-
-                  {/* Expanded details shown only if this challenge is expanded */}
                   {expandedChallengeId === c.id && (
                     <div className="bg-light p-2 rounded border mb-2">
-                      <p><strong>Description:</strong> {c.description || "No description provided."}</p>
-                      <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
+                      <p><strong>Description:</strong> {c.description || "No description."}</p>
+                      <p><strong>Metric:</strong> {c.metric}</p>
                       <p><strong>Target:</strong> {c.target_value}</p>
-                      <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
-                      <p><strong>End:</strong> {c.end_date || "N/A"}</p>
+                      <p><strong>Start:</strong> {c.start_date}</p>
+                      <p><strong>End:</strong> {c.end_date}</p>
                     </div>
                   )}
-
-                  {/* Progress bar */}
                   <div className="progress">
                     <div
                       className="progress-bar"
                       role="progressbar"
-                      style={{ width: c.target_value ? `${(c.progress / c.target_value) * 100}%` : "0%" }}
+                      style={{ width: `${(c.progress / c.target_value) * 100}%` }}
                     >
-                      {c.target_value ? ((c.progress / c.target_value) * 100).toFixed(1) : "0"}%
+                      {((c.progress / c.target_value) * 100).toFixed(1)}%
                     </div>
                   </div>
-                  <p>
-                    {c.progress} / {c.target_value}
-                  </p>
-
-                  {/* Add progress button or completion message */}
-                  {!c.completed && (
-                    <button
-                      className="btn btn-sm btn-success mt-2"
-                      onClick={() => handleAddProgress(c)}
-                    >
-                      + Add Progress
-                    </button>
-                  )}
-                  {c.completed && (
-                    <div className="text-success mt-2">✅ Challenge Completed! +1 point</div>
-                  )}
-                  {c.failed && (
-                    <div className="text-danger mt-2">❌ Challenge Failed (End Date Passed)</div>
-                  )}
+                  <p>{c.progress} / {c.target_value}</p>
+                  <button
+                    className="btn btn-sm btn-success mt-2"
+                    onClick={() => handleAddProgress(c)}
+                  >
+                    + Add Progress
+                  </button>
                 </div>
               ))
             ) : (
@@ -252,12 +227,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {leaderboard.length > 0 ? (
               <ul className="mt-2">
                 {leaderboard.map((entry, i) => (
-                  <li key={entry.user || i}>
-                    {i + 1}. {entry.user} -{" "}
-                    {entry.target_value
-                      ? ((entry.progress / entry.target_value) * 100).toFixed(1)
-                      : "0"}
-                    %
+                  <li key={i}>
+                    {i + 1}. {entry.user} - {(entry.progress / entry.target_value * 100).toFixed(1)}%
                   </li>
                 ))}
               </ul>
@@ -274,32 +245,23 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             {available.length > 0 ? (
               <ul className="mt-2 list-unstyled">
                 {available.map((c) => (
-                  <li
-                    key={c.id || `available-challenge-${c.title}-${Math.random()}`}
-                    className="mb-3 border rounded p-2 bg-light"
-                  >
-                    {/* Title toggle */}
+                  <li key={c.id} className="mb-3 border rounded p-2 bg-light">
                     <p
                       className="fw-semibold cursor-pointer mb-1"
                       onClick={() => toggleExpand(c.id)}
                       style={{ userSelect: "none" }}
-                      title="Click to view details"
                     >
                       {c.title}
                     </p>
-
-                    {/* Expanded view */}
                     {expandedChallengeId === c.id && (
                       <div className="mb-2">
-                        <p><strong>Description:</strong> {c.description || "No description provided."}</p>
-                        <p><strong>Metric:</strong> {c.metric || "N/A"}</p>
-                        <p><strong>Target:</strong> {c.target_value || "N/A"}</p>
-                        <p><strong>Start:</strong> {c.start_date || "N/A"}</p>
-                        <p><strong>End:</strong> {c.end_date || "N/A"}</p>
+                        <p><strong>Description:</strong> {c.description}</p>
+                        <p><strong>Metric:</strong> {c.metric}</p>
+                        <p><strong>Target:</strong> {c.target_value}</p>
+                        <p><strong>Start:</strong> {c.start_date}</p>
+                        <p><strong>End:</strong> {c.end_date}</p>
                       </div>
                     )}
-
-                    {/* Join button */}
                     <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handleJoin(c.id)}
