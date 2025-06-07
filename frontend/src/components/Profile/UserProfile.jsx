@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../../utils/api";
 import ProfileImage from "./ProfileImage";
 import ProfileForm from "./ProfileForm";
@@ -8,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const UserProfile = () => {
+  const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -72,6 +74,24 @@ const UserProfile = () => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
+
+  // Scroll into view logic on hash change
+  useEffect(() => {
+    // wait until profile loaded
+    if (loading) return;
+    if (!profile) return;
+
+    const hash = location.hash ? location.hash.replace("#", "") : null;
+    if (hash) {
+      // Delay slightly to ensure DOM is ready (adjust timing if needed)
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
+    }
+  }, [location.hash, loading, profile]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

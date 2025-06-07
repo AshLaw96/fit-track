@@ -43,7 +43,7 @@ const AlarmSetting = ({ alarm, setAlarm }) => {
   };
 
   return (
-    <div className="card p-3 shadow-sm mt-3">
+    <div className="card p-3 shadow-sm mt-3" id="alarm-setting">
       <h5 className="mb-3">Set Alarms</h5>
 
       <label htmlFor="sleepAlarm" className="form-label">

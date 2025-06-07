@@ -73,7 +73,7 @@ const QuickStats = ({ achievements }) => {
       <h5 className="custom-heading text-center mb-3">Quick Stats</h5>
 
       {/* Active Days */}
-      <div className="text-center mb-3">
+      <div className="text-center mb-3" id="active-days">
         <p className="text-muted small mb-1">Active Days</p>
         <h3 className="fw-bold text-primary">{activeCount}</h3>
       </div>
@@ -99,7 +99,7 @@ const QuickStats = ({ achievements }) => {
       )}
 
       {/* Achievements */}
-      <div className="mt-4">
+      <div className="mt-4" id="achievements">
         <h6 className="text-center fw-bold">Achievements</h6>
         <div className="d-flex justify-content-around mt-2">
           {["Sleep", "Diet", "Fitness"].map((label) => (

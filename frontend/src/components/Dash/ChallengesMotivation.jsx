@@ -180,7 +180,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       ) : (
         <>
           {/* Active Challenge */}
-          <div className="mb-4">
+          <div className="mb-4" id="active-challenge">
             <strong className="flex items-center gap-2">
               <TrendingUp className="text-primary" size={18} /> Active Challenge:
             </strong>
@@ -245,7 +245,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
           </div>
 
           {/* Leaderboard */}
-          <div className="mb-4">
+          <div className="mb-4" id="leaderboard">
             <strong className="flex items-center gap-2">
               <Users className="text-success" size={18} /> Leaderboard:
             </strong>

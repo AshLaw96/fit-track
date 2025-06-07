@@ -5,6 +5,7 @@ import WorkoutNutrition from "./WorkoutNutrition";
 import DailyGoals from "./DailyGoals";
 import ProgressAnalytics from "./ProgressAnalytics";
 import ChallengesMotivation from "./ChallengesMotivation";
+import { useLocation } from "react-router-dom";
 
 const UserDash = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -43,6 +44,21 @@ const UserDash = () => {
     fetchLogs();
     fetchDashboardData();
   }, [fetchLogs, fetchDashboardData]);
+
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      // Wait until DOM has rendered
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+        // small delay ensures DOM is ready
+      }, 0);
+    }
+  }, [hash]);
 
   if (
     !dashboardData ||

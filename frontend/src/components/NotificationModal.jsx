@@ -1,7 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/NotificationModal.css";
 
 const NotificationModal = ({ notifications, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleLinkClick = (link) => {
+    // Close the modal first
+    onClose();
+    setTimeout(() => {
+      // Navigate to the base path (e.g. "/")
+      navigate(link.split("#")[0]);
+      const anchor = link.split("#")[1];
+      if (anchor) {
+        setTimeout(() => {
+          const el = document.getElementById(anchor);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          }
+          // Delay to allow route/page to update
+        }, 300);
+      }
+      // Delay after closing modal
+    }, 100);
+  };
+
   return (
     <div className="notification-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="modal-header">
@@ -17,9 +40,13 @@ const NotificationModal = ({ notifications, onClose }) => {
               <h4>{note.title}</h4>
               <p>{note.description}</p>
               {note.link && (
-                <a href={note.link} target="_blank" rel="noopener noreferrer">
+                <button
+                  onClick={() => handleLinkClick(note.link)}
+                  className="notification-link btn btn-link p-0"
+                  style={{ cursor: "pointer" }}
+                >
                   View Details →
-                </a>
+                </button>
               )}
             </div>
           ))

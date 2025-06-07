@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import {
   getSleepLogs,
   createSleepLog,
@@ -23,6 +24,7 @@ const defaultFormData = {
 };
 
 const SleepLogPage = ({ onDataChanged }) => {
+  const { hash } = useLocation();
   const [logs, setLogs] = useState([]);
   const [formData, setFormData] = useState(defaultFormData);
   const [editingId, setEditingId] = useState(null);
@@ -184,6 +186,17 @@ const SleepLogPage = ({ onDataChanged }) => {
     Swal.fire("Error", "Failed to delete the sleep log.", "error");
   }
 };
+
+  useEffect(() => {
+    if (hash) {
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 0);
+    }
+  }, [hash]);
 
   const handleCloseModal = () => {
     setFormData(defaultFormData);
