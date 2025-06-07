@@ -9,6 +9,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     available: [],
     leaderboard: [],
   });
+  const [joiningIds, setJoiningIds] = useState([]);
   const [joinedChallengeIds, setJoinedChallengeIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedChallengeId, setExpandedChallengeId] = useState(null);
@@ -127,8 +128,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   };
 
   const handleJoin = async (challengeId) => {
+    setJoiningIds((prev) => [...prev, challengeId]);
     try {
-      await api.post("/challenges/public/", { challenge_id: challengeId });
+      await api.post("/user_challenges/", { challenge: challengeId });
+
       toast.success("🎉 Joined challenge!");
       if (typeof refreshData === "function") refreshData();
       fetchChallengeData();
@@ -136,8 +139,11 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       const msg =
         err.response?.data?.non_field_errors?.[0] ||
         err.response?.data?.detail ||
+        err.response?.data?.challenge?.[0] ||
         "Error joining challenge.";
       toast.error(`❌ ${msg}`);
+    } finally {
+      setJoiningIds((prev) => prev.filter((id) => id !== challengeId));
     }
   };
 
@@ -265,12 +271,18 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     <button
                       className="btn btn-sm btn-outline-primary"
                       onClick={() => handleJoin(c.id)}
-                      disabled={joinedChallengeIds.includes(c.id) || active.length > 0}
+                      disabled={
+                        joinedChallengeIds.includes(c.id) ||
+                        active.length > 0 ||
+                        joiningIds.includes(c.id)
+                      }
                     >
                       {joinedChallengeIds.includes(c.id)
                         ? "Already Joined"
                         : active.length > 0
                         ? "Only 1 Active Allowed"
+                        : joiningIds.includes(c.id)
+                        ? "Joining..."
                         : "Join"}
                     </button>
                   </li>
