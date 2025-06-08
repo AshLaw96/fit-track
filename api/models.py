@@ -15,7 +15,6 @@ class CustomUser(AbstractUser):
     height_cm = models.FloatField(null=True, blank=True)
     weight_kg = models.FloatField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True)
-    points = models.PositiveIntegerField(default=0)
     prefers_dark_mode = models.BooleanField(default=False)
     unit_preferences = models.JSONField(
         default=dict,
@@ -415,8 +414,6 @@ class UserChallenge(models.Model):
 
         if self.progress >= self.challenge.target_value:
             self.completed = True
-            self.user.points += 1
-            self.user.save(update_fields=["points"])
 
         self.save()
 

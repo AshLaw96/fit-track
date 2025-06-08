@@ -480,9 +480,6 @@ class UserChallengeSerializer(serializers.ModelSerializer):
         source='challenge.target_value', read_only=True
     )
     metric = serializers.CharField(source='challenge.metric', read_only=True)
-    user_points = serializers.IntegerField(
-        source='user.points', read_only=True
-    )
     challenge_id = serializers.IntegerField(
         source='challenge.id',
         read_only=True
@@ -519,7 +516,6 @@ class UserChallengeSerializer(serializers.ModelSerializer):
             'end_date',
             'is_active',
             'status',
-            'user_points',
         ]
         read_only_fields = ['user']
 

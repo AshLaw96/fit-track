@@ -15,7 +15,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   });
   const [loading, setLoading] = useState(true);
   const [expandedChallengeId, setExpandedChallengeId] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
   const [newChallenge, setNewChallenge] = useState({
     title: "",
     description: "",
@@ -56,8 +55,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         active,
         available: [],
       });
-      const totalPoints = activeResults.length > 0 ? activeResults[0].user_points || 0 : 0;
-      setUserPoints(totalPoints);
     } catch (err) {
       console.error("Error fetching challenges:", err);
     } finally {
@@ -136,7 +133,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         <h4 className="mb-0 flex items-center gap-2">
           <Trophy className="text-warning" size={20} /> Challenges & Motivation
         </h4>
-        <span className="badge bg-primary">🏆 Points: {userPoints}</span>
       </div>
 
       {loading ? (
@@ -189,8 +185,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   </div>
                 );
               })
-              )
-             : (
+            ) : (
               <div className="text-muted">No active challenges yet.</div>
             )}
           </div>
