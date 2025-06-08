@@ -545,19 +545,6 @@ class ChallengeListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        today = timezone.now().date()
-
-        # Check if user already has an active challenge
-        has_active = UserChallenge.objects.filter(
-            user=user,
-            completed=False,
-            challenge__start_date__lte=today,
-            challenge__end_date__gte=today
-        ).exists()
-
-        if has_active:
-            raise ValidationError("You already have an active challenge.")
-
         challenge = serializer.save(owner=user)
 
         # Automatically join the user to the created challenge
