@@ -1,4 +1,4 @@
-# [fit-track](https://fit-track-project-8ab24fa880fe.herokuapp.com)
+# [fit-track](https://fit-track-front-end.onrender.com)
 
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/t/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/commits/main)
 [![GitHub last commit](https://img.shields.io/github/last-commit/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/commits/main)
@@ -515,12 +515,12 @@ source: [medium.com](https://medium.com/@yathomasi1/1-using-django-extensions-to
 
 ### GitHub Issues
 
-[GitHub Issues](https://www.github.com/AshLaw96/fit-track/issues) served as an another Agile tool. There, I managed my User Stories and Milestone tasks, and tracked any issues/bugs.
+[GitHub Issues](https://github.com/AshLaw96/fit-track/issues) served as an another Agile tool. There, I managed my User Stories and Milestone tasks, and tracked any issues/bugs.
 
-| Link                                                                                                                                                                 | Screenshot                                        |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| [![GitHub issues](https://img.shields.io/github/issues/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/issues)                                        | ![screenshot](documentation/gh-issues-open.png)   |
-| [![GitHub closed issues](https://img.shields.io/github/issues-closed/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/issues?q=is%3Aissue+is%3Aclosed) | ![screenshot](documentation/gh-issues-closed.png) |
+| Link                                                                                                                                                                 | Screenshot                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [![GitHub issues](https://img.shields.io/github/issues/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/issues)                                        | ![screenshot](documentation/open.png)   |
+| [![GitHub closed issues](https://img.shields.io/github/issues-closed/AshLaw96/fit-track)](https://www.github.com/AshLaw96/fit-track/issues?q=is%3Aissue+is%3Aclosed) | ![screenshot](documentation/closed.png) |
 
 ### MoSCoW Prioritization
 
@@ -852,7 +852,8 @@ EMAIL_HOST_USER=user-inserts-own-gmail-email-address
 SECRET_KEY=any-random-secret-key
 STRIPE_PUBLIC_KEY=user-inserts-own-stripe-public-key
 STRIPE_SECRET_KEY=user-inserts-own-stripe-secret-key
-STRIPE_WH_SECRET=user-inserts-own-stripe-webhook-secret  # only if using Stripe Webhooks
+# only if using Stripe Webhooks
+STRIPE_WH_SECRET=user-inserts-own-stripe-webhook-secret
 
 # local environment only (do not include these in production/deployment!)
 DEBUG=True
