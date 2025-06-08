@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import date
+from api.utils.leaderboard import check_and_notify_leaderboard_change
 
 
 # Custom user model
@@ -16,6 +17,7 @@ class CustomUser(AbstractUser):
     weight_kg = models.FloatField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True)
     points = models.PositiveIntegerField(default=0)
+    last_known_rank = models.PositiveIntegerField(null=True, blank=True)
     prefers_dark_mode = models.BooleanField(default=False)
     unit_preferences = models.JSONField(
         default=dict,

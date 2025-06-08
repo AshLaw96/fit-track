@@ -1,4 +1,3 @@
-from ..models import Notification
 from django.utils import timezone
 
 
@@ -13,6 +12,7 @@ def send_notification(user, title, message, type="general", link=None):
         type (str): Optional tag/type, e.g. 'sleep_reminder', 'goal_achieved'.
         link: e.g. '/profile/#achievements'.
     """
+    from ..models import Notification
     notification = Notification.objects.create(
         user=user,
         title=title,

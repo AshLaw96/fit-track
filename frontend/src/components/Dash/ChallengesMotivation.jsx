@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/api";
-import { Trophy, PlusCircle, Users, Flame, TrendingUp } from "lucide-react";
+import {
+  Trophy,
+  PlusCircle,
+  Flame,
+  TrendingUp,
+  Globe2,
+} from "lucide-react";
 import { toast } from "react-toastify";
 
 const ChallengesMotivation = ({ data, refreshData }) => {
   const [challengeData, setChallengeData] = useState({
     active: [],
     available: [],
-    leaderboard: [],
+    globalLeaderboard: [],
   });
   const [joiningIds, setJoiningIds] = useState([]);
   const [joinedChallengeIds, setJoinedChallengeIds] = useState([]);
@@ -26,7 +32,11 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   const fetchChallengeData = async () => {
     try {
       setLoading(true);
-      setChallengeData({ active: [], available: [], leaderboard: [] });
+      setChallengeData({
+        active: [],
+        available: [],
+        globalLeaderboard: [],
+      });
 
       const [activeRes, availableRes, joinedRes] = await Promise.all([
         api.get("/user_challenges/active/"),
@@ -38,7 +48,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       const active = activeRes.data.results
         .map((uc) => {
           const endDate = uc.end_date ? new Date(uc.end_date) : null;
-          const completed = uc.completed || uc.progress >= (uc.target_value || 1);
+          const completed =
+            uc.completed || uc.progress >= (uc.target_value || 1);
           const failed = !completed && endDate && today > endDate;
 
           return {
@@ -61,19 +72,19 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       const joined = Array.isArray(joinedRes.data) ? joinedRes.data : [];
       const joinedIds = joined.map((uc) => uc.challenge_id || uc.challenge);
 
-      let leaderboard = [];
-      if (active.length > 0) {
-        const challengeId = active[0].challengeId;
-        try {
-          const res = await api.get(`/user_challenges/leaderboard/${challengeId}/`);
-          leaderboard = res.data || [];
-        } catch (err) {
-          console.warn("⚠️ Failed to fetch leaderboard:", err);
-        }
+      let globalLeaderboard = [];
+      try {
+        const res = await api.get("/global_leaderboard/");
+        globalLeaderboard = res.data.slice(0, 10); // top 10
+      } catch (err) {
+        console.warn("⚠️ Failed to fetch global leaderboard:", err);
       }
 
-      setChallengeData({ active, available, leaderboard });
-      console.log(availableRes.data)
+      setChallengeData({
+        active,
+        available,
+        globalLeaderboard,
+      });
       setJoinedChallengeIds(joinedIds);
     } catch (err) {
       console.error("Error fetching challenges:", err);
@@ -93,7 +104,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   const handleCreateChallenge = async (e) => {
     e.preventDefault();
 
-    if (!newChallenge.target_value || isNaN(parseFloat(newChallenge.target_value))) {
+    if (
+      !newChallenge.target_value ||
+      isNaN(parseFloat(newChallenge.target_value))
+    ) {
       toast.error("Target value must be a valid number.");
       return;
     }
@@ -167,7 +181,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     setExpandedChallengeId((prevId) => (prevId === id ? null : id));
   };
 
-  const { active, available, leaderboard } = challengeData;
+  const { active, available, globalLeaderboard } = challengeData;
 
   return (
     <div className="card p-4 shadow">
@@ -226,21 +240,21 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             )}
           </div>
 
-          {/* Leaderboard */}
-          <div className="mb-4" id="leaderboard">
+          {/* Global Leaderboard */}
+          <div className="mb-4" id="global-leaderboard">
             <strong className="flex items-center gap-2">
-              <Users className="text-success" size={18} /> Leaderboard:
+              <Globe2 className="text-secondary" size={18} /> Global Leaderboard:
             </strong>
-            {leaderboard.length > 0 ? (
+            {globalLeaderboard.length > 0 ? (
               <ul className="mt-2">
-                {leaderboard.map((entry, i) => (
-                  <li key={i}>
-                    {i + 1}. {entry.user} - {entry.points} points
+                {globalLeaderboard.map((entry) => (
+                  <li key={entry.username}>
+                    {entry.rank}. {entry.username} — {entry.total_points} points
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="text-muted">Leaderboard not available.</div>
+              <div className="text-muted">Global leaderboard not available.</div>
             )}
           </div>
 
@@ -358,7 +372,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   name="is_public"
                   checked={newChallenge.is_public}
                   onChange={(e) =>
-                    setNewChallenge({ ...newChallenge, is_public: e.target.checked })
+                    setNewChallenge({
+                      ...newChallenge,
+                      is_public: e.target.checked,
+                    })
                   }
                   id="isPublicCheck"
                 />
