@@ -564,7 +564,6 @@ class ChallengeListView(generics.ListCreateAPIView):
         UserChallenge.objects.create(user=user, challenge=challenge)
 
     def post(self, request, *args, **kwargs):
-        print("DEBUG - Challenge POST data:", request.data)
         return super().post(request, *args, **kwargs)
 
 
@@ -648,21 +647,12 @@ class ActiveUserChallengesView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         today = timezone.now().date()
-        print(f"[DEBUG] Fetching active challenges for user {user} on {today}")
-        try:
-            qs = UserChallenge.objects.filter(
-                user=user,
-                completed=False,
-                challenge__start_date__lte=today,
-                challenge__end_date__gte=today
-            ).select_related('challenge')
-            print(f"[DEBUG] Found {qs.count()} active challenges")
-            return qs
-        except Exception as e:
-            import traceback
-            print("[ERROR] Failed to fetch active challenges:", e)
-            traceback.print_exc()
-            raise
+        return UserChallenge.objects.filter(
+            user=user,
+            completed=False,
+            challenge__start_date__lte=today,
+            challenge__end_date__gte=today
+        ).select_related('challenge')
 
 
 # --- User Report Views ---

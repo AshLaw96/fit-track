@@ -32,16 +32,13 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         available: [],
       });
 
-      const [activeRes, availableRes] = await Promise.all([
-        api.get("/user_challenges/active/"),
-      ]);
+      const activeRes = await api.get("/user_challenges/active/");
 
       const today = new Date();
       const active = activeRes.data.results
         .map((uc) => {
           const endDate = uc.end_date ? new Date(uc.end_date) : null;
-          const completed =
-            uc.completed || uc.progress >= (uc.target_value || 1);
+          const completed = uc.completed || uc.progress >= (uc.target_value || 1);
           const failed = !completed && endDate && today > endDate;
 
           return {
@@ -53,11 +50,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         })
         .filter((c) => !c.completed && !c.failed);
 
-      const available = availableRes.data || [];
-
       setChallengeData({
         active,
-        available,
+        available: [],
       });
     } catch (err) {
       console.error("Error fetching challenges:", err);
