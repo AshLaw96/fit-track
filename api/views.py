@@ -706,17 +706,9 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
             and not instance.completed
         ):
             instance.completed = True
-            instance.points = instance.target_value
-            instance.save(update_fields=["completed", "points"])
-
-        try:
-            check_and_notify_leaderboard_change(
-                self.request.user
-            )
-        except Exception as e:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Error in leaderboard check: {e}", exc_info=True)
+            instance.points = instance.challenge.target_value
+            instance.save(update_fields=["completed"])
+            check_and_notify_leaderboard_change(self.request.user)
 
 
 class IncrementProgressView(APIView):
