@@ -132,7 +132,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     setExpandedChallengeId((prevId) => (prevId === id ? null : id));
   };
 
-  const { active, available } = challengeData;
+  const { active } = challengeData;
   const userPoints = active.reduce((sum, c) => sum + (c.user_points || 0), 0);
 
   return (

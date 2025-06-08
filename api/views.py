@@ -580,29 +580,6 @@ class ChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Challenge.objects.filter(owner=self.request.user)
 
 
-# --- Public Challenge List View ---
-class PublicChallengeListView(generics.ListAPIView):
-    """
-    List all challenges not yet joined by the user (public feed).
-    """
-    serializer_class = ChallengeSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        joined_ids = (
-            UserChallenge.objects
-            .filter(user=user)
-            .values_list('challenge_id', flat=True)
-        )
-        return (
-            Challenge.objects
-            .filter(is_public=True)
-            .exclude(id__in=joined_ids)
-            .exclude(owner=user)
-        )
-
-
 # --- User Challenge Views ---
 class UserChallengeListView(generics.ListCreateAPIView):
     """
@@ -663,8 +640,7 @@ class IncrementProgressView(APIView):
 
 class ActiveUserChallengesView(generics.ListAPIView):
     """
-    Return all active challenges for the current user
-    (i.e., ones that are ongoing and the user has joined).
+    Return all active challenges for the current user.
     """
     serializer_class = UserChallengeSerializer
     permission_classes = [permissions.IsAuthenticated]
