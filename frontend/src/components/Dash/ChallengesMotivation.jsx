@@ -15,6 +15,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   });
   const [loading, setLoading] = useState(true);
   const [expandedChallengeId, setExpandedChallengeId] = useState(null);
+  const [userPoints, setUserPoints] = useState(0);
   const [newChallenge, setNewChallenge] = useState({
     title: "",
     description: "",
@@ -33,9 +34,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       });
 
       const activeRes = await api.get("/user_challenges/active/");
+      const activeResults = activeRes.data.results;
 
       const today = new Date();
-      const active = activeRes.data.results
+      const active = activeResults
         .map((uc) => {
           const endDate = uc.end_date ? new Date(uc.end_date) : null;
           const completed = uc.completed || uc.progress >= (uc.target_value || 1);
@@ -54,6 +56,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         active,
         available: [],
       });
+      const totalPoints = activeResults.length > 0 ? activeResults[0].user_points || 0 : 0;
+      setUserPoints(totalPoints);
     } catch (err) {
       console.error("Error fetching challenges:", err);
     } finally {
@@ -125,7 +129,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   };
 
   const { active } = challengeData;
-  const userPoints = active.reduce((sum, c) => sum + (c.user_points || 0), 0);
+  const percent = c.target_value ? (c.progress / c.target_value) * 100 : 0;
 
   return (
     <div className="card p-4 shadow">
@@ -168,12 +172,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     </div>
                   )}
                   <div className="progress">
-                    <div
-                      className="progress-bar"
-                      role="progressbar"
-                      style={{ width: `${(c.progress / c.target_value) * 100}%` }}
-                    >
-                      {((c.progress / c.target_value) * 100).toFixed(1)}%
+                    <div className="progress-bar" role="progressbar" style={{ width: `${percent}%` }}>
+                      {percent.toFixed(1)}%
                     </div>
                   </div>
                   <p>{c.progress} / {c.target_value}</p>

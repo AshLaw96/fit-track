@@ -409,16 +409,14 @@ class UserChallenge(models.Model):
 
     def increment_progress(self, amount=1):
         self.progress += amount
-        self.save(update_fields=["progress", "completed"])
 
-    def save(self, *args, **kwargs):
-        # Auto-complete logic
+        # Check if now completed
         if self.progress >= self.challenge.target_value and not self.completed:
             self.completed = True
             self.user.points += 1
             self.user.save(update_fields=["points"])
 
-        super().save(*args, **kwargs)
+        self.save()
 
 
 class UserReport(models.Model):
