@@ -129,7 +129,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   };
 
   const { active } = challengeData;
-  const percent = c.target_value ? (c.progress / c.target_value) * 100 : 0;
 
   return (
     <div className="card p-4 shadow">
@@ -150,43 +149,48 @@ const ChallengesMotivation = ({ data, refreshData }) => {
               <TrendingUp className="text-primary" size={18} /> Active Challenges:
             </strong>
             {active.length > 0 ? (
-              active.map((c) => (
-                <div key={c.id} className="mb-3">
-                  <p
-                    className="fw-semibold cursor-pointer"
-                    onClick={() => toggleExpand(c.id)}
-                    style={{ userSelect: "none" }}
-                  >
-                    {c.title}{" "}
-                    {c.completed && (
-                      <span className="badge bg-success ms-2">Completed</span>
+              active.map((c) => {
+                const percent = c.target_value ? (c.progress / c.target_value) * 100 : 0;
+
+                return (
+                  <div key={c.id} className="mb-3">
+                    <p
+                      className="fw-semibold cursor-pointer"
+                      onClick={() => toggleExpand(c.id)}
+                      style={{ userSelect: "none" }}
+                    >
+                      {c.title}{" "}
+                      {c.completed && (
+                        <span className="badge bg-success ms-2">Completed</span>
+                      )}
+                    </p>
+                    {expandedChallengeId === c.id && (
+                      <div className="bg-light p-2 rounded border mb-2">
+                        <p><strong>Description:</strong> {c.description || "No description."}</p>
+                        <p><strong>Metric:</strong> {c.metric}</p>
+                        <p><strong>Target:</strong> {c.target_value}</p>
+                        <p><strong>Start:</strong> {c.start_date}</p>
+                        <p><strong>End:</strong> {c.end_date}</p>
+                      </div>
                     )}
-                  </p>
-                  {expandedChallengeId === c.id && (
-                    <div className="bg-light p-2 rounded border mb-2">
-                      <p><strong>Description:</strong> {c.description || "No description."}</p>
-                      <p><strong>Metric:</strong> {c.metric}</p>
-                      <p><strong>Target:</strong> {c.target_value}</p>
-                      <p><strong>Start:</strong> {c.start_date}</p>
-                      <p><strong>End:</strong> {c.end_date}</p>
+                    <div className="progress">
+                      <div className="progress-bar" role="progressbar" style={{ width: `${percent}%` }}>
+                        {percent.toFixed(1)}%
+                      </div>
                     </div>
-                  )}
-                  <div className="progress">
-                    <div className="progress-bar" role="progressbar" style={{ width: `${percent}%` }}>
-                      {percent.toFixed(1)}%
-                    </div>
+                    <p>{c.progress} / {c.target_value}</p>
+                    <button
+                      className="btn btn-sm btn-success mt-2"
+                      onClick={() => handleAddProgress(c)}
+                      disabled={c.completed}
+                    >
+                      + Add Progress
+                    </button>
                   </div>
-                  <p>{c.progress} / {c.target_value}</p>
-                  <button
-                    className="btn btn-sm btn-success mt-2"
-                    onClick={() => handleAddProgress(c)}
-                    disabled={c.completed}
-                  >
-                    + Add Progress
-                  </button>
-                </div>
-              ))
-            ) : (
+                );
+              })
+              )
+             : (
               <div className="text-muted">No active challenges yet.</div>
             )}
           </div>
