@@ -420,17 +420,18 @@ class UserChallenge(models.Model):
 
     def increment_progress(self, amount=1):
         self.progress += amount
-        completed_now = False
+        self.save(update_fields=["progress", "completed"])
 
+    def save(self, *args, **kwargs):
+        # Auto-complete logic
         if self.progress >= self.challenge.target_value and not self.completed:
             self.completed = True
             self.user.points += 1
-            completed_now = True
             self.user.save(update_fields=["points"])
-        self.save(update_fields=["progress", "completed"])
 
-        if completed_now:
             check_and_notify_leaderboard_change(self.user)
+
+        super().save(*args, **kwargs)
 
 
 class UserReport(models.Model):

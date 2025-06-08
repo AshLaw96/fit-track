@@ -53,15 +53,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
           const failed = !completed && endDate && today > endDate;
 
           return {
-            id: uc.id,
+            ...uc,
             challengeId: uc.challenge_id || uc.challenge,
-            title: uc.title || "Untitled",
-            description: uc.description || "",
-            metric: uc.metric || "",
-            target_value: uc.target_value || 1,
-            progress: uc.progress ?? 0,
-            start_date: uc.start_date || "",
-            end_date: uc.end_date || "",
             completed,
             failed,
           };
@@ -75,7 +68,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       let globalLeaderboard = [];
       try {
         const res = await api.get("/global_leaderboard/");
-        globalLeaderboard = res.data.slice(0, 10); // top 10
+        globalLeaderboard = res.data.slice(0, 10);
       } catch (err) {
         console.warn("⚠️ Failed to fetch global leaderboard:", err);
       }
@@ -119,7 +112,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
     try {
       await api.post("/challenges/", challengePayload);
-
       toast.success("🎉 Challenge created and joined!");
       setNewChallenge({
         title: "",
@@ -163,10 +155,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   };
 
   const handleAddProgress = async (challenge) => {
-    if (!challenge?.id) {
-      console.warn("Challenge id is undefined, cannot add progress.", challenge);
-      return;
-    }
+    if (!challenge?.id) return;
 
     try {
       await api.post(`/user_challenges/${challenge.id}/increment_progress/`);
@@ -182,12 +171,16 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   };
 
   const { active, available, globalLeaderboard } = challengeData;
+  const userPoints = active[0]?.user_points ?? 0;
 
   return (
     <div className="card p-4 shadow">
-      <h4 className="mb-4 flex items-center gap-2">
-        <Trophy className="text-warning" size={20} /> Challenges & Motivation
-      </h4>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="mb-0 flex items-center gap-2">
+          <Trophy className="text-warning" size={20} /> Challenges & Motivation
+        </h4>
+        <span className="badge bg-primary">🏆 Points: {userPoints}</span>
+      </div>
 
       {loading ? (
         <div className="text-muted">Loading challenge data...</div>
@@ -206,7 +199,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                     onClick={() => toggleExpand(c.id)}
                     style={{ userSelect: "none" }}
                   >
-                    {c.title}
+                    {c.title}{" "}
+                    {c.completed && (
+                      <span className="badge bg-success ms-2">Completed</span>
+                    )}
                   </p>
                   {expandedChallengeId === c.id && (
                     <div className="bg-light p-2 rounded border mb-2">
@@ -230,6 +226,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   <button
                     className="btn btn-sm btn-success mt-2"
                     onClick={() => handleAddProgress(c)}
+                    disabled={c.completed}
                   >
                     + Add Progress
                   </button>

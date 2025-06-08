@@ -500,6 +500,7 @@ class UserChallengeSerializer(serializers.ModelSerializer):
     challenge = serializers.PrimaryKeyRelatedField(
         queryset=Challenge.objects.all(), write_only=True
     )
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = UserChallenge
@@ -517,18 +518,26 @@ class UserChallengeSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'is_active',
+            'status',
             'user_points',
         ]
         read_only_fields = ['user']
 
     def get_is_active(self, obj):
         today = timezone.now().date()
-        return obj.challenge.start_date <= today <= obj.challenge.end_date
+        return (
+            not obj.completed and
+            obj.challenge.start_date <= today <= obj.challenge.end_date
+        )
 
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        (f"[SERIALIZER DEBUG] {rep}")
-        return rep
+    def get_status(self, obj):
+        today = timezone.now().date()
+        if obj.completed:
+            return "Completed"
+        elif obj.challenge.end_date and today > obj.challenge.end_date:
+            return "Failed"
+        else:
+            return "In Progress"
 
 
 class UserReportSerializer(serializers.ModelSerializer):
