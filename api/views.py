@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.db.models import F
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
@@ -551,6 +552,7 @@ class ChallengeListView(generics.ListCreateAPIView):
         # Check if user already has an active challenge
         has_active = UserChallenge.objects.filter(
             user=user,
+            completed=False,
             challenge__start_date__lte=today,
             challenge__end_date__gte=today
         ).exists()
@@ -603,20 +605,25 @@ class PublicChallengeListView(generics.ListAPIView):
         )
 
 
-# --- Challenge Leaderboard View ---
-class ChallengeLeaderboardView(generics.ListAPIView):
-    serializer_class = UserChallengeSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        challenge_id = self.kwargs["challenge_id"]
-        return (
-            UserChallenge.objects
-            .filter(challenge__id=challenge_id)
-            .select_related("user")
-            # rank by user points
-            .order_by("-user__points")
+# --- Leaderboard Views ---
+class GlobalLeaderboardView(APIView):
+    def get(self, request):
+        users = (
+            CustomUser.objects
+            .annotate(total_points=F("points"))
+            .values("username", "total_points")
+            .order_by("-total_points")
         )
+
+        leaderboard = []
+        for rank, user in enumerate(users, start=1):
+            leaderboard.append({
+                "rank": rank,
+                "username": user["username"],
+                "total_points": user["total_points"]
+            })
+
+        return Response(leaderboard)
 
 
 # --- User Challenge Views ---
@@ -657,6 +664,7 @@ class UserChallengeListView(generics.ListCreateAPIView):
 
         has_active = UserChallenge.objects.filter(
             user=user,
+            completed=False,
             challenge__start_date__lte=today,
             challenge__end_date__gte=today
         ).exists()
@@ -703,7 +711,6 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         try:
             check_and_notify_leaderboard_change(
-                instance.challenge_id,
                 self.request.user
             )
         except Exception as e:
@@ -751,6 +758,7 @@ class ActiveUserChallengesView(generics.ListAPIView):
         try:
             qs = UserChallenge.objects.filter(
                 user=user,
+                completed=False,
                 challenge__start_date__lte=today,
                 challenge__end_date__gte=today
             ).select_related('challenge')

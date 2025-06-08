@@ -13,11 +13,11 @@ from .views import (
     WorkoutPlanListView, WorkoutPlanDetailView, RegisterView,
     CustomPasswordResetView, CustomPasswordResetConfirmView,
     CustomTokenObtainPairView, DashboardView, upload_profile_image,
-    PublicChallengeListView, ChallengeLeaderboardView,
+    PublicChallengeListView,
     ActiveUserChallengesView, DeleteAccountView, UserActivityStreakView,
     ChangePasswordView, SleepScheduleView, NotificationListView,
     MarkAllNotificationsRead, UserPreferenceView, RepeatWorkoutPlanView,
-    IncrementProgressView
+    IncrementProgressView, GlobalLeaderboardView
 )
 
 # Create a router and register viewset with it
@@ -166,11 +166,11 @@ urlpatterns = [
         IncrementProgressView.as_view(),
         name='increment-progress',
     ),
-    # Challenge Leaderboard
+    # Leaderboard
     path(
-        'user_challenges/leaderboard/<int:challenge_id>/',
-        ChallengeLeaderboardView.as_view(),
-        name='challenge_leaderboard',
+        'global_leaderboard/',
+        GlobalLeaderboardView.as_view(),
+        name='global_leaderboard',
     ),
     # User Reports
     path(

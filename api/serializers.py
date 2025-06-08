@@ -531,11 +531,6 @@ class UserChallengeSerializer(serializers.ModelSerializer):
         return rep
 
 
-class LeaderboardEntrySerializer(serializers.Serializer):
-    user = serializers.CharField(source='user.username')
-    points = serializers.IntegerField(source='user.points')
-
-
 class UserReportSerializer(serializers.ModelSerializer):
     """
     Serializer for the UserReport model.
