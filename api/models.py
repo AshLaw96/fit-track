@@ -4,7 +4,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from datetime import date
-from api.utils.leaderboard import check_and_notify_leaderboard_change
 
 
 # Custom user model
@@ -17,7 +16,6 @@ class CustomUser(AbstractUser):
     weight_kg = models.FloatField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True)
     points = models.PositiveIntegerField(default=0)
-    last_known_rank = models.PositiveIntegerField(null=True, blank=True)
     prefers_dark_mode = models.BooleanField(default=False)
     unit_preferences = models.JSONField(
         default=dict,
@@ -381,19 +379,10 @@ class Challenge(models.Model):
     target_value = models.FloatField()
     start_date = models.DateField()
     end_date = models.DateField()
-    is_public = models.BooleanField(default=False)
 
     def clean(self):
         if self.start_date > self.end_date:
             raise ValidationError("Start date must be before end date.")
-
-    @property
-    def can_be_joined(self):
-        from django.utils.timezone import now
-        return (
-            self.is_public
-            and self.start_date <= now().date() <= self.end_date
-        )
 
     def __str__(self):
         return f"{self.title}"
@@ -428,8 +417,6 @@ class UserChallenge(models.Model):
             self.completed = True
             self.user.points += 1
             self.user.save(update_fields=["points"])
-
-            check_and_notify_leaderboard_change(self.user)
 
         super().save(*args, **kwargs)
 

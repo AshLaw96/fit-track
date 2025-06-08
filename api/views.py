@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import F
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
@@ -11,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.utils.timezone import now
-from rest_framework import generics, permissions, viewsets, status, serializers
+from rest_framework import generics, permissions, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -38,7 +37,6 @@ from .serializers import (
     NotificationSerializer, UserPreferenceSerializer
 )
 from .utils.activity import calculate_user_streak
-from .utils.leaderboard import check_and_notify_leaderboard_change
 from .utils.sleep import update_daily_sleep_log
 from .utils.fitness import estimate_steps_from_exercise
 
@@ -605,27 +603,6 @@ class PublicChallengeListView(generics.ListAPIView):
         )
 
 
-# --- Leaderboard Views ---
-class GlobalLeaderboardView(APIView):
-    def get(self, request):
-        users = (
-            CustomUser.objects
-            .annotate(total_points=F("points"))
-            .values("username", "total_points")
-            .order_by("-total_points")
-        )
-
-        leaderboard = []
-        for rank, user in enumerate(users, start=1):
-            leaderboard.append({
-                "rank": rank,
-                "username": user["username"],
-                "total_points": user["total_points"]
-            })
-
-        return Response(leaderboard)
-
-
 # --- User Challenge Views ---
 class UserChallengeListView(generics.ListCreateAPIView):
     """
@@ -635,56 +612,7 @@ class UserChallengeListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        print(
-            f"[DEBUG] Fetching all user challenges for user: {user} "
-            f"(ID: {user.id})"
-        )
-        try:
-            queryset = (
-                UserChallenge.objects
-                .filter(user=user)
-                .select_related("challenge", "user")
-                .order_by("id")
-            )
-            print(f"[DEBUG] Found {queryset.count()} user challenges")
-            return queryset
-        except Exception as e:
-            import traceback
-            print(
-                "[ERROR] Exception in get_queryset of "
-                "UserChallengeListView:", e
-            )
-            traceback.print_exc()
-            raise
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        today = timezone.now().date()
-
-        has_active = UserChallenge.objects.filter(
-            user=user,
-            completed=False,
-            challenge__start_date__lte=today,
-            challenge__end_date__gte=today
-        ).exists()
-
-        if has_active:
-            raise serializers.ValidationError(
-                "You already have an active challenge."
-            )
-
-        try:
-            instance = serializer.save(user=user)
-            print(
-                f"[DEBUG] Created UserChallenge for user: {user}, "
-                f"challenge: {instance.challenge}"
-            )
-        except IntegrityError as e:
-            print("[ERROR] IntegrityError when creating UserChallenge:", e)
-            raise serializers.ValidationError(
-                "You have already joined this challenge."
-            )
+        return UserChallenge.objects.filter(user=self.request.user)
 
 
 class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -702,13 +630,11 @@ class UserChallengeDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = serializer.save()
 
         if (
-            instance.progress >= instance.target_value
+            instance.progress >= instance.challenge.target_value
             and not instance.completed
         ):
             instance.completed = True
-            instance.points = instance.challenge.target_value
             instance.save(update_fields=["completed"])
-            check_and_notify_leaderboard_change(self.request.user)
 
 
 class IncrementProgressView(APIView):

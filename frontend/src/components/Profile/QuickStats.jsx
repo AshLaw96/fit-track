@@ -23,12 +23,12 @@ const QuickStats = ({ achievements }) => {
         const processed = challenges
           .map((c) => {
             const endDate = c.end_date ? new Date(c.end_date) : null;
-            const completed = c.completed || (c.progress >= (c.target || 1));
+            const completed = c.completed || (c.progress >= (c.target_value || 1));
             const failed = !completed && endDate && today > endDate;
 
             return {
               id: c.id,
-              title: c.title,
+              title: c.title || c.challenge_title || "Untitled",
               start_date: c.start_date,
               end_date: c.end_date,
               status: completed ? "Completed" : failed ? "Failed" : "In Progress",

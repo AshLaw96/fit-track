@@ -5,7 +5,6 @@ import {
   PlusCircle,
   Flame,
   TrendingUp,
-  Globe2,
 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -13,10 +12,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
   const [challengeData, setChallengeData] = useState({
     active: [],
     available: [],
-    globalLeaderboard: [],
   });
-  const [joiningIds, setJoiningIds] = useState([]);
-  const [joinedChallengeIds, setJoinedChallengeIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedChallengeId, setExpandedChallengeId] = useState(null);
   const [newChallenge, setNewChallenge] = useState({
@@ -35,13 +31,11 @@ const ChallengesMotivation = ({ data, refreshData }) => {
       setChallengeData({
         active: [],
         available: [],
-        globalLeaderboard: [],
       });
 
-      const [activeRes, availableRes, joinedRes] = await Promise.all([
+      const [activeRes, availableRes] = await Promise.all([
         api.get("/user_challenges/active/"),
         api.get("/challenges/public/"),
-        api.get("/user_challenges/"),
       ]);
 
       const today = new Date();
@@ -62,23 +56,11 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         .filter((c) => !c.completed && !c.failed);
 
       const available = availableRes.data || [];
-      const joined = Array.isArray(joinedRes.data) ? joinedRes.data : [];
-      const joinedIds = joined.map((uc) => uc.challenge_id || uc.challenge);
-
-      let globalLeaderboard = [];
-      try {
-        const res = await api.get("/global_leaderboard/");
-        globalLeaderboard = res.data.slice(0, 10);
-      } catch (err) {
-        console.warn("⚠️ Failed to fetch global leaderboard:", err);
-      }
 
       setChallengeData({
         active,
         available,
-        globalLeaderboard,
       });
-      setJoinedChallengeIds(joinedIds);
     } catch (err) {
       console.error("Error fetching challenges:", err);
     } finally {
@@ -112,7 +94,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
     try {
       await api.post("/challenges/", challengePayload);
-      toast.success("🎉 Challenge created and joined!");
+      toast.success("🎉 Challenge created!");
       setNewChallenge({
         title: "",
         description: "",
@@ -134,26 +116,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     }
   };
 
-  const handleJoin = async (challengeId) => {
-    setJoiningIds((prev) => [...prev, challengeId]);
-    try {
-      await api.post("/user_challenges/", { challenge: challengeId });
-
-      toast.success("🎉 Joined challenge!");
-      if (typeof refreshData === "function") refreshData();
-      fetchChallengeData();
-    } catch (err) {
-      const msg =
-        err.response?.data?.non_field_errors?.[0] ||
-        err.response?.data?.detail ||
-        err.response?.data?.challenge?.[0] ||
-        "Error joining challenge.";
-      toast.error(`❌ ${msg}`);
-    } finally {
-      setJoiningIds((prev) => prev.filter((id) => id !== challengeId));
-    }
-  };
-
   const handleAddProgress = async (challenge) => {
     if (!challenge?.id) return;
 
@@ -170,8 +132,8 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     setExpandedChallengeId((prevId) => (prevId === id ? null : id));
   };
 
-  const { active, available, globalLeaderboard } = challengeData;
-  const userPoints = active[0]?.user_points ?? 0;
+  const { active, available } = challengeData;
+  const userPoints = active.reduce((sum, c) => sum + (c.user_points || 0), 0);
 
   return (
     <div className="card p-4 shadow">
@@ -186,10 +148,10 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         <div className="text-muted">Loading challenge data...</div>
       ) : (
         <>
-          {/* Active Challenge */}
+          {/* Active Challenges */}
           <div className="mb-4" id="active-challenge">
             <strong className="flex items-center gap-2">
-              <TrendingUp className="text-primary" size={18} /> Active Challenge:
+              <TrendingUp className="text-primary" size={18} /> Active Challenges:
             </strong>
             {active.length > 0 ? (
               active.map((c) => (
@@ -233,25 +195,7 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                 </div>
               ))
             ) : (
-              <div className="text-muted">No active challenge joined.</div>
-            )}
-          </div>
-
-          {/* Global Leaderboard */}
-          <div className="mb-4" id="global-leaderboard">
-            <strong className="flex items-center gap-2">
-              <Globe2 className="text-secondary" size={18} /> Global Leaderboard:
-            </strong>
-            {globalLeaderboard.length > 0 ? (
-              <ul className="mt-2">
-                {globalLeaderboard.map((entry) => (
-                  <li key={entry.username}>
-                    {entry.rank}. {entry.username} — {entry.total_points} points
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-muted">Global leaderboard not available.</div>
+              <div className="text-muted">No active challenges yet.</div>
             )}
           </div>
 
@@ -260,49 +204,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
             <strong className="flex items-center gap-2">
               <Flame className="text-danger" size={18} /> Available Challenges:
             </strong>
-            {available.length > 0 ? (
-              <ul className="mt-2 list-unstyled">
-                {available.map((c) => (
-                  <li key={c.id} className="mb-3 border rounded p-2 bg-light">
-                    <p
-                      className="fw-semibold cursor-pointer mb-1"
-                      onClick={() => toggleExpand(c.id)}
-                      style={{ userSelect: "none" }}
-                    >
-                      {c.title}
-                    </p>
-                    {expandedChallengeId === c.id && (
-                      <div className="mb-2">
-                        <p><strong>Description:</strong> {c.description}</p>
-                        <p><strong>Metric:</strong> {c.metric}</p>
-                        <p><strong>Target:</strong> {c.target_value}</p>
-                        <p><strong>Start:</strong> {c.start_date}</p>
-                        <p><strong>End:</strong> {c.end_date}</p>
-                      </div>
-                    )}
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => handleJoin(c.id)}
-                      disabled={
-                        joinedChallengeIds.includes(c.id) ||
-                        active.length > 0 ||
-                        joiningIds.includes(c.id)
-                      }
-                    >
-                      {joinedChallengeIds.includes(c.id)
-                        ? "Already Joined"
-                        : active.length > 0
-                        ? "Only 1 Active Allowed"
-                        : joiningIds.includes(c.id)
-                        ? "Joining..."
-                        : "Join"}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-muted">No challenges available to join.</div>
-            )}
+            <div className="alert alert-secondary mt-2">
+              Joining challenges is currently disabled.
+            </div>
           </div>
 
           <hr />
@@ -380,15 +284,9 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                   Public Challenge
                 </label>
               </div>
-              {active.length > 0 ? (
-                <div className="alert alert-warning">
-                  You already have an active challenge. Complete it before creating a new one.
-                </div>
-              ) : (
-                <button type="submit" className="btn btn-primary">
-                  Create Challenge
-                </button>
-              )}
+              <button type="submit" className="btn btn-primary">
+                Create Challenge
+              </button>
             </form>
           </div>
         </>
