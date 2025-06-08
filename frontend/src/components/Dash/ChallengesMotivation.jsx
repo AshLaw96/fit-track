@@ -22,7 +22,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
     target_value: "",
     start_date: "",
     end_date: "",
-    is_public: false,
   });
 
   const fetchChallengeData = async () => {
@@ -35,7 +34,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
 
       const [activeRes, availableRes] = await Promise.all([
         api.get("/user_challenges/active/"),
-        api.get("/challenges/public/"),
       ]);
 
       const today = new Date();
@@ -102,7 +100,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
         target_value: "",
         start_date: "",
         end_date: "",
-        is_public: false,
       });
 
       if (typeof refreshData === "function") refreshData();
@@ -266,24 +263,6 @@ const ChallengesMotivation = ({ data, refreshData }) => {
                 className="form-control mb-2"
                 required
               />
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="is_public"
-                  checked={newChallenge.is_public}
-                  onChange={(e) =>
-                    setNewChallenge({
-                      ...newChallenge,
-                      is_public: e.target.checked,
-                    })
-                  }
-                  id="isPublicCheck"
-                />
-                <label className="form-check-label" htmlFor="isPublicCheck">
-                  Public Challenge
-                </label>
-              </div>
               <button type="submit" className="btn btn-primary">
                 Create Challenge
               </button>
